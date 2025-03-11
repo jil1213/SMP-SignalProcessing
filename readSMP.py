@@ -10,6 +10,8 @@ import glob
 from pathlib import Path # for os independent path handling
 from snowmicropyn import Profile #package snowmicropyn must be installed
 
+#todo: handle/detecting ground and surface? (especially ground should be removed..)
+
 # exports pnt files to csv files in a target directory
 def export_pnt(pnt_dir, target_dir,  overwrite=False):
     """ Exports all pnt files from a dir and its subdirs as csv files into a new dir.
@@ -33,9 +35,39 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
         # exports file only if we want to overwrite it or it doesnt exist yet
         if overwrite or not file_name.is_file():
             smp_profile = Profile.load(file)
-            df = smp_profile.samples_within_snowpack(relativize=False)
+            df = smp_profile.samples
             df.to_csv(os.path.join(target_dir, Path(smp_profile.name + ".csv")))
 
     print("Finished exporting all pnt file as {} files in {}.".format("csv", target_dir))
 
+
+#load files a data frame
+def load_pnt(file):
+    smp_profile = Profile.load(file)
+    df = smp_profile.samples # converting profile into a panda dataframe
+    return df
+
+#visualize profile 
+def plot_profile(df):
+    # Plot erstellen
+    plt.figure(figsize=(8, 5))
+    plt.plot(df["distance"], df["force"], color='blue')
+    plt.xlabel("Ditance (cm)")
+    plt.ylabel("Force (kg/m³)")
+    plt.title("SMP Signal")
+    #plt.gca().invert_xaxis() 
+    plt.legend()
+    plt.grid()
+    plt.show()
+
+#for exporting pnt as csv 
 export_pnt(Path("data/smp_profiles"), Path("data/smp_profiles_csv"), overwrite=False)
+
+s = load_pnt("data/smp_profiles/S45M1061.PNT")
+plot_profile(s)
+
+# todo: design for all files (for file in file generator)
+# match all files in the dir who end on .pnt recursively
+#match_pnt = pnt_dir.as_posix() + "/**/*.pnt"
+#file_generator = glob.iglob(match_pnt, recursive=True)
+#for file in file_generator:
