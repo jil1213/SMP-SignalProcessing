@@ -1,18 +1,14 @@
-# read SMP .pnt files and convert them to csv files 
-# inspired by snowdragon/data_handling/data_preprocessing.py
-# working with profile class ba snowmicropyn 
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
-import csv
 import glob
 
 from pathlib import Path # for os independent path handling
 from snowmicropyn import Profile #package snowmicropyn must be installed
 
 #todo: handle/detecting ground and surface? (especially ground should be removed..)
-
-# exports pnt files to csv files in a target directory
+# read SMP .pnt files and export them as csv files 
+# inspired by snowdragon/data_handling/data_preprocessing.py
 def export_pnt(pnt_dir, target_dir,  overwrite=False):
     """ Exports all pnt files from a dir and its subdirs as csv files into a new dir.
     Preproceses the profiles, according to kwargs arguments.
@@ -41,7 +37,7 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
     print("Finished exporting all pnt file as {} files in {}.".format("csv", target_dir))
 
 
-#load files a data frame
+#load files as data frame
 def load_pnt(file):
     smp_profile = Profile.load(file)
     df = smp_profile.samples # converting profile into a panda dataframe
@@ -55,19 +51,18 @@ def plot_profile(df):
     plt.xlabel("Ditance (cm)")
     plt.ylabel("Force (kg/m³)")
     plt.title("SMP Signal")
-    #plt.gca().invert_xaxis() 
     plt.legend()
     plt.grid()
     plt.show()
 
-#for exporting pnt as csv 
+# export pnt as csv 
 export_pnt(Path("data/smp_profiles"), Path("data/smp_profiles_csv"), overwrite=False)
 
+#example:plotting a specific SMP Profile
 s = load_pnt("data/smp_profiles/S45M1061.PNT")
 plot_profile(s)
 
 # todo: design for all files (for file in file generator)
-# match all files in the dir who end on .pnt recursively
 #match_pnt = pnt_dir.as_posix() + "/**/*.pnt"
 #file_generator = glob.iglob(match_pnt, recursive=True)
 #for file in file_generator:
