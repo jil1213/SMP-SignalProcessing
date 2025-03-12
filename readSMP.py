@@ -40,27 +40,28 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
 #load files as data frame
 def load_pnt(file):
     smp_profile = Profile.load(file)
+    profile_name = smp_profile.name
     df = smp_profile.samples # converting profile into a panda dataframe
-    return df
+    return df, profile_name
 
 #visualize profile 
-def plot_profile(df):
+def plot_profile(df, name):
     # Plot erstellen
     plt.figure(figsize=(8, 5))
-    plt.plot(df["distance"], df["force"], color='blue')
-    plt.xlabel("Ditance (cm)")
-    plt.ylabel("Force (kg/m³)")
+    plt.plot(df["distance"], df["force"], color='blue', label=name)
+    plt.xlabel("Distance (cm)")
+    plt.ylabel("Force (N)")
     plt.title("SMP Signal")
     plt.legend()
     plt.grid()
     plt.show()
 
 # export pnt as csv 
-export_pnt(Path("data/smp_profiles"), Path("data/smp_profiles_csv"), overwrite=False)
+#export_pnt(Path("data/smp_profiles"), Path("data/smp_profiles_csv"), overwrite=False)
 
 #example:plotting a specific SMP Profile
-s = load_pnt("data/smp_profiles/S45M1061.PNT")
-plot_profile(s)
+df, profile_name = load_pnt("data/smp_profiles/S45M1061.PNT")
+plot_profile(df, profile_name)
 
 # todo: design for all files (for file in file generator)
 #match_pnt = pnt_dir.as_posix() + "/**/*.pnt"

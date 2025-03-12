@@ -17,7 +17,7 @@ def plot_density(snowdepth, mean, snowdepthslf, meanslf):
     plt.plot(snowdepth, mean, color='blue', label='Density Cutter')
     plt.scatter(snowdepthslf, meanslf, color='red')
     plt.plot(snowdepthslf, meanslf, color='red', label='Density SLF')
-    plt.xlabel("snowdepth (cm)")
+    plt.xlabel("Snowdepth (cm)")
     plt.ylabel("Density (kg/m^3)")
     plt.title("Density over snowdepth")
     plt.legend()
