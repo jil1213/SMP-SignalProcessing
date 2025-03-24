@@ -39,9 +39,9 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
 
 
 #load files as data frame
-def load_pnt(file):
+def load_pnt(file, allocation):
     smp_profile = Profile.load(file)
-    profile_name = smp_profile.name
+    profile_name = smp_profile.name #string
     df = smp_profile.samples # converting profile into a panda dataframe
     return df, profile_name
 
@@ -56,8 +56,13 @@ def plot_profiles(profiles):
     plt.grid()
     plt.show()
 
+allocation = pd.read_excel("data/smp_allocation.xlsx")
+smp_profiles = {} #dictionary for all smp profiles
 
-df1, profile_name1 = load_pnt("data/smp_profiles/S45M1056.PNT")
-df2, profile_name2 = load_pnt("data/smp_profiles/S45M1061.PNT") 
+for i in range(allocation.shape[0]): 
+    df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT", allocation)
+    df.attrs["date"] = allocation["date"][i]
+    df.attrs["velocity"] = allocation["velocity"][i]
+    smp_profiles[profile_name] = df 
 
-plot_profiles([(df1, profile_name1), (df2, profile_name2)])
+plot_profiles([(smp_profiles["S45M1053"], "SMP_1"), (smp_profiles["S45M1056"], "SMP_2")])
