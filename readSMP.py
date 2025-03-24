@@ -39,30 +39,38 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
 
 
 #load files as data frame
-def load_pnt(file, allocation):
+def load_pnt(file):
     smp_profile = Profile.load(file)
     profile_name = smp_profile.name #string
     df = smp_profile.samples # converting profile into a panda dataframe
     return df, profile_name
 
-def plot_profiles(profiles):
+def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visualizations")):
     plt.figure(figsize=(8, 5))
     for df, name in profiles:
         plt.plot(df["distance"], df["force"], label=name)  # more than one profile can be plotted
     plt.xlabel("Distance (cm)")
     plt.ylabel("Force (N)")
-    plt.title("SMP Signal")
+    plt.title(f"{filename}")
     plt.legend()
     plt.grid()
-    plt.show()
+    #plt.show()
+    if save == True: 
+        # save as figure
+        plt.savefig((target_dir / filename).with_suffix(".png"))
+        plt.close()
 
-allocation = pd.read_excel("data/smp_allocation.xlsx")
+
 smp_profiles = {} #dictionary for all smp profiles
 
-for i in range(allocation.shape[0]): 
-    df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT", allocation)
-    df.attrs["date"] = allocation["date"][i]
-    df.attrs["velocity"] = allocation["velocity"][i]
-    smp_profiles[profile_name] = df 
+def load_all_smp_profiles():
+    allocation = pd.read_excel("data/smp_allocation.xlsx")
+    for i in range(allocation.shape[0]): 
+        df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
+        df.attrs["date"] = allocation["date"][i]
+        df.attrs["velocity"] = allocation["velocity"][i]
+        smp_profiles[profile_name] = df 
+    return smp_profiles
 
-plot_profiles([(smp_profiles["S45M1053"], "SMP_1"), (smp_profiles["S45M1056"], "SMP_2")])
+#example:plot two SMP profiles
+#plot_profiles([(smp_profiles["S45M1053"], "SMP_1"), (smp_profiles["S45M1056"], "SMP_2")])

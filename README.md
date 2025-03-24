@@ -12,3 +12,7 @@ can be used to import and visualize denity measuremnts stored in csv files
 
 can be used to read .pnt SMP files. They can be converted into a csv file without any reduction of datapoints
 SMP files can also be stored in dataframes and in further steps for eample used for visualization (and later for signal processing)
+
+## plotSMP
+
+can be used to visualize smp profiles. Outputs are stored in folder `output/visualizations`
