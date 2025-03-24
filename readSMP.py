@@ -7,6 +7,7 @@ from pathlib import Path # for os independent path handling
 from snowmicropyn import Profile #package snowmicropyn must be installed
 
 #todo: handle/detecting ground and surface? (especially ground should be removed..)
+
 # read SMP .pnt files and export them as csv files 
 # inspired by snowdragon/data_handling/data_preprocessing.py
 def export_pnt(pnt_dir, target_dir,  overwrite=False):
