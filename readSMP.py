@@ -4,7 +4,7 @@ import os
 import glob
 
 from pathlib import Path # for os independent path handling
-from snowmicropyn import Profile #package snowmicropyn must be installed
+from snowmicropyn import Profile, detection #.detect_ground, detection.detect_surface #package snowmicropyn must be installed
 
 #todo: handle/detecting ground and surface? (especially ground should be removed..)
 
@@ -37,12 +37,26 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
 
     print("Finished exporting all pnt file as {} files in {}.".format("csv", target_dir))
 
+#trim profiles with surface and ground 
+#autodetection by snowmicropyn package
+# Todo set marker for plotting to check if algorithm is right (?) 
+def trim_profile(profile):
+    ground = Profile.detect_ground(profile)
+    surface = Profile.detect_surface(profile)
+    df = profile.samples
+    df_trimmed = df[(df["distance"] >= surface) & (df["distance"] <= ground)]
+    return df_trimmed
+
 
 #load files as data frame
-def load_pnt(file):
+def load_pnt(file, Trim = True):
     smp_profile = Profile.load(file)
     profile_name = smp_profile.name #string
-    df = smp_profile.samples # converting profile into a panda dataframe
+    if Trim == True: 
+        df_trimmed = trim_profile(smp_profile) #loaded smp Profile must be given as input parameter
+        df = df_trimmed
+    else: 
+        df = smp_profile.samples # converting profile into a panda dataframe
     return df, profile_name
 
 def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visualizations")):
