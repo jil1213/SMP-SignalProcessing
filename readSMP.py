@@ -39,43 +39,56 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
 
 #trim profiles with surface and ground 
 #autodetection by snowmicropyn package and option to change values manually
-def trim_profile(profile):
-    ground = Profile.detect_ground(profile)
-    surface = Profile.detect_surface(profile)
+#Markers can be taken out of Allocation File or set with autodetect and manually corrected
+def trim_profile(profile, Allocation = True):
     df = profile.samples
-    while True:
-        # Plot to check if algorithm is right
-        plt.figure(figsize=(8, 5))
-        plt.plot(df["distance"], df["force"])
-        plt.axvline(x=ground, color='red', linestyle='--', label=f'Ground: {ground} mm')
-        plt.axvline(x=surface, color='blue', linestyle='--', label=f'Surface: {surface} mm')
-        plt.xlabel("Distance (mm)")
-        plt.ylabel("Force (N)")
-        plt.grid()
-        plt.legend()
-        plt.show()
+    allocation = pd.read_excel("data/smp_allocation.xlsx")
 
-        # Option to manually change the values for surface and ground 
-        response = input("Are Markers correct? (y/n): ").strip().lower()
+    if Allocation == True: 
+        profile_data = allocation[allocation["Profile"] == profile.name].iloc[0]
+        ground = profile_data["Ground"]
+        surface = profile_data["Surface"]
+        print(f"Using allocated markers: Surface = {surface} mm, Ground = {ground} mm")
+        df_trimmed = df[(df["distance"] >= surface) & (df["distance"] <= ground)]
+        return df_trimmed
 
-        if response == 'y':
-            print("Proceeding with trimming...")
-            df_trimmed = df[(df["distance"] >= surface) & (df["distance"] <= ground)]
-            return df_trimmed
-        elif response == 'n':
-            print("Please enter custom values for surface and ground.")
-            try:
-                # Terminal user input
-                surface = float(input("Enter value for Surface (in mm): ").strip())
-                ground = float(input("Enter value for Ground (in mm): ").strip())
-                print(f"Custom values set: Surface = {surface} mm, Ground = {ground} mm")
-            except ValueError:
-                print("Invalid input. Please enter numeric values for surface and ground.")
-        else:
-            print("Invalid input. Please enter 'y' for Yes or 'n' for No.")
+    else: 
+        ground = Profile.detect_ground(profile)
+        surface = Profile.detect_surface(profile)
+
+        while True:
+            # Plot to check if algorithm is right
+            plt.figure(figsize=(8, 5))
+            plt.plot(df["distance"], df["force"])
+            plt.axvline(x=ground, color='red', linestyle='--', label=f'Ground: {ground} mm')
+            plt.axvline(x=surface, color='blue', linestyle='--', label=f'Surface: {surface} mm')
+            plt.xlabel("Distance (mm)")
+            plt.ylabel("Force (N)")
+            plt.grid()
+            plt.legend()
+            plt.show()
+
+            # Option to manually change the values for surface and ground 
+            response = input("Are Markers correct? (y/n): ").strip().lower()
+
+            if response == 'y':
+                print("Proceeding with trimming...")
+                df_trimmed = df[(df["distance"] >= surface) & (df["distance"] <= ground)]
+                return df_trimmed
+            elif response == 'n':
+                print("Please enter custom values for surface and ground.")
+                try:
+                    # Terminal user input
+                    surface = float(input("Enter value for Surface (in mm): ").strip())
+                    ground = float(input("Enter value for Ground (in mm): ").strip())
+                    print(f"Custom values set: Surface = {surface} mm, Ground = {ground} mm")
+                except ValueError:
+                    print("Invalid input. Please enter numeric values for surface and ground.")
+            else:
+                print("Invalid input. Please enter 'y' for Yes or 'n' for No.")
 
 #load files as data frame
-def load_pnt(file, Trim = True):
+def load_pnt(file, Trim = False):
     smp_profile = Profile.load(file)
     profile_name = smp_profile.name #string
     if Trim == True: 
