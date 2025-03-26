@@ -94,7 +94,6 @@ def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visual
     plt.title(f"{filename}")
     plt.legend()
     plt.grid()
-    #plt.show()
     if save == True: 
         # save as figure
         plt.savefig((target_dir / filename).with_suffix(".png"))
