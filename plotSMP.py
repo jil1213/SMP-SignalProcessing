@@ -37,7 +37,7 @@ def plot_pairs(pairs):
         plt.figure(figsize=(8, 5))
         plt.plot(df20["distance"], df20["force"], label=f"{name20} (velocity=20)")
         plt.plot(df8["distance"], df8["force"], label=f"{name8} (velocity=8)")
-        plt.xlabel("Distance (cm)")
+        plt.xlabel("Distance (mm)")
         plt.ylabel("Force (N)")
         plt.title(f"SMP Signal: {name20} & {name8}")
         plt.legend()

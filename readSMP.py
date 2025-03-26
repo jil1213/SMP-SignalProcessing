@@ -38,15 +38,41 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
     print("Finished exporting all pnt file as {} files in {}.".format("csv", target_dir))
 
 #trim profiles with surface and ground 
-#autodetection by snowmicropyn package
-# Todo set marker for plotting to check if algorithm is right (?) 
+#autodetection by snowmicropyn package and option to change values manually
 def trim_profile(profile):
     ground = Profile.detect_ground(profile)
     surface = Profile.detect_surface(profile)
     df = profile.samples
-    df_trimmed = df[(df["distance"] >= surface) & (df["distance"] <= ground)]
-    return df_trimmed
+    while True:
+        # Plot to check if algorithm is right
+        plt.figure(figsize=(8, 5))
+        plt.plot(df["distance"], df["force"])
+        plt.axvline(x=ground, color='red', linestyle='--', label=f'Ground: {ground} mm')
+        plt.axvline(x=surface, color='blue', linestyle='--', label=f'Surface: {surface} mm')
+        plt.xlabel("Distance (mm)")
+        plt.ylabel("Force (N)")
+        plt.grid()
+        plt.legend()
+        plt.show()
 
+        # Option to manually change the values for surface and ground 
+        response = input("Are Markers correct? (y/n): ").strip().lower()
+
+        if response == 'y':
+            print("Proceeding with trimming...")
+            df_trimmed = df[(df["distance"] >= surface) & (df["distance"] <= ground)]
+            return df_trimmed
+        elif response == 'n':
+            print("Please enter custom values for surface and ground.")
+            try:
+                # Terminal user input
+                surface = float(input("Enter value for Surface (in mm): ").strip())
+                ground = float(input("Enter value for Ground (in mm): ").strip())
+                print(f"Custom values set: Surface = {surface} mm, Ground = {ground} mm")
+            except ValueError:
+                print("Invalid input. Please enter numeric values for surface and ground.")
+        else:
+            print("Invalid input. Please enter 'y' for Yes or 'n' for No.")
 
 #load files as data frame
 def load_pnt(file, Trim = True):
@@ -63,7 +89,7 @@ def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visual
     plt.figure(figsize=(8, 5))
     for df, name in profiles:
         plt.plot(df["distance"], df["force"], label=name)  # more than one profile can be plotted
-    plt.xlabel("Distance (cm)")
+    plt.xlabel("Distance (mm)")
     plt.ylabel("Force (N)")
     plt.title(f"{filename}")
     plt.legend()
