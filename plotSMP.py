@@ -12,6 +12,9 @@ all = True
 all_day1 = True
 all_day2 = True
 comparison = True #comparison between two velocities 8mm/s and 20mm/s
+temperature_day1 = True #temperature acclimatization 
+temperature_day2 = True
+
 
 #plot all profiles
 if all == True: 
@@ -58,3 +61,14 @@ if comparison == True:
     paired_profiles = {name8: (velocity_8[name8], name20, velocity_20[name20])
                        for name8, name20 in zip(sorted_8, sorted_20)}
     plot_pairs(paired_profiles)
+
+if temperature_day1 == True:
+    smp_day1 = {name: df for name, df in smp_profiles.items()
+    if df.attrs.get("date") == 1 and df.attrs.get("velocity") == 0}
+    plot_profiles([(df, name) for name, df in smp_day1.items()], "day1_temperature", save=True)
+
+if temperature_day2 == True:
+    smp_day1 = {name: df for name, df in smp_profiles.items()
+    if df.attrs.get("date") == 2 and df.attrs.get("velocity") == 0}
+    plot_profiles([(df, name) for name, df in smp_day1.items()], "day2_temperature", save=True)
+
