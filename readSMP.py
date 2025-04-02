@@ -45,7 +45,7 @@ def trim_profile(profile, Allocation = True):
     allocation = pd.read_excel("data/smp_allocation.xlsx")
 
     if Allocation == True: 
-        profile_data = allocation[allocation["Profile"] == profile.name].iloc[0]
+        profile_data = allocation[allocation["name"] == profile.name].iloc[0]
         ground = profile_data["Ground"]
         surface = profile_data["Surface"]
         print(f"Using allocated markers: Surface = {surface} mm, Ground = {ground} mm")
@@ -88,7 +88,7 @@ def trim_profile(profile, Allocation = True):
                 print("Invalid input. Please enter 'y' for Yes or 'n' for No.")
 
 #load files as data frame
-def load_pnt(file, Trim = False):
+def load_pnt(file, Trim = True):
     smp_profile = Profile.load(file)
     profile_name = smp_profile.name #string
     if Trim == True: 
