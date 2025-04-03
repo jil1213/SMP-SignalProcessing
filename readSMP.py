@@ -37,6 +37,12 @@ def export_pnt(pnt_dir, target_dir,  overwrite=False):
 
     print("Finished exporting all pnt file as {} files in {}.".format("csv", target_dir))
 
+
+#target_dir = Path("data/smp_profiles_csv")
+#pnt_dir = Path("data/smp_profiles")
+#export_pnt(pnt_dir, target_dir, overwrite=True)
+
+
 #trim profiles with surface and ground 
 #autodetection by snowmicropyn package and option to change values manually
 #Markers can be taken out of Allocation File or set with autodetect and manually corrected
