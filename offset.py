@@ -2,23 +2,17 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from pathlib import Path # for os independent path handling
+from pathlib import Path
 from readSMP import plot_profiles, load_all_smp_profiles, load_pnt
 
+target_dir = Path("output/cross_correlations")
+smp_profiles = load_all_smp_profiles()
 
-#smp_profiles = {} #dictionary for all smp profiles
-#smp_profiles = load_all_smp_profiles()
-
-
-
-df_1, name_1 = load_pnt("data/smp_profiles/S45M1058.pnt")
-df_2, name_2 = load_pnt("data/smp_profiles/S45M1063.pnt")
-
-#plot_profiles([(df_1, "SMP_1"), (df_2, "SMP_2")], "test_plot.png")
+all = True
 
 
-#methods to get the offset of two profiles by autocorrelation
-def get_offset(df1, df2):
+#method to get the offset of two profiles by crosscorrelation
+def get_offset(df1, df2, name1, name2):
     """Calculate the offset between two profiles using cross-correlation."""
 
     #Cut dfs to apply autocorrelation - only use for offset method!
@@ -46,19 +40,34 @@ def get_offset(df1, df2):
     offset_mm = lag_max * dx #distance offset
 
     #Print results
-    print(f"Max correlation: {np.max(correlation)}")
+    print(f"Crosscorrelation {name1} - {name2}")
+    print(f"Max corr: {np.max(correlation)}")
     print(f"Offset: {offset_mm:.2f} mm (lag: {lag_max})")
 
     plt.figure(figsize=(8, 4))
     plt.plot(index_shifts_mm, correlation)
-    plt.title("Cross-Correlation over distance")
+    plt.title(f"Cross-Correlation over distance {name1} & {name2}")
     plt.xlabel("Distance (mm)")
     plt.ylabel("Correlation")
     plt.grid(True)
-    plt.show()
+    #plt.show()
+    plt.savefig(target_dir / f"corr_{name1}_{name2}.png")
 
     return offset_mm, correlation, lag_max
 
 
 
-offset, corr, lag = get_offset(df_1, df_2)
+# all profiles comparing two velocites
+if all == True:
+    # dictionary for velocities
+    velocity_8 = {name: df for name, df in smp_profiles.items() if df.attrs.get("velocity") == 8}
+    velocity_20 = {name: df for name, df in smp_profiles.items() if df.attrs.get("velocity") == 20}
+    # sorted dictionary-names 
+    sorted_8 = sorted(velocity_8.keys())
+    sorted_20 = sorted(velocity_20.keys())
+
+    paired_data = [
+        (velocity_8[name8], name8, velocity_20[name20], name20)
+        for name8, name20 in zip(sorted_8, sorted_20)]
+    for df1, name1, df2, name2 in paired_data:
+        offset_mm, correlation, lag = get_offset(df1, df2, name1, name2)
