@@ -94,7 +94,7 @@ def trim_profile(profile, Allocation = True):
                 print("Invalid input. Please enter 'y' for Yes or 'n' for No.")
 
 #load files as data frame
-def load_pnt(file, Trim = True):
+def load_pnt(file, Trim = False):
     smp_profile = Profile.load(file)
     profile_name = smp_profile.name #string
     if Trim == True: 
@@ -117,6 +117,8 @@ def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visual
         # save as figure
         plt.savefig((target_dir / filename).with_suffix(".png"))
         plt.close()
+    else:
+        plt.show()
 
 
 smp_profiles = {} #dictionary for all smp profiles
