@@ -25,23 +25,28 @@ def load_csv(file_name):
     df["min"] = df[["density1", "density2", "density3", "density4"]].min(axis=1)
     df["max"] = df[["density1", "density2", "density3", "density4"]].max(axis=1)
 
-    mean = df["mean"]
-    snowdepth = df["snowdepth"]
-    return snowdepth, mean
+    # Fehlerbalken: asymmetrisch
+    df["err_lower"] = df["mean"] - df["min"]
+    df["err_upper"] = df["max"] - df["mean"]
 
-def plot_density(snowdepth, mean, snowdepthslf, meanslf, cutter_name, slf_name):
+    return df
+
+
+def plot_density(df_cutter, df_slf, cutter_name, slf_name):
     plt.figure(figsize=(8, 5))
 
-    #plot density cutter
-    plt.scatter(snowdepth, mean, color='blue')
-    plt.plot(snowdepth, mean, color='blue', label='Density Cutter')
+    # Cutter
+    plt.errorbar(df_cutter["snowdepth"], df_cutter["mean"],
+                 yerr=[df_cutter["err_lower"], df_cutter["err_upper"]],
+                 fmt='o-', color='blue', capsize=4, label='Density Cutter')
 
-    #plot density SLF - mostly we have only one value, so only few error bars
-    plt.scatter(snowdepthslf, meanslf, color='red')
-    plt.plot(snowdepthslf, meanslf, color='red', label='Density SLF')
+    # SLF-
+    plt.errorbar(df_slf["snowdepth"], df_slf["mean"],
+                 yerr=[df_slf["err_lower"], df_slf["err_upper"]],
+                 fmt='o-', color='red', capsize=4, label='Density SLF')
+
     plt.xlabel("Snowdepth (cm)")
     plt.ylabel("Density (kg/m^3)")
-
     title = f"Density over Snowdepth ({cutter_name} vs {slf_name})"
     plt.title(title)
     plt.legend()
@@ -50,6 +55,7 @@ def plot_density(snowdepth, mean, snowdepthslf, meanslf, cutter_name, slf_name):
     filename = f"density_{cutter_name}_vs_{slf_name}.png"
     plt.savefig(target_dir / filename)
     plt.close()
+    return
 
 # Pair of files for each day
 file_pairs = [
@@ -57,10 +63,10 @@ file_pairs = [
     ("data/03-21-densitycutter.xlsx", "data/03-21-densitySLF.xlsx"),]
 
 for cutter_file, slf_file in file_pairs:
-    snowdepth, mean = load_csv(cutter_file)
-    snowdepthslf, meanslf = load_csv(slf_file)
+    df_cutter = load_csv(cutter_file)
+    df_slf = load_csv(slf_file)
 
     cutter_name = Path(cutter_file).stem # Extract file names without extensions and paths
     slf_name = Path(slf_file).stem
 
-    plot_density(snowdepth, mean, snowdepthslf, meanslf, cutter_name, slf_name)
+    plot_density(df_cutter, df_slf, cutter_name, slf_name)
