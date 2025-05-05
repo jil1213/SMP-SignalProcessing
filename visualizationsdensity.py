@@ -7,21 +7,36 @@ target_dir = Path("output/visualizations")
 
 def load_csv(file_name):
     df = pd.read_excel(file_name)
-    # Drop rows with NaN values in snowdepth or mean
-    df = df[["snowdepth", "mean"]].dropna()
+    # take only relevant rows
+    df = df[["snowdepth", "density1","density2","density3","density4"]]
     # Ensure numeric conversion
     df["snowdepth"] = pd.to_numeric(df["snowdepth"], errors="coerce")
-    df["mean"] = pd.to_numeric(df["mean"], errors="coerce")
-    # Drop any remaining NaN after conversion
-    df = df.dropna()
-    snowdepth = df["snowdepth"]
+    df["density1"] = pd.to_numeric(df["density1"], errors="coerce")
+    df["density2"] = pd.to_numeric(df["density2"], errors="coerce")
+    df["density3"] = pd.to_numeric(df["density3"], errors="coerce")
+    df["density4"] = pd.to_numeric(df["density4"], errors="coerce")
+
+    #Means
+    df["mean"] = df[["density1", "density2", "density3", "density4"]].mean(axis=1)
+    #delete rows were man has a NaN value
+    df = df.dropna(subset=["mean"])
+
+    #Min and max values for density
+    df["min"] = df[["density1", "density2", "density3", "density4"]].min(axis=1)
+    df["max"] = df[["density1", "density2", "density3", "density4"]].max(axis=1)
+
     mean = df["mean"]
+    snowdepth = df["snowdepth"]
     return snowdepth, mean
 
 def plot_density(snowdepth, mean, snowdepthslf, meanslf, cutter_name, slf_name):
     plt.figure(figsize=(8, 5))
+
+    #plot density cutter
     plt.scatter(snowdepth, mean, color='blue')
     plt.plot(snowdepth, mean, color='blue', label='Density Cutter')
+
+    #plot density SLF - mostly we have only one value, so only few error bars
     plt.scatter(snowdepthslf, meanslf, color='red')
     plt.plot(snowdepthslf, meanslf, color='red', label='Density SLF')
     plt.xlabel("Snowdepth (cm)")
