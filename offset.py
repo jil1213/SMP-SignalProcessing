@@ -9,8 +9,6 @@ from plotSMP import bulid_pairs, plot_pairs
 target_dir = Path("output/cross_correlations")
 smp_profiles = load_all_smp_profiles()
 
-all = True
-
 
 #method to get the offset of two profiles by crosscorrelation
 def get_offset(df1, df2, name1, name2):
@@ -57,9 +55,7 @@ def get_offset(df1, df2, name1, name2):
     return offset_mm, correlation, lag_max
 
 
-
-# all profiles comparing two velocites
-if all == True:
+def overlay_profiles(smp_profiles): 
     paired_profiles = bulid_pairs(smp_profiles)
     for df1, name1, df2, name2 in paired_profiles:
         offset_mm, correlation, lag = get_offset(df1, df2, name1, name2)
@@ -69,3 +65,10 @@ if all == True:
         df2_shifted['force'] = df2_shifted['force'].shift(lag, fill_value=0)
         title = f"Signal shifted with cross-Correlation {name1} & {name2}"
         plot_pairs([(df1, name1, df2_shifted, name2)], target_dir,title)
+
+        # update/save in original dictionary
+        smp_profiles[name2] = df2_shifted
+    smp_profiles_shifted = smp_profiles.copy()
+    return smp_profiles_shifted
+
+smp_profiles_shifted = overlay_profiles(smp_profiles)
