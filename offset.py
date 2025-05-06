@@ -17,8 +17,8 @@ def get_offset(df1, df2, name1, name2):
     """Calculate the offset between two profiles using cross-correlation."""
 
     #Cut dfs to apply autocorrelation - only use for offset method!
-    start = 100000
-    end = 200000 #100.000 values
+    start = 50000
+    end = 200000 #150.000 values
     df1_cut = df1.iloc[start:end]
     df2_cut = df2.iloc[start:end]
 
