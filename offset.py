@@ -4,7 +4,7 @@ import numpy as np
 
 from pathlib import Path
 from readSMP import plot_profiles, load_all_smp_profiles, load_pnt
-from plotSMP import bulid_pairs
+from plotSMP import bulid_pairs, plot_pairs
 
 target_dir = Path("output/cross_correlations")
 smp_profiles = load_all_smp_profiles()
@@ -19,7 +19,7 @@ def get_offset(df1, df2, name1, name2):
     #Cut dfs to apply autocorrelation - only use for offset method!
     start = 100000
     end = 200000 #100.000 values
-    df1_cut = df1.iloc[start:end] #cut out mittle part of profile
+    df1_cut = df1.iloc[start:end]
     df2_cut = df2.iloc[start:end]
 
     # mean centering to get a more exact correlation
@@ -63,3 +63,9 @@ if all == True:
     paired_profiles = bulid_pairs(smp_profiles)
     for df1, name1, df2, name2 in paired_profiles:
         offset_mm, correlation, lag = get_offset(df1, df2, name1, name2)
+        df2_shifted = df2.copy()
+        #shift indices of df2 with lag to get max correlation --arrays get cut in the end (last part missing)
+        #positive lag shift to right side - negative lag shift to left side
+        df2_shifted['force'] = df2_shifted['force'].shift(lag, fill_value=0)
+        title = f"Signal shifted with cross-Correlation {name1} & {name2}"
+        plot_pairs([(df1, name1, df2_shifted, name2)], target_dir,title)

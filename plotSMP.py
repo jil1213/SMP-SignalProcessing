@@ -45,14 +45,16 @@ def bulid_pairs(df):
         for name8, name20 in zip(sorted_8, sorted_20)]
     return paired_data
 
-def plot_pairs(pairs):
+def plot_pairs(pairs, target_dir, title = None):
     for df8, name8, df20, name20 in pairs:
         plt.figure(figsize=(8, 5))
         plt.plot(df20["distance"], df20["force"], label=f"{name20} (velocity=20)")
         plt.plot(df8["distance"], df8["force"], label=f"{name8} (velocity=8)")
         plt.xlabel("Distance (mm)")
         plt.ylabel("Force (N)")
-        plt.title(f"SMP Signal: {name20} & {name8}")
+        if title == None: 
+            title = f"SMP Signal: {name20} & {name8}"
+        plt.title(title)
         plt.legend()
         plt.grid()
         #plt.show()
@@ -65,7 +67,7 @@ def plot_pairs(pairs):
 #compare two velocities 
 if comparison == True:
     paired_profiles = bulid_pairs(smp_profiles)
-    plot_pairs(paired_profiles)
+    plot_pairs(paired_profiles, target_dir)
 
 if temperature_day1 == True:
     smp_day1 = {name: df for name, df in smp_profiles.items()
