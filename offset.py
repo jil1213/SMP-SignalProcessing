@@ -4,6 +4,7 @@ import numpy as np
 
 from pathlib import Path
 from readSMP import plot_profiles, load_all_smp_profiles, load_pnt
+from plotSMP import bulid_pairs
 
 target_dir = Path("output/cross_correlations")
 smp_profiles = load_all_smp_profiles()
@@ -59,15 +60,6 @@ def get_offset(df1, df2, name1, name2):
 
 # all profiles comparing two velocites
 if all == True:
-    # dictionary for velocities
-    velocity_8 = {name: df for name, df in smp_profiles.items() if df.attrs.get("velocity") == 8}
-    velocity_20 = {name: df for name, df in smp_profiles.items() if df.attrs.get("velocity") == 20}
-    # sorted dictionary-names 
-    sorted_8 = sorted(velocity_8.keys())
-    sorted_20 = sorted(velocity_20.keys())
-
-    paired_data = [
-        (velocity_8[name8], name8, velocity_20[name20], name20)
-        for name8, name20 in zip(sorted_8, sorted_20)]
-    for df1, name1, df2, name2 in paired_data:
+    paired_profiles = bulid_pairs(smp_profiles)
+    for df1, name1, df2, name2 in paired_profiles:
         offset_mm, correlation, lag = get_offset(df1, df2, name1, name2)
