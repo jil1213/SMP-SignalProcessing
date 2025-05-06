@@ -75,8 +75,12 @@ def plot_pairs(pairs, target_dir, title = None):
         plt.grid()
         #plt.show()
 
-        # save as figure
+        # save as figure png
         plt.savefig(target_dir / f"comparison_{name20}_{name8}.png")
+        #save as pdf for better quality in another folder
+        (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
+        plt.savefig(target_dir / "pdf" / f"comparison_{name20}_{name8}.pdf", format="pdf", bbox_inches="tight")
+
         plt.close()
 
 

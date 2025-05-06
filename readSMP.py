@@ -104,7 +104,7 @@ def load_pnt(file, Trim = False):
         df = smp_profile.samples # converting profile into a panda dataframe
     return df, profile_name
 
-def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visualizations")):
+def plot_profiles(profiles, filename, save=True, target_dir=Path("output/visualizations")):
     plt.figure(figsize=(8, 5))
     for df, name in profiles:
         plt.plot(df["distance"], df["force"], label=name)  # more than one profile can be plotted
@@ -118,7 +118,7 @@ def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visual
         plt.savefig((target_dir / filename).with_suffix(".png"))
         #save as pdf for better quality in another folder
         (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
-        plt.savefig(target_dir / "pdf" / f"{name}.pdf", format="pdf", bbox_inches="tight")
+        plt.savefig((target_dir / "pdf" / filename).with_suffix(".pdf"), format="pdf", bbox_inches="tight")
     else:
         plt.show()
     plt.close()
