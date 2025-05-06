@@ -1,8 +1,7 @@
 # SMP-SignalProcessing
 
-In this Repositiory are all scripts for my master thesis stored.
-
-Folder data stores the measured data and converted files
+This repository contains all scripts used for my master's thesis.
+Folder `data` stores the measured data and converted files
 
 ## visualizationsdensity
 
@@ -16,3 +15,7 @@ SMP files can also be stored in dataframes and in further steps for eample used 
 ## plotSMP
 
 can be used to visualize smp profiles. Outputs are stored in folder `output/visualizations`
+
+## offset
+
+functions to calculate offset of two different profiles with crosscorrelation. Outputs are stored in folder `output/cross_correlations`
