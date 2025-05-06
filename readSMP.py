@@ -114,11 +114,14 @@ def plot_profiles(profiles, filename, save=False, target_dir=Path("output/visual
     plt.legend()
     plt.grid()
     if save == True: 
-        # save as figure
+        # save as figure png
         plt.savefig((target_dir / filename).with_suffix(".png"))
-        plt.close()
+        #save as pdf for better quality in another folder
+        (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
+        plt.savefig(target_dir / "pdf" / f"{name}.pdf", format="pdf", bbox_inches="tight")
     else:
         plt.show()
+    plt.close()
 
 
 smp_profiles = {} #dictionary for all smp profiles

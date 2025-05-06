@@ -8,12 +8,19 @@ from readSMP import plot_profiles, load_all_smp_profiles
 target_dir = Path("output/visualizations")
 smp_profiles = load_all_smp_profiles()
 
-all = False #plot all profiles
-all_day1 = False
-all_day2 = False
+single = True
+all = True #plot all profiles
+all_day1 = True
+all_day2 = True
 comparison = True #comparison between two velocities 8mm/s and 20mm/s
-temperature_day1 = False #temperature acclimatization 
-temperature_day2 = False
+temperature_day1 = True #temperature acclimatization 
+temperature_day2 = True
+
+
+#plot single profile
+if single == True:
+    for name, df in smp_profiles.items():
+        plot_profiles([(df, name)], f"{name}", save=True)
 
 
 #plot all profiles
@@ -22,14 +29,23 @@ if all == True:
 
 #plot all profiles of a day
 if all_day1 == True:
-    smp_day1 = {name: df for name, df in smp_profiles.items()
-    if df.attrs.get("date") == 1 and df.attrs.get("velocity") != 0}
+    smp_day1 = {name: df for name, df in smp_profiles.items() 
+     if df.attrs.get("date") == 1 and df.attrs.get("velocity") != 0}
     plot_profiles([(df, name) for name, df in smp_day1.items()], "day1_profiles", save=True)
 
+    for velocity in [8, 20]:
+        subset = {name: df for name, df in smp_day1.items() if df.attrs.get("velocity") == velocity}
+        plot_profiles([(df, name) for name, df in subset.items()], f"day1_profiles_velocity{velocity}", save=True)
+
+
 if all_day2 == True:
-    smp_day2 = {name: df for name, df in smp_profiles.items()
-    if df.attrs.get("date") == 2 and df.attrs.get("velocity") != 0}
-    plot_profiles([(df, name) for name, df in smp_day2.items()], "day2_profiles", save=True)
+    smp_day1 = {name: df for name, df in smp_profiles.items() 
+     if df.attrs.get("date") == 2 and df.attrs.get("velocity") != 0}
+    plot_profiles([(df, name) for name, df in smp_day1.items()], "day2_profiles", save=True)
+
+    for velocity in [8, 20]:
+        subset = {name: df for name, df in smp_day1.items() if df.attrs.get("velocity") == velocity}
+        plot_profiles([(df, name) for name, df in subset.items()], f"day2_profiles_velocity{velocity}", save=True)
 
 
 def bulid_pairs(df):

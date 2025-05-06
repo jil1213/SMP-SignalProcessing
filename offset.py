@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from pathlib import Path
-from readSMP import plot_profiles, load_all_smp_profiles, load_pnt
+from readSMP import load_all_smp_profiles
 from plotSMP import bulid_pairs, plot_pairs
 
 target_dir = Path("output/cross_correlations")
