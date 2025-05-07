@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 from pathlib import Path
 from readSMP import plot_profiles, load_all_smp_profiles
