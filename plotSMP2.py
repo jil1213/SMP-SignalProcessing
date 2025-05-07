@@ -16,6 +16,7 @@ smp_profiles = load_all_smp_profiles()
 for date in [1, 2]:
     smp_day = {name: df for name, df in smp_profiles.items() 
      if df.attrs.get("date") == date and df.attrs.get("velocity") != 0}
+    mean_profiles = {}
 
     for velocity in [8, 20]:
         subset = {name: df for name, df in smp_day.items() if df.attrs.get("velocity") == velocity}
@@ -26,6 +27,11 @@ for date in [1, 2]:
         mean_df.attrs["velocity"] = velocity
         mean_df.attrs["date"] = date
         plot_profiles([(mean_df, f"mean_day{date}_velocity{velocity}")], f"day{date}_mean_velocity{velocity}", save=False)
+
+        # comparison plot of both velocities 
+        mean_profiles[velocity] = mean_df
+    if 8 in mean_profiles and 20 in mean_profiles:
+        plot_pairs([(mean_profiles[8], f"mean_day{date}_v8", mean_profiles[20], f"mean_day{date}_v20")], target_dir, f"Comparison of means of day {date}")
 
 
 #comparing 8 with 20
