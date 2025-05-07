@@ -19,14 +19,13 @@ for date in [1, 2]:
 
     for velocity in [8, 20]:
         subset = {name: df for name, df in smp_day.items() if df.attrs.get("velocity") == velocity}
-
+        # before building mean i have to do an overlaying? ...
         # Mittelwert berechnen, wenn subset nicht leer ist
-        if subset:
-            # Nehme an alle DFs haben denselben Index
-            mean_df = sum(subset.values()) / len(subset)
-            mean_df.attrs["velocity"] = velocity
-            mean_df.attrs["date"] = date
-            #plot_profiles([(mean_df, f"mean_day{date}_velocity{velocity}")], f"day{date}_mean_velocity{velocity}", save=False)
+        # mean of profiles
+        mean_df = sum(subset.values()) / len(subset)
+        mean_df.attrs["velocity"] = velocity
+        mean_df.attrs["date"] = date
+        plot_profiles([(mean_df, f"mean_day{date}_velocity{velocity}")], f"day{date}_mean_velocity{velocity}", save=False)
 
 
 #comparing 8 with 20
