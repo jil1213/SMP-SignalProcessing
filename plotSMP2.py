@@ -31,8 +31,8 @@ for date in [1, 2]:
         # comparison plot of both velocities 
         mean_profiles[velocity] = mean_df
     if 8 in mean_profiles and 20 in mean_profiles:
-        plot_pairs([(mean_profiles[8], f"mean_day{date}_v8", mean_profiles[20], f"mean_day{date}_v20")], target_dir, f"Comparison of means of day {date}")
-
+        plot_pairs([(mean_profiles[8], f"mean_day{date}", mean_profiles[20], f"mean_day{date}")],
+            filename=f"mean_comparison_day{date}", title=f"Comparison of means of day {date}", save=False,target_dir=target_dir)
 
 #comparing 8 with 20
 

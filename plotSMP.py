@@ -21,7 +21,7 @@ def bulid_pairs(df):
         for name8, name20 in zip(sorted_8, sorted_20)]
     return paired_data
 
-def plot_pairs(pairs, target_dir, title = None):
+def plot_pairs(pairs, filename, save=False, title=None, target_dir=Path("output/visualizations")):
     for df8, name8, df20, name20 in pairs:
         plt.figure(figsize=(8, 5))
         plt.plot(df20["distance"], df20["force"], label=f"{name20} (velocity=20)")
@@ -33,14 +33,14 @@ def plot_pairs(pairs, target_dir, title = None):
         plt.title(title)
         plt.legend()
         plt.grid()
-        #plt.show()
-
-        # save as figure png
-        plt.savefig(target_dir / f"comparison_{name20}_{name8}.png")
-        #save as pdf for better quality in another folder
-        (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
-        plt.savefig(target_dir / "pdf" / f"comparison_{name20}_{name8}.pdf", format="pdf", bbox_inches="tight")
-
+        if save == True: 
+            # save as figure png
+            plt.savefig((target_dir / filename).with_suffix(".png"))
+            #save as pdf for better quality in another folder
+            (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
+            plt.savefig((target_dir / "pdf" / filename).with_suffix(".pdf"), format="pdf", bbox_inches="tight")
+        else:
+            plt.show()
         plt.close()
 
 
@@ -90,7 +90,10 @@ if __name__ == "__main__":
     #compare two velocities 
     if comparison == True:
         paired_profiles = bulid_pairs(smp_profiles)
-        plot_pairs(paired_profiles, target_dir)
+        for df8, name8, df20, name20 in paired_profiles:
+            title = f"Comparison: {name8} vs {name20}"
+            filename = f"comparison_{name8}_vs_{name20}"
+            plot_pairs([(df8, name8, df20, name20)], filename=filename, save=True, title=title, target_dir=target_dir)
 
     if temperature_day1 == True:
         smp_day1 = {name: df for name, df in smp_profiles.items()
