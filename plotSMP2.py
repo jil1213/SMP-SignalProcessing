@@ -13,20 +13,20 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_new"), save=F
     Also generates comparison plots between velocities.
     """
 
+    # align all profiles to first non-temperature profile before computing mean
+    smp_profiles = align_profiles(smp_profiles, pairs=False)
+
     for date in [1, 2]:
         # Filter profiles of a specific day (excluding temperature measurements)
         smp_day = {name: df for name, df in smp_profiles.items() 
                    if df.attrs.get("date") == date and df.attrs.get("velocity") != 0}
         mean_profiles = {}
 
-        for velocity in [8, 20]:
+        for velocity in [20, 8]:
             subset = {name: df for name, df in smp_day.items() if df.attrs.get("velocity") == velocity}
-            
+
             if not subset:
                 continue
-
-            #overlay profiles before computing mean
-            # subset = align_profiles(subset)
 
             # Compute mean profile
             mean_df = sum(subset.values()) / len(subset)
@@ -51,7 +51,7 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_new"), save=F
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     plot_mean(smp_profiles, save=True)
-    
+
 
 #means of each 5 measurements of one velocity
 #errorbars 

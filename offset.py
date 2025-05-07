@@ -61,7 +61,7 @@ def get_offset(df1, df2, name1, name2, plot=False):
     return offset_mm, correlation, lag_max
 
 
-def align_profiles(smp_profiles, pairs=True): 
+def align_profiles(smp_profiles, pairs=True, plot=False): 
     #case only pairs to compare
     if pairs == True:
         paired_profiles = bulid_pairs(smp_profiles)
@@ -90,9 +90,10 @@ def align_profiles(smp_profiles, pairs=True):
         for name in profile_names[0:]:
             df = smp_profiles[name]
             offset_mm, correlation, lag = get_offset(reference_df, df, reference_name, name)
-            #shifted and filled/cutted as same length as reference 
+            #shifted ro reference
             df_shifted = df.copy()
             df_shifted['force'] = df_shifted['force'].shift(lag, fill_value=0)
+
             #cut to same length as reference
             if len(df_shifted) < len(reference_df):
                 padding_len = len(reference_df) - len(df_shifted)
@@ -108,12 +109,13 @@ def align_profiles(smp_profiles, pairs=True):
             else:
                 df_shifted['distance'] = reference_df['distance'].values
 
-            title = f"Aligned: {name} to {reference_name}"
-            plot_pairs([(reference_df, reference_name, df_shifted, name)],
-                       filename=f"aligned_{name}_to_{reference_name}",
-                       title=title,
-                       save=True,
-                       target_dir=target_dir)
+            if plot==True:
+                title = f"Aligned: {name} to {reference_name}"
+                plot_pairs([(reference_df, reference_name, df_shifted, name)],
+                        filename=f"aligned_{name}_to_{reference_name}",
+                        title=title,
+                        save=True,
+                        target_dir=target_dir)
 
             smp_profiles[name] = df_shifted  # update original
 
