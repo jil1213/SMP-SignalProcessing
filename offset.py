@@ -7,8 +7,6 @@ from readSMP import load_all_smp_profiles
 from plotSMP import bulid_pairs, plot_pairs
 
 target_dir = Path("output/cross_correlations")
-smp_profiles = load_all_smp_profiles()
-
 
 #method to get the offset of two profiles by crosscorrelation
 def get_offset(df1, df2, name1, name2):
@@ -71,4 +69,7 @@ def overlay_profiles(smp_profiles):
     smp_profiles_shifted = smp_profiles.copy()
     return smp_profiles_shifted
 
-smp_profiles_shifted = overlay_profiles(smp_profiles)
+
+if __name__ == "__main__":
+    smp_profiles = load_all_smp_profiles()
+    smp_profiles_shifted = overlay_profiles(smp_profiles)
