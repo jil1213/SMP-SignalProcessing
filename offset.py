@@ -61,7 +61,7 @@ def get_offset(df1, df2, name1, name2, plot=False):
     return offset_mm, correlation, lag_max
 
 
-def overlay_profiles(smp_profiles, pairs=True): 
+def align_profiles(smp_profiles, pairs=True): 
     #case only pairs to compare
     if pairs == True:
         paired_profiles = bulid_pairs(smp_profiles)
@@ -126,4 +126,4 @@ if __name__ == "__main__":
     #to aligning two profiles
     #smp_profiles_shifted = align_all_to_first(smp_profiles, pairs=True)
     #to align all profiles to the first one
-    smp_profiles_shifted = overlay_profiles(smp_profiles, pairs=False)
+    smp_profiles_shifted = align_profiles(smp_profiles, pairs=False)

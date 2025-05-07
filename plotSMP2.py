@@ -4,7 +4,7 @@ import numpy as np
 
 from pathlib import Path
 from readSMP import plot_profiles, load_all_smp_profiles
-from offset import get_offset, overlay_profiles
+from offset import get_offset, align_profiles
 from plotSMP import bulid_pairs, plot_pairs
 
 def plot_mean(smp_profiles, target_dir=Path("output/visualizations_new"), save=False):
@@ -26,7 +26,7 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_new"), save=F
                 continue
 
             #overlay profiles before computing mean
-            # subset = overlay_profiles(subset)
+            # subset = align_profiles(subset)
 
             # Compute mean profile
             mean_df = sum(subset.values()) / len(subset)
