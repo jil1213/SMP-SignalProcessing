@@ -85,7 +85,6 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
             for name, df in smp_profiles.items():
                 df.to_csv(save_dir / f"{name}_aligned.csv", index=False)
 
-
     #case more than two profiles to compare
     else:
         # Get the first non-temperature-profile as reference
