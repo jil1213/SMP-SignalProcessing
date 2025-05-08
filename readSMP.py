@@ -97,12 +97,13 @@ def trim_profile(profile, Allocation = True):
 def load_pnt(file, Trim = False):
     smp_profile = Profile.load(file)
     profile_name = smp_profile.name #string
+    spatial_resolution = smp_profile.spatial_resolution #float
     if Trim == True: 
         df_trimmed = trim_profile(smp_profile) #loaded smp Profile must be given as input parameter
         df = df_trimmed
     else: 
         df = smp_profile.samples # converting profile into a panda dataframe
-    return df, profile_name
+    return df, profile_name, spatial_resolution
 
 def load_csv(file):
     profile_name = Path(file).stem
@@ -134,12 +135,14 @@ smp_profiles = {} #dictionary for all smp profiles
 def load_all_smp_profiles(pnt=True):
     allocation = pd.read_excel("data/smp_allocation.xlsx")
     for i in range(allocation.shape[0]): 
+        spatial_res = 0
         if pnt == True:
-            df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
+            df, profile_name, spatial_res = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
         else:
             df, profile_name = load_csv("data/aligned_first/"+allocation["name"][i]+ "_aligned.csv")
         df.attrs["date"] = allocation["date"][i]
         df.attrs["velocity"] = allocation["velocity"][i]
+        df.attrs["spatial_resolution"] = spatial_res
         smp_profiles[profile_name] = df 
     return smp_profiles
 
