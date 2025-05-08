@@ -79,7 +79,11 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
         #save correlation results as csv
         if save == True:
             smp_profiles_shifted = smp_profiles.copy()
-            
+            save_dir = Path("data/aligned_pairs")
+            save_dir.mkdir(parents=True, exist_ok=True)
+            for name, df in smp_profiles.items():
+                df.to_csv(save_dir / f"{name}_aligned.csv", index=False)
+
 
     #case more than two profiles to compare
     else:
@@ -123,6 +127,14 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
 
             smp_profiles[name] = df_shifted  # update original
 
+        #save correlation results as csv
+        if save == True:
+            smp_profiles_shifted = smp_profiles.copy()
+            save_dir = Path("data/aligned_first")
+            save_dir.mkdir(parents=True, exist_ok=True)
+            for name, df in smp_profiles.items():
+                df.to_csv(save_dir / f"{name}_aligned.csv", index=False)
+
     smp_profiles_shifted = smp_profiles.copy()
     return smp_profiles_shifted
 
@@ -130,6 +142,6 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
-    #smp_profiles_shifted = align_all_to_first(smp_profiles, pairs=True)
+    smp_profiles_shifted = align_profiles(smp_profiles, pairs=True)
     #to align all profiles to the first one
     smp_profiles_shifted = align_profiles(smp_profiles, pairs=False)

@@ -8,7 +8,7 @@ from readSMP import plot_profiles, load_all_smp_profiles
 target_dir = Path("output/visualizations")
 
 
-def bulid_pairs(df):
+def bulid_pairs(smp_profiles):
     # dictionary for velocities
     velocity_8 = {name: df for name, df in smp_profiles.items() if df.attrs.get("velocity") == 8}
     velocity_20 = {name: df for name, df in smp_profiles.items() if df.attrs.get("velocity") == 20}
