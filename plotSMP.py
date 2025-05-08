@@ -59,7 +59,7 @@ if __name__ == "__main__":
     #plot single profile
     if single == True:
         for name, df in smp_profiles.items():
-            plot_profiles([(df, name)], f"{name}", save=True)
+            plot_profiles([(df, name)], f"{name}", save=True, target_dir=Path("output/single"))
 
 
     #plot all profiles
