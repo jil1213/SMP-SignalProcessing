@@ -61,7 +61,7 @@ def get_offset(df1, df2, name1, name2, plot=False):
     return offset_mm, correlation, lag_max
 
 
-def align_profiles(smp_profiles, pairs=True, plot=False): 
+def align_profiles(smp_profiles, pairs=True, plot=False, save=False): 
     #case only pairs to compare
     if pairs == True:
         paired_profiles = bulid_pairs(smp_profiles)
@@ -76,6 +76,10 @@ def align_profiles(smp_profiles, pairs=True, plot=False):
 
             # update/save in original dictionary
             smp_profiles[name2] = df2_shifted
+        #save correlation results as csv
+        if save == True:
+            smp_profiles_shifted = smp_profiles.copy()
+            
 
     #case more than two profiles to compare
     else:

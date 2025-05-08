@@ -104,6 +104,11 @@ def load_pnt(file, Trim = False):
         df = smp_profile.samples # converting profile into a panda dataframe
     return df, profile_name
 
+def load_csv(file):
+    profile_name = Path(file).stem
+    df = pd.read_csv(file)
+    return df, profile_name
+
 def plot_profiles(profiles, filename, save=True, target_dir=Path("output/visualizations")):
     plt.figure(figsize=(8, 5))
     for df, name in profiles:
@@ -126,10 +131,13 @@ def plot_profiles(profiles, filename, save=True, target_dir=Path("output/visuali
 
 smp_profiles = {} #dictionary for all smp profiles
 
-def load_all_smp_profiles():
+def load_all_smp_profiles(pnt=True):
     allocation = pd.read_excel("data/smp_allocation.xlsx")
     for i in range(allocation.shape[0]): 
-        df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
+        if pnt == True:
+            df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
+        else:
+            df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".csv")
         df.attrs["date"] = allocation["date"][i]
         df.attrs["velocity"] = allocation["velocity"][i]
         smp_profiles[profile_name] = df 
