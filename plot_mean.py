@@ -1,11 +1,9 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
 from pathlib import Path
-from readSMP import plot_profiles, load_all_smp_profiles
-from offset import get_offset, align_profiles
-from plotSMP import bulid_pairs, plot_pairs
+from readSMP import load_all_smp_profiles
+from offset import align_profiles
 
 def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=False, buffer=True):
     """
@@ -95,10 +93,3 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     plot_mean(smp_profiles, save=True)
-
-
-#means of each 5 measurements of one velocity
-#errorbars 
-
-#mins interpolate to find trend 
-#also for temperature measurements (89)
