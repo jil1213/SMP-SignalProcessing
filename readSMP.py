@@ -137,7 +137,7 @@ def load_all_smp_profiles(pnt=True):
         if pnt == True:
             df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
         else:
-            df, profile_name = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".csv")
+            df, profile_name = load_csv("data/aligned_first/"+allocation["name"][i]+ "_aligned.csv")
         df.attrs["date"] = allocation["date"][i]
         df.attrs["velocity"] = allocation["velocity"][i]
         smp_profiles[profile_name] = df 

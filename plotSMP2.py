@@ -7,14 +7,17 @@ from readSMP import plot_profiles, load_all_smp_profiles
 from offset import get_offset, align_profiles
 from plotSMP import bulid_pairs, plot_pairs
 
-def plot_mean(smp_profiles, target_dir=Path("output/visualizations_new"), save=False):
+def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=False, buffer=True):
     """
     Computes and plots the mean SMP profiles per day and velocity.
     Also generates comparison plots between velocities.
     """
-
-    # align all profiles to first non-temperature profile before computing mean
-    smp_profiles = align_profiles(smp_profiles, pairs=False)
+    if buffer == True: 
+        #take smp_profiles already aligned from cache 
+        smp_profiles = load_all_smp_profiles(pnt=False)
+    else: 
+        # align all profiles to first non-temperature profile before computing mean
+        smp_profiles = align_profiles(smp_profiles, pairs=False)
 
     for date in [1, 2]:
         # Filter profiles of a specific day (excluding temperature measurements)
