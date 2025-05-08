@@ -71,8 +71,9 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
             #shift indices of df2 with lag to get max correlation --arrays get cut in the end (last part missing)
             #positive lag shift to right side - negative lag shift to left side
             df2_shifted['force'] = df2_shifted['force'].shift(lag, fill_value=0)
-            title = f"Signal shifted with cross-Correlation {name1} & {name2}"
-            plot_pairs([(df1, name1, df2_shifted, name2)], target_dir,title)
+            if plot == True:
+                title = f"Signal shifted with cross-Correlation {name1} & {name2}"
+                plot_pairs([(df1, name1, df2_shifted, name2)], target_dir,title)
 
             # update/save in original dictionary
             smp_profiles[name2] = df2_shifted
@@ -142,6 +143,6 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
-    smp_profiles_shifted = align_profiles(smp_profiles, pairs=True)
+    smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, save=True)
     #to align all profiles to the first one
-    smp_profiles_shifted = align_profiles(smp_profiles, pairs=False)
+    smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=True)
