@@ -37,17 +37,17 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
             forces = np.stack([df["force"].values for df in subset_trimmed.values()])
             distance = subset_trimmed[list(subset_trimmed.keys())[0]]["distance"].values
 
-            # Mean and SEM (Standard Error of Mean)
+            # Mean and std Standard deviation
             mean_force = np.mean(forces, axis=0)
-            sem = np.std(forces, axis=0, ddof=1) / np.sqrt(forces.shape[0])  
+            std = np.std(forces, axis=0, ddof=1)
 
             # Plot Mean with CI 95% 
             plt.figure(figsize=(8, 5))
             plt.plot(distance, mean_force, label=f"Mean (v={velocity})")
-            plt.fill_between(distance, mean_force - 1.96 * sem, mean_force + 1.96 * sem, alpha=0.3, label="95% CI")
+            plt.fill_between(distance, mean_force - std, mean_force + std, alpha=0.3, label="±1 SD")
             plt.xlabel("Distance (mm)")
             plt.ylabel("Force (N)")
-            plt.title(f"Mean Profile with 95% CI Day {date}, Velocity {velocity}")
+            plt.title(f"Mean Profile ±1 SD Day {date}, Velocity {velocity}")
             plt.legend()
             plt.grid()
             if save == True: 
@@ -61,7 +61,7 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
             plt.close()
 
             #save in one array for each velocity
-            mean_profiles[velocity] = {"distance": distance,"mean": mean_force,"sem": sem}
+            mean_profiles[velocity] = {"distance": distance,"mean": mean_force,"std": std}
 
         # Plot comparison of mean profiles for velocities 8 and 20
         if 8 in mean_profiles and 20 in mean_profiles:
@@ -69,19 +69,19 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
             for v in [8, 20]:
                 dist = mean_profiles[v]["distance"]
                 mean = mean_profiles[v]["mean"]
-                sem = mean_profiles[v]["sem"]
+                std = mean_profiles[v]["std"]
 
                 plt.plot(dist, mean, label=f"Mean (v={v})")
-                plt.fill_between(dist, mean - 1.96 * sem, mean + 1.96 * sem, alpha=0.2, label=f"95% CI (v={v})")
+                plt.fill_between(dist, mean - std, mean + std, alpha=0.3, label="±1 SD")
 
             plt.xlabel("Distance (mm)")
             plt.ylabel("Force (N)")
-            plt.title(f"Comparison of Mean Profiles with 95% CI Day {date}")
+            plt.title(f"Comparison of Mean Profiles ±1 SD Day {date}")
             plt.legend()
             plt.grid()
 
             if save==True:
-                filename = f"mean_comparison_CI_day{date}"
+                filename = f"mean_comparison_std_day{date}"
                 plt.savefig(target_dir / f"{filename}.png")
                 (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
                 plt.savefig(target_dir / "pdf" / f"{filename}.pdf", format="pdf", bbox_inches="tight")
@@ -91,5 +91,5 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
 
 # Beispiel zur Ausführung
 if __name__ == "__main__":
-    smp_profiles = load_all_smp_profiles()
+    smp_profiles = load_all_smp_profiles(pnt=False)
     plot_mean(smp_profiles, save=True)
