@@ -9,12 +9,17 @@ from plotSMP import bulid_pairs, plot_pairs
 target_dir = Path("output/cross_correlations")
 
 #method to get the offset of two profiles by crosscorrelation
-def get_offset(df1, df2, name1, name2, plot=False):
+def get_offset(df1, df2, name1, name2, plot=True):
     """Calculate the offset between two profiles using cross-correlation."""
 
     #Cut dfs to apply autocorrelation - only use for offset method!
     start = 50000
-    end = 200000 #150.000 values
+    end = 220000 #170.000 values
+
+    #make shorter Array for day 2 (so ground peaks get cut off)
+    if len(df2) < 250000: 
+        start = 50000
+        end = 200000 #170.000 values
 
     #check if array is long enough, if not: take a smaller range
     if len(df2) < end:
@@ -73,7 +78,8 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
             df2_shifted['force'] = df2_shifted['force'].shift(lag, fill_value=0)
             if plot == True:
                 title = f"Signal shifted with cross-Correlation {name1} & {name2}"
-                plot_pairs([(df1, name1, df2_shifted, name2)], target_dir,title)
+                filename = f"aligned_{name1}_to_{name2}"
+                plot_pairs([(df1, name1, df2_shifted, name2)], filename, save=True, title=title, target_dir=target_dir)
 
             # update/save in original dictionary
             smp_profiles[name2] = df2_shifted
@@ -142,6 +148,6 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
-    smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, save=False)
+    smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, plot=True, save=True)
     #to align all profiles to the first one
-    smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=False)
+    #smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=False)
