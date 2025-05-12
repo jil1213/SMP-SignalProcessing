@@ -21,13 +21,11 @@ def load_csv(file_name):
     #delete rows were man has a NaN value
     df = df.dropna(subset=["mean"])
 
-    #Min and max values for density
-    df["min"] = df[["density1", "density2", "density3", "density4"]].min(axis=1)
-    df["max"] = df[["density1", "density2", "density3", "density4"]].max(axis=1)
+    # Standardabweichung berechnen
+    df["std"] = df[["density1", "density2", "density3", "density4"]].std(axis=1)
 
-    # Fehlerbalken: asymmetrisch
-    df["err_lower"] = df["mean"] - df["min"]
-    df["err_upper"] = df["max"] - df["mean"]
+    # Fehlerbalken: symmetrisch mit Standardabweichung
+    df["err"] = df["std"]
 
     return df
 
@@ -37,13 +35,14 @@ def plot_density(df_cutter, df_slf, cutter_name, slf_name):
 
     # Cutter
     plt.errorbar(df_cutter["snowdepth"], df_cutter["mean"],
-                 yerr=[df_cutter["err_lower"], df_cutter["err_upper"]],
-                 fmt='o-', color='blue', capsize=4, label='Density Cutter')
+                yerr=df_cutter["err"],
+                fmt='o-', color='blue', capsize=4, label='Density Cutter with std')
 
-    # SLF-
+    # SLF
     plt.errorbar(df_slf["snowdepth"], df_slf["mean"],
-                 yerr=[df_slf["err_lower"], df_slf["err_upper"]],
-                 fmt='o-', color='red', capsize=4, label='Density SLF')
+                yerr=df_slf["err"],
+                fmt='o-', color='red', capsize=4, label='Density SLF with std')
+
 
     plt.xlabel("Snowdepth (cm)")
     plt.ylabel("Density (kg/m^3)")
