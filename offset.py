@@ -46,7 +46,13 @@ def get_offset(df1, df2, name1, name2, plot=True):
     index_shifts = np.arange(-len(df1_cut["force"]) + 1, len(df1_cut["force"]))       # create array of right size, starting from -n+1 to n
     index_shifts_mm = index_shifts * dx #convert lags into distances in mm
 
-    lag_max = np.argmax(correlation) - (len(df1_cut["force"]) - 1) #lag with max correlation
+    # Lag with max correlation 
+    # lag_max = np.argmax(correlation) - (len(df1_cut["force"]) - 1) #lag with max correlation global
+    # local max  around center (most realistic)
+    start, end = len(correlation) // 2 - 20000, len(correlation) // 2 + 20000
+    lag_local = np.argmax(correlation[start:end])
+    lag_max = (start + lag_local) - (len(df1_cut["force"]) - 1)
+
     offset_mm = lag_max * dx #distance offset
 
     #Print results
@@ -94,7 +100,7 @@ def align_profiles(smp_profiles, pairs=True, plot=True, save=False):
 
     #case more than two profiles to compare
     else:
-     for day in [1, 2]:
+     for day in [2]:
         # take all profiles of one day 
         day_profiles = {name: df for name, df in smp_profiles.items()
                         if df.attrs.get("date") == day and df.attrs.get("velocity", 0) != 0}
@@ -150,5 +156,5 @@ if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
     #smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, plot=True, save=True)
-    #to align all profiles to the first one
+    #to align all profiles to the first one of the day
     smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=True)
