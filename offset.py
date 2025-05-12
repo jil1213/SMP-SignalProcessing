@@ -62,11 +62,12 @@ def get_offset(df1, df2, name1, name2, plot=True):
         plt.grid(True)
         #plt.show()
         plt.savefig(target_dir / f"corr_{name1}_{name2}.png")
+        plt.close()
 
     return offset_mm, correlation, lag_max
 
 
-def align_profiles(smp_profiles, pairs=True, plot=False, save=False): 
+def align_profiles(smp_profiles, pairs=True, plot=True, save=False): 
     #case only pairs to compare
     if pairs == True:
         paired_profiles = bulid_pairs(smp_profiles)
@@ -93,22 +94,23 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
 
     #case more than two profiles to compare
     else:
-        # Get the first non-temperature-profile as reference
-        reference_name = next((name for name, df in smp_profiles.items() if df.attrs.get("velocity", 0) != 0), None)
-        if reference_name is None:
-            raise ValueError("Kein gültiges Referenzprofil gefunden (alle velocity == 0).")
+     for day in [1, 2]:
+        # take all profiles of one day 
+        day_profiles = {name: df for name, df in smp_profiles.items()
+                        if df.attrs.get("date") == day and df.attrs.get("velocity", 0) != 0}
 
-        reference_df = smp_profiles[reference_name]
-        profile_names = list(smp_profiles.keys())
+        # # Get the first non-temperature-profile of the day as reference
+        reference_name = next(iter(day_profiles))
+        reference_df = day_profiles[reference_name]
 
-        for name in profile_names[0:]:
+        for name, df in day_profiles.items():
             df = smp_profiles[name]
             offset_mm, correlation, lag = get_offset(reference_df, df, reference_name, name)
-            #shifted ro reference
+            #shifted to reference
             df_shifted = df.copy()
             df_shifted['force'] = df_shifted['force'].shift(lag, fill_value=0)
 
-            #cut to same length as reference
+            # cut to same length as reference
             if len(df_shifted) < len(reference_df):
                 padding_len = len(reference_df) - len(df_shifted)
                 padding = pd.DataFrame({
@@ -123,19 +125,18 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
             else:
                 df_shifted['distance'] = reference_df['distance'].values
 
-            if plot==True:
-                title = f"Aligned: {name} to {reference_name}"
+            if plot:
+                title = f"Aligned: {name} to {reference_name} (Day {day})"
                 plot_pairs([(reference_df, reference_name, df_shifted, name)],
-                        filename=f"aligned_{name}_to_{reference_name}",
-                        title=title,
-                        save=True,
-                        target_dir=target_dir)
+                           filename=f"day{day}_aligned_{name}_to_{reference_name}",
+                           title=title,
+                           save=True,
+                           target_dir=target_dir)
 
             smp_profiles[name] = df_shifted  # update original
 
         #save correlation results as csv
-        if save == True:
-            smp_profiles_shifted = smp_profiles.copy()
+        if save:
             save_dir = Path("data/aligned_first")
             save_dir.mkdir(parents=True, exist_ok=True)
             for name, df in smp_profiles.items():
@@ -148,6 +149,6 @@ def align_profiles(smp_profiles, pairs=True, plot=False, save=False):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
-    smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, plot=True, save=True)
+    #smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, plot=True, save=True)
     #to align all profiles to the first one
-    #smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=False)
+    smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=True)
