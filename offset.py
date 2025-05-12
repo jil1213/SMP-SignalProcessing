@@ -155,6 +155,6 @@ def align_profiles(smp_profiles, pairs=True, plot=True, save=False):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
-    #smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, plot=True, save=True)
+    smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, plot=True, save=True)
     #to align all profiles to the first one of the day
     smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=True)
