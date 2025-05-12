@@ -45,15 +45,18 @@ def plot_pairs(pairs, filename, save=False, title=None, target_dir=Path("output/
 
 
 if __name__ == "__main__":
-    smp_profiles = load_all_smp_profiles()
+    #smp_profiles = load_all_smp_profiles()
 
-    single = True
+    #load from csv for aligned profiles
+    smp_profiles = load_all_smp_profiles(pnt=False)
+
+    single = False
     all = True #plot all profiles
     all_day1 = True
     all_day2 = True
-    comparison = True #comparison between two velocities 8mm/s and 20mm/s
-    temperature_day1 = True #temperature acclimatization 
-    temperature_day2 = True
+    comparison = False #comparison between two velocities 8mm/s and 20mm/s
+    temperature_day1 = False #temperature acclimatization 
+    temperature_day2 = False
 
 
     #plot single profile
