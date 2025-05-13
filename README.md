@@ -42,3 +42,7 @@ Logratihm scale for single output plots.
 ## autocorrelation
 
 Autocorrelation of single profiles
+
+## FFT
+
+Fourier Transformation computed with the Fast Fourier Transformation and PSD (Leistungsdichtespektrum) can be plotted.
