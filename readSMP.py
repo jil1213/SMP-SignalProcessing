@@ -143,7 +143,7 @@ smp_profiles = {} #dictionary for all smp profiles
 def load_all_smp_profiles(pnt=True):
     allocation = pd.read_excel("data/smp_allocation.xlsx")
     for i in range(allocation.shape[0]): 
-        spatial_res = 0
+        spatial_res = 0.00413223123177886 # default but gets checked again in pnts 
         if pnt == True:
             df, profile_name, spatial_res = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
         else:
