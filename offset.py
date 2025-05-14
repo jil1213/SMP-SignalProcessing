@@ -31,13 +31,6 @@ def get_offset(df1, df2, name1, name2, plot=True):
     df1_cut = df1.iloc[start:end]
     df2_cut = df2.iloc[start:end]
 
-    # mean centering to get a more exact correlation
-    #df1_cut["force"] = df1_cut["force"].values - np.mean(df1_cut["force"])
-    #df2_cut["force"] = df2_cut["force"].values - np.mean(df2_cut["force"])
-
-    #low-pass filter to get a more exact correlation
-    #...
-
     # Calculate cross-correlation to cutted dfs
     correlation = np.correlate(df1_cut["force"], df2_cut["force"], mode='full')
 
@@ -80,15 +73,36 @@ def align_profiles(smp_profiles, pairs=True, plot=True, save=False):
         for df1, name1, df2, name2 in paired_profiles:
             offset_mm, correlation, lag = get_offset(df1, df2, name1, name2)
             df2_shifted = df2.copy()
-            #shift indices of df2 with lag to get max correlation --arrays get cut in the end (last part missing)
-            #positive lag shift to right side - negative lag shift to left side
-            df2_shifted['force'] = df2_shifted['force'].shift(lag, fill_value=0)
+            # shift indices of df2 with lag to get max correlation
+            # positive lag shift to right side - negative lag shift to left side
+            df2_shifted['force'] = df2_shifted['force'].shift(lag, fill_value=np.nan)
+
+            # bring both to same length
+            min_len = min(len(df1), len(df2_shifted))
+            df1 = df1.iloc[:min_len]
+            df2_shifted = df2_shifted.iloc[:min_len]
+
+            # cut both profiles to common length
+            # find valid Index range
+            force1_valid = ~df1["force"].isna() #boolean for all values if value=True, if Nan=False
+            force2_valid = ~df2_shifted["force"].isna()
+            valid_mask = force1_valid & force2_valid #find valid range (as long as boolean=True)
+            valid_index = df1.index[valid_mask] #get index of valid range
+
+            #cut to valid range
+            df1_shifted = df1.loc[valid_index].reset_index(drop=True)
+            df2_shifted = df2_shifted.loc[valid_index].reset_index(drop=True)
+
+            #take distance values from df1 for both dfs
+            df2_shifted["distance"] = df1_shifted["distance"]
+
             if plot == True:
                 title = f"Signal shifted with cross-Correlation {name1} & {name2}"
                 filename = f"aligned_{name1}_to_{name2}"
-                plot_pairs([(df1, name1, df2_shifted, name2)], filename, save=True, title=title, target_dir=target_dir)
+                plot_pairs([(df1_shifted, name1, df2_shifted, name2)], filename, save=True, title=title, target_dir=target_dir)
 
             # update/save in original dictionary
+            smp_profiles[name1] = df1_shifted
             smp_profiles[name2] = df2_shifted
         #save correlation results as csv
         if save == True:
@@ -157,4 +171,4 @@ if __name__ == "__main__":
     #to aligning two profiles
     smp_profiles_shifted = align_profiles(smp_profiles, pairs=True, plot=True, save=True)
     #to align all profiles to the first one of the day
-    smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=True)
+    #smp_profiles_shifted = align_profiles(smp_profiles, pairs=False, save=True)
