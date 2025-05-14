@@ -11,8 +11,8 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
     Also generates comparison plots between velocities.
     """
     if buffer == True: 
-        #take smp_profiles already aligned from cache 
-        smp_profiles = load_all_smp_profiles(pnt=False)
+        #take smp_profiles already aligned to first from cache 
+        smp_profiles = load_all_smp_profiles(pnt=False, aligned="first")
     else: 
         # align all profiles to first non-temperature profile before computing mean
         smp_profiles = align_profiles(smp_profiles, pairs=False)

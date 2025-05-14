@@ -50,7 +50,7 @@ if __name__ == "__main__":
     #load from csv for aligned profiles
     smp_profiles = load_all_smp_profiles(pnt=False)
 
-    single = False
+    single = True
     all = True #plot all profiles
     all_day1 = True
     all_day2 = True
