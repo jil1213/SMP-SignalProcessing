@@ -20,8 +20,10 @@ def compare_temperature_trends(smp_profiles):
         # Interpolation trend
         coeffs8 = np.polyfit(df_drift8["distance"], df_drift8["force"], deg=1)
         trendline8 = np.polyval(coeffs8, df_drift8["distance"])
+        df_trend8 = pd.DataFrame({"distance": df_drift8["distance"],"force": trendline8})
         coeffs20 = np.polyfit(df_drift20["distance"], df_drift20["force"], deg=1)
         trendline20 = np.polyval(coeffs20, df_drift20["distance"])
+        df_trend20 = pd.DataFrame({"distance": df_drift20["distance"],"force": trendline20})
 
         #Plot both: Interpolation and trend of each velocity
         plt.figure(figsize=(8, 5))
@@ -40,6 +42,12 @@ def compare_temperature_trends(smp_profiles):
         target_dir = Path("output/trend")
         plt.savefig((target_dir / filename).with_suffix(".png"))
         plt.close()
+
+        #plot only trends 
+        filename = f"trend_{name8}_vs_{name20}"
+        title = f"Trend {name8} vs {name20}"
+        target_dir = Path("output/trend")
+        plot_pairs([(df_trend8, name8, df_trend20, name20)], filename=filename, save=True, title=title, target_dir=target_dir)
 
 
 def extract_temperature_trends(smp_profiles, save=False): 
