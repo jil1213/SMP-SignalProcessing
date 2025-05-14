@@ -59,21 +59,25 @@ def extract_temperature_trends(smp_profiles, save=False):
         df_drift8 = interpolate(name8, df8, save=True)
         df_drift20 = interpolate(name20, df20, save=True)
 
-        #Create Difference as trend 
+        #Create Difference
         min_len = min(len(df_drift8), len(df_drift20))
         distance = df_drift20["distance"].values[:min_len] 
         diff_force = df_drift8["force"].values[:min_len]  - df_drift20["force"].values[:min_len] 
 
+        # Create Trend of diff
+        coeffs = np.polyfit(distance, diff_force, deg=1)
+        trendline = np.polyval(coeffs, diff_force)
 
         plt.figure(figsize=(8, 5))
         plt.plot(distance, diff_force, label=f"{name8} - {name20}")
+        plt.plot(distance, trendline, '--', label=f"Trend {name8} - {name20}")
         plt.xlabel("Distance (mm)")
         plt.ylabel("Force Difference (N)")
         plt.title(f"Interpolated Drift Difference: {name8} - {name20}")
         plt.legend()
         plt.grid()
         filename = f"diff_interpolation_{name8}_vs_{name20}"
-        target_dir = Path("output/interpolation")
+        target_dir = Path("output/trend")
 
         if save == True: 
             # save as figure png
@@ -89,5 +93,5 @@ def extract_temperature_trends(smp_profiles, save=False):
 if __name__ == "__main__":
     #load from csv for aligned profiles
     smp_profiles = load_all_smp_profiles(pnt=False)
-    compare_temperature_trends(smp_profiles)
-    #extract_temperature_trends(smp_profiles)
+    #compare_temperature_trends(smp_profiles)
+    extract_temperature_trends(smp_profiles, save=True)
