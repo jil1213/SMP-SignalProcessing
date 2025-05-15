@@ -56,6 +56,6 @@ def interpolate(name, df, plot= False, save=False, target_dir=Path("output/inter
     return df_drift
 
 if __name__ == "__main__":
-    smp_profiles = load_all_smp_profiles()
+    smp_profiles = load_all_smp_profiles(pnt=False, aligned="pairs") 
     for name, df in smp_profiles.items():
         interpolate(name, df, plot=True, save=True)

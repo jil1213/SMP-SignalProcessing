@@ -7,7 +7,7 @@ from readSMP import plot_profiles, load_all_smp_profiles
 from plot_interpolate import interpolate
 from plotSMP import bulid_pairs, plot_pairs
 
-def compare_temperature_trends(smp_profiles): 
+def compare_temperature_trends(smp_profiles, save=False): 
 
     # build velocitiy pairs
     paired_profiles = bulid_pairs(smp_profiles)
@@ -37,10 +37,17 @@ def compare_temperature_trends(smp_profiles):
         plt.title(f"Interpolated & Trendline: {name8} vs {name20}")
         plt.legend()
         plt.grid()
-
         filename = f"comparison_trend_{name8}_vs_{name20}"
         target_dir = Path("output/trend")
-        plt.savefig((target_dir / filename).with_suffix(".png"))
+
+        if save == True: 
+            # save as figure png
+            plt.savefig((target_dir / filename).with_suffix(".png"))
+            #save as pdf for better quality in another folder
+            (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
+            plt.savefig((target_dir / "pdf" / filename).with_suffix(".pdf"), format="pdf", bbox_inches="tight")
+        else:
+            plt.show()
         plt.close()
 
         #plot only trends 
@@ -93,5 +100,5 @@ def extract_temperature_trends(smp_profiles, save=False):
 if __name__ == "__main__":
     #load from csv for aligned profiles
     smp_profiles = load_all_smp_profiles(pnt=False)
-    #compare_temperature_trends(smp_profiles)
+    compare_temperature_trends(smp_profiles, save=True)
     extract_temperature_trends(smp_profiles, save=True)
