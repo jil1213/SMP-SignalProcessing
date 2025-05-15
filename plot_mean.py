@@ -26,16 +26,9 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
         for velocity in [20, 8]:
             subset = {name: df for name, df in smp_day.items() if df.attrs.get("velocity") == velocity}
 
-            #trimm all profiles to the same length = shortest length
-            min_len = min(len(df) for df in subset.values())
-            subset_trimmed = {name: df.iloc[:min_len].copy() for name, df in subset.items()}
-
-            # check if all have the same length after trimming
-            assert all(len(df) == min_len for df in subset_trimmed.values()), "Nicht alle Profile sind gleich lang nach dem Kürzen"
-
             # save all force values in array
-            forces = np.stack([df["force"].values for df in subset_trimmed.values()])
-            distance = subset_trimmed[list(subset_trimmed.keys())[0]]["distance"].values
+            forces = np.stack([df["force"].values for df in subset.values()])
+            distance = subset[list(subset.keys())[0]]["distance"].values
 
             # Mean and std Standard deviation
             mean_force = np.mean(forces, axis=0)
@@ -91,5 +84,5 @@ def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=
 
 # Beispiel zur Ausführung
 if __name__ == "__main__":
-    smp_profiles = load_all_smp_profiles(pnt=False)
+    smp_profiles = load_all_smp_profiles(pnt=False, aligned="first")
     plot_mean(smp_profiles, save=True)
