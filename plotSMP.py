@@ -48,9 +48,9 @@ if __name__ == "__main__":
     #smp_profiles = load_all_smp_profiles()
 
     #load from csv for aligned profiles
-    smp_profiles = load_all_smp_profiles(pnt=False)
+    smp_profiles = load_all_smp_profiles(pnt=False, aligned="first") #can be changed to "pairs"
 
-    single = True
+    single = False
     all = True #plot all profiles
     all_day1 = True
     all_day2 = True
