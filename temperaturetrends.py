@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from pathlib import Path 
-from readSMP import plot_profiles, load_all_smp_profiles
+from readSMP import load_all_smp_profiles
 from plot_interpolate import interpolate
 from plotSMP import bulid_pairs, plot_pairs
 
