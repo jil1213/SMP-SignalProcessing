@@ -26,6 +26,14 @@ def load_lawis_profile(json_path):
     df = pd.DataFrame(records)
     return df
 
+def convert_to_snowdepth(df):
+    #Converts the height written in the manual snow profile to snowdepth, same as used in SMP profiles 
+    #Adds 'distance_min' and 'distance_max' coloumns
+    max_height = df["height_max"].max()
+    df["distance_min"] = max_height - df["height_max"]
+    df["distance_max"] = max_height - df["height_min"]
+    return df
+
 
 if __name__ == "__main__":
     # Beispiel-Anwendung
@@ -33,4 +41,5 @@ if __name__ == "__main__":
     df_day2 = load_lawis_profile("data/LawisProfile23044.json")
     #load profile day 2
     df_day2 = load_lawis_profile("data/LawisProfile23778.json")
-    print(df_day2.head())
+    df_day2 = convert_to_snowdepth(df_day2)
+    print(df_day2)
