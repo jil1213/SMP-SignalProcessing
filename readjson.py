@@ -2,8 +2,7 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 
-import profiles_parameters #also correct? 
-from profiles_parameters import LABELS, LABELS_LONG, COLORS #right? 
+from profiles_parameters import LABELS_LONG, COLORS 
 
 # load .json snowprofiles from LAWIS
 def load_lawis_profile(json_path):
@@ -29,9 +28,8 @@ def load_lawis_profile(json_path):
     df = pd.DataFrame(records)
     return df
 
-
+# Converts the height written in the manual snow profile to snowdepth, same as used in SMP profiles 
 def convert_to_snowdepth(df):
-    # Converts the height written in the manual snow profile to snowdepth, same as used in SMP profiles 
     # Adds 'distance_min' and 'distance_max' coloumns
     max_height = df["height_max"].max()
 
@@ -61,11 +59,23 @@ def convert_to_snowdepth(df):
     df_converted = pd.DataFrame(expanded_rows).reset_index(drop=True)
     return df_converted
 
+# Assign color of snow grain types to df
+def assign_grain_colors(df):
+
+    reverse_labels_long = {v.lower(): k for k, v in LABELS_LONG.items()}
+
+    colors = []
+    for grain in df["grain1"]:
+        grain_text = str(grain).lower().strip()
+        label_id = reverse_labels_long.get(grain_text, 0)
+        color = COLORS.get(label_id, "dimgray")
+        colors.append(color)
+    df["color"] = colors
+    return df
+
 
 def plot_lawis_hardness(df, name="LAWIS_Profile"):
-    # plot step plot of hardness over distance
     plt.figure(figsize=(8, 5))
-    #plt.step(df["distance"], df["hardness_id"], label=name)
     plt.plot(df["distance"], df["hardness_id"], label=name)
 
     plt.gca()
@@ -77,24 +87,24 @@ def plot_lawis_hardness(df, name="LAWIS_Profile"):
     plt.tight_layout()
     plt.show()
 
-
+#plot colours and hardness 
 def plot_lawis_colored_grain(df, name="LAWIS_Profile"):
-    reverse_labels_long = {v.lower(): k for k, v in LABELS_LONG.items()}
-
     fig, ax = plt.subplots(figsize=(10, 2))
 
     for i in range(0, len(df), 2):
         left = df.iloc[i + 1]["distance"]
         right = df.iloc[i]["distance"]
-        grain1_text = df.iloc[i]["grain1"].lower().strip()
-
-        # Übersetze grain1 zu label_id über den LANGTEXT
-        label_id = reverse_labels_long.get(grain1_text, 0)  # default zu 0 ("not_labelled")
-        color = COLORS.get(label_id, "dimgray")
+        color = df.iloc[i]["color"]
 
         ax.fill_betweenx([0, 1], left, right, color=color)
 
-    ax.set_ylim(0, 1)
+    # hardness
+    ax2 = ax.twinx()
+    ax2.plot(df["distance"], df["hardness_id"], color='black', linewidth=1.5, label="Hardness")
+    ax2.set_ylim(df["hardness_id"].min() - 0.5, df["hardness_id"].max() + 0.5)
+    ax2.set_ylabel("Hardness (Index)")
+    ax2.legend(loc="upper right")
+
     ax.set_xlim(df["distance"].min(), df["distance"].max())
     ax.set_xlabel("Distance from surface (mm)")
     ax.set_yticks([])
@@ -107,12 +117,14 @@ if __name__ == "__main__":
     #load profile day 1
     df_day1 = load_lawis_profile("data/LawisProfile23044.json")
     df_day1 = convert_to_snowdepth(df_day1)
+    df_day1 = assign_grain_colors(df_day1)
     print(df_day1)
     #plot_lawis_hardness(df_day1, name="LAWIS Profile Day 1")
 
     #load profile day 2
     df_day2 = load_lawis_profile("data/LawisProfile23778.json")
     df_day2 = convert_to_snowdepth(df_day2)
+    df_day2 = assign_grain_colors(df_day2)
     print(df_day2)
     #plot_lawis_hardness(df_day2, name="LAWIS Profile Day 2")
     plot_lawis_colored_grain(df_day1, name="LAWIS Profile Day 1")
