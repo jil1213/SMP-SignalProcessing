@@ -19,15 +19,15 @@ def detect_surface(df):
     # calculate gradient
     gradient = np.gradient(log_force, log_distance)
     start_idx = np.searchsorted(log_distance, 20)
-    dx = np.mean(np.diff(distance))              # Samplingrate of finding local minimas
-    window_size_mm = 1.0                    # size in mm of shot noise moving window 1,5,10mm, not overlapping
+    dx = np.mean(np.diff(log_distance))              # Samplingrate of finding local minimas
+    window_size_mm = 10.0                    # size in mm of shot noise moving window 1,5,10mm, not overlapping
     window_size = int(window_size_mm / dx)  # window size adapted to sampling of local minima
 
     for i in range(start_idx + 50, len(gradient) - window_size):
         mean_prev = np.mean(gradient[start_idx:i])  # mean
         mean_window = np.mean(gradient[i:i + window_size])  # current window
 
-        if mean_window > mean_prev *10000:  # change value for sensitivtiy
+        if mean_window > mean_prev *2:  # change value for sensitivtiy
             surface = log_distance[i]
             break
 
