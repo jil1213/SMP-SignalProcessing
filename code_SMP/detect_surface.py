@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from snowmicropyn import Profile
-from readSMP import load_all_smp_profiles
+from code_SMP.readSMP import load_all_smp_profiles
 
 
 

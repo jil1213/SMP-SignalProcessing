@@ -5,7 +5,7 @@ import glob
 
 from pathlib import Path # for os independent path handling
 from snowmicropyn import Profile #package snowmicropyn must be installed
-from detect_ground import detect_ground_csv #original method from snowmicropyn changed to work with csv files
+from code_SMP.detect_ground import detect_ground_csv #original method from snowmicropyn changed to work with csv files
 
 #todo: handle/detecting ground and surface? (especially ground should be removed..)
 

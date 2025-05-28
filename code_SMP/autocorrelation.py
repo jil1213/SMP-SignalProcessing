@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from pathlib import Path
-from readSMP import load_all_smp_profiles
+from code_SMP.readSMP import load_all_smp_profiles
 
 
 def calc_autocorrelations(smp_profiles, normalize=True):

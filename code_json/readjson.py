@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from profiles_parameters import LABELS_LONG, COLORS 
+from code_json.profiles_parameters import LABELS_LONG, COLORS 
 
 # load .json snowprofiles from LAWIS
 def load_lawis_profile(json_path):

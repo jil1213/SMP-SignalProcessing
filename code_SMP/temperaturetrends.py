@@ -3,9 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from pathlib import Path 
-from readSMP import load_all_smp_profiles
-from plot_interpolate import interpolate
-from plotSMP import bulid_pairs, plot_pairs
+from code_SMP.readSMP import load_all_smp_profiles
+from code_visualizations.plot_interpolate import interpolate
+from code_visualizations.plotSMP import bulid_pairs, plot_pairs
 
 def compare_temperature_trends(smp_profiles, save=False): 
 

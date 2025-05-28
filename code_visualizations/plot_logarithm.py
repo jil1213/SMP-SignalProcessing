@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 from pathlib import Path
-from readSMP import load_all_smp_profiles
+from code_SMP.readSMP import load_all_smp_profiles
 
 def logarithm(smp_profiles, save=False, target_dir=Path("output/logarithm")):
     target_dir.mkdir(parents=True, exist_ok=True)

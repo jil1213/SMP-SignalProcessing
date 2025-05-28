@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from pathlib import Path # for os independent path handling
-from readSMP import plot_profiles, load_all_smp_profiles
+from code_SMP.readSMP import plot_profiles, load_all_smp_profiles
 
 
 target_dir = Path("output/visualizations")

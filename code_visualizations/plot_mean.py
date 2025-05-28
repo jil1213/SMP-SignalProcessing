@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from pathlib import Path
-from readSMP import load_all_smp_profiles
-from offset import align_profiles
+from code_SMP.readSMP import load_all_smp_profiles
+from code_SMP.offset import align_profiles
 
 def plot_mean(smp_profiles, target_dir=Path("output/visualizations_mean"), save=False, buffer=True):
     """

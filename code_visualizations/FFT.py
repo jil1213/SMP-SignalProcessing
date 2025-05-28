@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 from scipy.signal import welch
 from pathlib import Path
-from readSMP import load_all_smp_profiles
+from code_SMP.readSMP import load_all_smp_profiles
 
 # calculate Fast Fourier Transform
 def calc_fourier_transform(smp_profiles, sampling_rate):

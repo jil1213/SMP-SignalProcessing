@@ -6,7 +6,7 @@ from pathlib import Path
 from scipy.signal import argrelextrema
 from scipy.interpolate import pchip_interpolate
 
-from readSMP import load_all_smp_profiles
+from code_SMP.readSMP import load_all_smp_profiles
 
 # Interpolation of minima with low pass filter
 
