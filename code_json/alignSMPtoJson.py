@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from pathlib import Path
 
 from code_SMP.readSMP import load_all_smp_profiles
 from code_json.readjson import load_lawis_profile
@@ -50,7 +51,17 @@ def align_SMP_to_Snowprofile(df):
     ax.set_xlabel("Distance from surface (mm)")
     ax.set_title(f"{name} and manual profile day {df.attrs['date']}")
     plt.tight_layout()
-    plt.show()
+    #plt.show()
+
+    #save plot
+    # save as figure png
+    target_dir = Path("output/SMPtoJson")
+    plt.savefig((target_dir / f"{name}toJson").with_suffix(".png"))
+    #save as pdf for better quality in another folder
+    (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
+    plt.savefig((target_dir / "pdf" / f"{name}toJson").with_suffix(".pdf"), format="pdf", bbox_inches="tight")
+
+    plt.close()
 
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles(pnt=True)
