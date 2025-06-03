@@ -9,20 +9,25 @@ def align_SMP_to_Snowprofile(df):
     # get day to knwo which profile to align 
     if df.attrs["date"] == 1: 
         #align to first Snowprofile
-        json = load_lawis_profile("data/LawisProfile23044.json")
+        json, boundaries = load_lawis_profile("data/LawisProfile23044.json")
     elif df.attrs["date"] == 2:
         #align to second Snowprofile
-        json = load_lawis_profile("data/LawisProfile23778.json")
+        json, boundaries = load_lawis_profile("data/LawisProfile23778.json")
 
     # Plot SMP together with JSON profile
     fig, ax = plt.subplots(figsize=(8, 5))
 
     # plot first grain colors as colored bands
-    for i in range(0, len(json), 2):
-        left = json.iloc[i + 1]["distance"]
-        right = json.iloc[i]["distance"]
-        color = json.iloc[i]["color"]
-        ax.fill_betweenx([df["force"].min(), df["force"].max()], left, right, color=color)
+    current_color = json["color"].iloc[0]
+    start = json["distance"].iloc[0]
+
+    for i in range(1, len(json)):
+        color = json["color"].iloc[i]
+        if color != current_color or i == len(json) - 1:
+            end = json["distance"].iloc[i]
+            ax.fill_betweenx([df["force"].min(), df["force"].max()], start, end, color=current_color)
+            start = end
+            current_color = color
 
     #plot SMP force
     ax.plot(df["distance"], df["force"], label="SMP Force")
@@ -33,6 +38,7 @@ def align_SMP_to_Snowprofile(df):
     # plot Hardness Index of JSON profile
     ax2.plot(json["distance"], json["hardness_id"], color='black', linestyle='--', label="Hardness Index")
     ax2.set_ylabel("Hardness Index")
+    ax2.set_ylim(bottom=0)
 
     ax.grid()
     ax.set_xlabel("Distance from surface (mm)")
