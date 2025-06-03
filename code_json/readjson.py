@@ -122,7 +122,7 @@ def load_lawis_profile(json_path, resample=True):
         boundaries = pd.DataFrame({"distance": df["distance"].sort_values().unique()})
     return df, boundaries
 
-
+# plot hardness index over profile depth
 def plot_lawis_hardness(df, name="LAWIS_Profile"):
     plt.figure(figsize=(8, 5))
     plt.plot(df["distance"], df["hardness_id"], label=name)
@@ -136,23 +136,27 @@ def plot_lawis_hardness(df, name="LAWIS_Profile"):
     plt.tight_layout()
     plt.show()
 
-#plot colours and hardness 
+#plot colors and hardness over profile depth
 def plot_lawis_colored_grain(df, name="LAWIS_Profile"):
     fig, ax = plt.subplots(figsize=(10, 2))
 
-    for i in range(0, len(df), 2):
-        left = df.iloc[i + 1]["distance"]
-        right = df.iloc[i]["distance"]
-        color = df.iloc[i]["color"]
+    current_color = df["color"].iloc[0]
+    start = df["distance"].iloc[0]
 
-        ax.fill_betweenx([0, 1], left, right, color=color)
+    for i in range(1, len(df)):
+        color = df["color"].iloc[i]
+        if color != current_color or i == len(df) - 1:
+            end = df["distance"].iloc[i]
+            ax.fill_betweenx([0, 1], start, end, color=current_color)
+            start = end
+            current_color = color
 
     # hardness
     ax2 = ax.twinx()
     ax2.plot(df["distance"], df["hardness_id"], color='black', linewidth=1.5, label="Hardness")
     ax2.set_ylim(df["hardness_id"].min() - 0.5, df["hardness_id"].max() + 0.5)
     ax2.set_ylabel("Hardness (Index)")
-    ax2.legend(loc="upper right")
+    ax2.legend()
 
     ax.set_xlim(df["distance"].min(), df["distance"].max())
     ax.set_xlabel("Distance from surface (mm)")
@@ -165,14 +169,13 @@ def plot_lawis_colored_grain(df, name="LAWIS_Profile"):
 if __name__ == "__main__":
     #load profile day 1
     df_day1, boundaries1 = load_lawis_profile("data/LawisProfile23044.json")
-    print(df_day1)
-    print(boundaries1)
-    #plot_lawis_hardness(df_day1, name="LAWIS Profile Day 1")
+
+    plot_lawis_hardness(df_day1, name="LAWIS Profile Day 1")
+    plot_lawis_colored_grain(df_day1, name="LAWIS Profile Day 1")
+
 
     #load profile day 2
     df_day2, boundaries2 = load_lawis_profile("data/LawisProfile23778.json")
-    print(df_day2)
-    print(boundaries2)
-    #plot_lawis_hardness(df_day2, name="LAWIS Profile Day 2")
-    #plot_lawis_colored_grain(df_day1, name="LAWIS Profile Day 1")
-    #plot_lawis_colored_grain(df_day2, name="LAWIS Profile Day 2")
+
+    plot_lawis_hardness(df_day2, name="LAWIS Profile Day 2")
+    plot_lawis_colored_grain(df_day2, name="LAWIS Profile Day 2")
