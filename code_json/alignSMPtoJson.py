@@ -2,9 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-from snowmicropyn import Profile
 from code_SMP.readSMP import load_all_smp_profiles
-from code_json.readjson import load_lawis_profile, plot_lawis_hardness
+from code_json.readjson import load_lawis_profile
 
 def align_SMP_to_Snowprofile(df):
     # get day to knwo which profile to align 
@@ -29,7 +28,7 @@ def align_SMP_to_Snowprofile(df):
     ax.plot(df["distance"], df["force"], label="SMP Force")
     ax.set_ylabel("Force (N)")
 
-    # create second y axis 
+    # create second y axis
     ax2 = ax.twinx()
     # plot Hardness Index of JSON profile
     ax2.plot(json["distance"], json["hardness_id"], color='black', linestyle='--', label="Hardness Index")

@@ -1,13 +1,60 @@
 import json
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-from code_json.profiles_parameters import LABELS_LONG, COLORS 
+from code_json.profiles_parameters import LABELS_LONG, COLORS
+
+
+def resample_lawis_profile(df, name):
+    # Resample LAWIS profiles to SMP resolution and extract layer boundaries
+
+    # fix resolution of SMP
+    resolution = 0.00413223123177886 #mm
+
+    # Step 1: Extract min/max distance
+    min_dist = df["distance"].min()
+    max_dist = df["distance"].max()
+
+    # Step 2: Create uniform distance values
+    distances = np.arange(min_dist, max_dist, resolution)
+
+    # Step 3: Create intervalls for all layers
+    intervals = []
+    rows = []
+    for i in range(0, len(df) - 1, 2):
+        top = df.iloc[i]["distance"]
+        bottom = df.iloc[i + 1]["distance"]
+        intervals.append(pd.Interval(left=bottom, right=top, closed='left'))  # [bottom, top)
+        rows.append(df.iloc[i])
+
+    # Step 4: Mapping with IntervalIndex
+    interval_index = pd.IntervalIndex(intervals)
+    mapping_df = pd.DataFrame(rows).reset_index(drop=True)
+
+    # Step 5: Allocate all points
+    distance_series = pd.Series(distances, name="distance")
+    bin_indices = interval_index.get_indexer(distance_series)  # -1 if not found in any interval
+
+    # Step 6: Build resampled DataFrame
+    resampled_df = mapping_df.iloc[bin_indices].reset_index(drop=True)
+    resampled_df["distance"] = distances
+    resampled_df.loc[bin_indices == -1, resampled_df.columns != "distance"] = np.nan  # empty layer (not sure if necessary)
+
+    boundaries = pd.DataFrame({"distance": df["distance"].sort_values().unique()})
+
+    # save both as csv, but not necessary right now
+    #resampled_df.to_csv(Path(f"data/resampled_{name}.csv") , index=False)
+    #boundaries.to_csv(Path(f"data/boundaries_{name}.csv"), index=False)
+
+    return resampled_df, boundaries
 
 # load .json snowprofiles from LAWIS
-def load_lawis_profile(json_path):
+def load_lawis_profile(json_path, resample=True):
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
+    json_path = Path(json_path)
 
     layers = data["profile"]
 
@@ -69,7 +116,11 @@ def load_lawis_profile(json_path):
         colors.append(color)
     df["color"] = colors
 
-    return df
+    if resample==True:
+        df, boundaries = resample_lawis_profile(df, json_path.stem)  # Resample to SMP resolution
+    else:
+        boundaries = pd.DataFrame({"distance": df["distance"].sort_values().unique()})
+    return df, boundaries
 
 
 def plot_lawis_hardness(df, name="LAWIS_Profile"):
@@ -113,13 +164,15 @@ def plot_lawis_colored_grain(df, name="LAWIS_Profile"):
 
 if __name__ == "__main__":
     #load profile day 1
-    df_day1 = load_lawis_profile("data/LawisProfile23044.json")
+    df_day1, boundaries1 = load_lawis_profile("data/LawisProfile23044.json")
     print(df_day1)
+    print(boundaries1)
     #plot_lawis_hardness(df_day1, name="LAWIS Profile Day 1")
 
     #load profile day 2
-    df_day2 = load_lawis_profile("data/LawisProfile23778.json")
+    df_day2, boundaries2 = load_lawis_profile("data/LawisProfile23778.json")
     print(df_day2)
+    print(boundaries2)
     #plot_lawis_hardness(df_day2, name="LAWIS Profile Day 2")
-    plot_lawis_colored_grain(df_day1, name="LAWIS Profile Day 1")
-    plot_lawis_colored_grain(df_day2, name="LAWIS Profile Day 2")
+    #plot_lawis_colored_grain(df_day1, name="LAWIS Profile Day 1")
+    #plot_lawis_colored_grain(df_day2, name="LAWIS Profile Day 2")
