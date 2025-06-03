@@ -27,7 +27,7 @@ def load_lawis_profile(json_path):
 
     df = pd.DataFrame(records)
 
-    # Converts the height written in the manual snow profile to snowdepth, same as used in SMP profiles 
+    # Converts the height written in the manual snow profile to snowdepth, same as used in SMP profiles
     # Adds 'distance_min' and 'distance_max' coloumns
     max_height = df["height_max"].max()
 
@@ -38,7 +38,7 @@ def load_lawis_profile(json_path):
 
             # First: Calculate lower boundary (height_min)
             expanded_rows.append({
-                "distance": max_height - height_min,
+                "distance": (max_height - height_min)*10, #convert cm to
                 "hardness": row["hardness"],
                 "hardness_id": row["hardness_id"],
                 "grain1": row["grain1"],
@@ -47,7 +47,7 @@ def load_lawis_profile(json_path):
 
             # Then: calculate upper boundary (height_max)
             expanded_rows.append({
-                "distance": max_height - height_max,
+                "distance": (max_height - height_max)*10, #convert cm to mm
                 "hardness": row["hardness"],
                 "hardness_id": row["hardness_id"],
                 "grain1": row["grain1"],
