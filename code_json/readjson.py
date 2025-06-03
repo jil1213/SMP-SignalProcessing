@@ -26,10 +26,8 @@ def load_lawis_profile(json_path):
         records.append(record)
 
     df = pd.DataFrame(records)
-    return df
 
-# Converts the height written in the manual snow profile to snowdepth, same as used in SMP profiles 
-def convert_to_snowdepth(df):
+    # Converts the height written in the manual snow profile to snowdepth, same as used in SMP profiles 
     # Adds 'distance_min' and 'distance_max' coloumns
     max_height = df["height_max"].max()
 
@@ -56,11 +54,10 @@ def convert_to_snowdepth(df):
                 "grain2": row["grain2"]
             })
 
-    df_converted = pd.DataFrame(expanded_rows).reset_index(drop=True)
-    return df_converted
+    df = pd.DataFrame(expanded_rows).reset_index(drop=True)
 
-# Assign color of snow grain types to df
-def assign_grain_colors(df):
+    # Assign color of snow grain types to df
+    # using defined Labels in profiles_parameters.py
 
     reverse_labels_long = {v.lower(): k for k, v in LABELS_LONG.items()}
 
@@ -71,6 +68,7 @@ def assign_grain_colors(df):
         color = COLORS.get(label_id, "dimgray")
         colors.append(color)
     df["color"] = colors
+
     return df
 
 
@@ -116,15 +114,11 @@ def plot_lawis_colored_grain(df, name="LAWIS_Profile"):
 if __name__ == "__main__":
     #load profile day 1
     df_day1 = load_lawis_profile("data/LawisProfile23044.json")
-    df_day1 = convert_to_snowdepth(df_day1)
-    df_day1 = assign_grain_colors(df_day1)
     print(df_day1)
     #plot_lawis_hardness(df_day1, name="LAWIS Profile Day 1")
 
     #load profile day 2
     df_day2 = load_lawis_profile("data/LawisProfile23778.json")
-    df_day2 = convert_to_snowdepth(df_day2)
-    df_day2 = assign_grain_colors(df_day2)
     print(df_day2)
     #plot_lawis_hardness(df_day2, name="LAWIS Profile Day 2")
     plot_lawis_colored_grain(df_day1, name="LAWIS Profile Day 1")
