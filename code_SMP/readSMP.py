@@ -108,12 +108,14 @@ def load_pnt(file, Trim_ground = True, Trim_surface = True, Trim = False):
         df = df[df["distance"] <= ground]
         if Trim_surface == True:
             surface = detect_surface(df, profile_name)
-            df = df[df["distance"] >= surface]
+            df = df[df["distance"] >= surface].copy()
+            df["distance"] = df["distance"] - surface  # reset distance so it starts at 0
     else: 
         df = smp_profile.samples # converting profile into a panda dataframe
         if Trim_surface == True:
             surface = detect_surface(df, profile_name)
-            df = df[df["distance"] >= surface]
+            df = df[df["distance"] >= surface].copy()
+            df["distance"] = df["distance"] - surface  # reset distance so it starts at 0
     return df, profile_name, spatial_resolution
 
 def load_csv(file, Trim_ground = True, Trim_surface = True):
@@ -124,7 +126,8 @@ def load_csv(file, Trim_ground = True, Trim_surface = True):
         df = df[df["distance"] <= ground]
     if Trim_surface == True:
         surface = detect_surface(df, profile_name)
-        df = df[df["distance"] >= surface]
+        df = df[df["distance"] >= surface].copy()
+        df["distance"] = df["distance"] - surface  # reset distance so it starts at 0
     return df, profile_name
 
 def plot_profiles(profiles, filename, save=True, target_dir=Path("output/visualizations")):
@@ -165,3 +168,7 @@ def load_all_smp_profiles(pnt=True, aligned="pairs"):
 
 #example:plot two SMP profiles
 #plot_profiles([(smp_profiles["S45M1053"], "SMP_1"), (smp_profiles["S45M1056"], "SMP_2")])
+
+if __name__ == '__main__':
+    load_all_smp_profiles()
+    
