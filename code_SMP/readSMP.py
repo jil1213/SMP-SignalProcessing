@@ -156,3 +156,6 @@ def load_all_smp_profiles(pnt=True, aligned="pairs"):
 
 #example:plot two SMP profiles
 #plot_profiles([(smp_profiles["S45M1053"], "SMP_1"), (smp_profiles["S45M1056"], "SMP_2")])
+
+if __name__ == "__main__":
+    load_all_smp_profiles()

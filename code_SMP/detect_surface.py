@@ -77,81 +77,12 @@ def detect_surface(df, name, plot=False):
 
     return surface
 
-def detect_surface3(profile):
+def detect_surface_snowmicropyn(file):
     #compare with snowmicropyn package detection method
-    surface2 = profile.detect_surface()
-
-    return surface2
-
-
-def downsample(x, n=2):
-    if n < 1:
-        raise ValueError('n must be bigger or equal 1')
-
-    i = np.mod(len(x), n)
-    x = x[:len(x) - i].reshape(-1, n).mean(axis=1)
-    return x
-
-def smooth(x, window_len=11, window='hanning'):
-    """Smooth the data using a window with requested size"""
-
-    if x.ndim != 1:
-        raise ValueError('Function only accepts 1 dimension arrays.')
-    if x.size < window_len:
-        raise ValueError('Input vector needs to be bigger than window size.')
-    if window_len < 3:
-        return x
-    valid = ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']
-    if window not in valid:
-        raise ValueError('Invalid value for parameter window. Valid values: ' + ','.join(valid))
-
-    s = np.r_[x[window_len - 1:0:-1], x, x[-1:-window_len:-1]]
-
-    if window == 'flat':
-        # moving average
-        w = np.ones(window_len, 'd')
-    else:
-        w = eval('np.' + window + '(window_len)')
-
-    y = np.convolve(w / w.sum(), s, mode='valid')
-    return y
-
-def detect_surface2(df):
-    """Automatic detection of surface (begin of snowpack).
-
-    :param profile: The profile to detect surface in.
-    :return: Distance where surface was detected.
-    :rtype: float
-    """
-
-    # Cut off ca. 1 mm
-    distance = df["distance"]
-    distance = distance.values[250:]
-    force = df["force"]
-    force = force.values[250:]
-
-    force = downsample(force, 20)
-    distance = downsample(distance, 20)
-
-    force = smooth(force, 242)
-
-    y_grad = np.gradient(force)
-    y_grad = downsample(y_grad, 3)
-    x_grad = downsample(distance, 3)
-
-    max_force = np.amax(force)
-
-    for i in np.arange(100, x_grad.size):
-        std = np.std(y_grad[:i - 1])
-        mean = np.mean(y_grad[:i - 1])
-        if y_grad[i] >= 5 * std + mean:
-            surface = x_grad[i]
-            break
-
-    if i == x_grad.size - 1:
-        surface = max_force
-
+    smp_profile = Profile.load(file)
+    surface = Profile.detect_surface(smp_profile)
     return surface
+
 
 
 def plot_surface(df, name, surface, surface2): 
@@ -172,8 +103,9 @@ if __name__ == "__main__":
     for name, df in smp_profiles.items():
         surface = detect_surface(df, name)
         print(f"Profile: {name}, Detected Surface1: {surface} mm")
-        #does not work yet because you need snowmicropyn profile
-        surface2 = detect_surface2(df)
+        #works only with Profile (not with df)
+        file = 'data/smp_profiles/'+name+'.PNT' #load origin file to use with snowmicropyn package 
+        surface2 = detect_surface_snowmicropyn(file)
         print(f"Profile: {name}, Detected Surface2: {surface2} mm")
-        
+
         plot_surface(df, name, surface, surface2)
