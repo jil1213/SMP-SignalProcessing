@@ -107,12 +107,12 @@ def load_pnt(file, Trim_ground = True, Trim_surface = True, Trim = False):
         df = smp_profile.samples
         df = df[df["distance"] <= ground]
         if Trim_surface == True:
-            surface = detect_surface(df)
+            surface = detect_surface(df, profile_name)
             df = df[df["distance"] >= surface]
     else: 
         df = smp_profile.samples # converting profile into a panda dataframe
         if Trim_surface == True:
-            surface = detect_surface(df)
+            surface = detect_surface(df, profile_name)
             df = df[df["distance"] >= surface]
     return df, profile_name, spatial_resolution
 
@@ -123,7 +123,7 @@ def load_csv(file, Trim_ground = True, Trim_surface = True):
         ground = detect_ground_csv(df)
         df = df[df["distance"] <= ground]
     if Trim_surface == True:
-        surface = detect_surface(df)
+        surface = detect_surface(df, profile_name)
         df = df[df["distance"] >= surface]
     return df, profile_name
 
