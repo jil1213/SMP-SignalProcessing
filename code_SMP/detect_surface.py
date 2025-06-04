@@ -98,8 +98,10 @@ def plot_surface(df, name, surface, surface2):
     plt.legend()
     plt.show()
 
+#this kind of comment to avoid circular import 
+"""""
 if __name__ == "__main__":
-    smp_profiles = load_all_smp_profiles(pnt=True)
+    #smp_profiles = load_all_smp_profiles(pnt=True)
     for name, df in smp_profiles.items():
         surface = detect_surface(df, name)
         print(f"Profile: {name}, Detected Surface1: {surface} mm")
@@ -109,3 +111,4 @@ if __name__ == "__main__":
         print(f"Profile: {name}, Detected Surface2: {surface2} mm")
 
         plot_surface(df, name, surface, surface2)
+"""""

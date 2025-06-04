@@ -8,7 +8,6 @@ from snowmicropyn import Profile #package snowmicropyn must be installed
 from code_SMP.detect_ground import detect_ground_csv #original method from snowmicropyn changed to work with csv files
 from code_SMP.detect_surface import detect_surface
 
-#todo: handle/detecting ground and surface? (especially ground should be removed..)
 
 # read SMP .pnt files and export them as csv files 
 # inspired by snowdragon/data_handling/data_preprocessing.py
@@ -166,6 +165,3 @@ def load_all_smp_profiles(pnt=True, aligned="pairs"):
 
 #example:plot two SMP profiles
 #plot_profiles([(smp_profiles["S45M1053"], "SMP_1"), (smp_profiles["S45M1056"], "SMP_2")])
-
-if __name__ == "__main__":
-    load_all_smp_profiles()

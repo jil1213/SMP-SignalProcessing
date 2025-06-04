@@ -38,6 +38,7 @@ def detect_ground_csv(df):
     return ground
 
 
+#this kind of comment to avoid circular import 
 """""
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
