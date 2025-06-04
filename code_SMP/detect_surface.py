@@ -38,7 +38,7 @@ def moving_linear_regression(x, y, window_mm=1.0):
     return result
 
 
-def detect_surface(df, name):
+def detect_surface(df, name, plot=False):
     distance = df["distance"]
     force = df["force"]
 
@@ -63,17 +63,17 @@ def detect_surface(df, name):
         if grad[i] > threshold:
             surface = distance[i]
             break
-
-    #plot gradient 
-    plt.figure(figsize=(8, 5))
-    plt.plot(distance, grad, label='Moving Derivative (1mm window)', linestyle='--')
-    plt.axvline(x=surface, color='red', linestyle='--', label=f'Surface: {surface} mm')
-    plt.xlabel("Distance (mm)")
-    plt.ylabel("Gradient of log force")
-    plt.title(f"Gradient of log force vs Distance {name}")
-    plt.grid()
-    plt.legend()
-    plt.show()
+    if plot == True: 
+        #plot gradient 
+        plt.figure(figsize=(8, 5))
+        plt.plot(distance, grad, label='Moving Derivative (1mm window)', linestyle='--')
+        plt.axvline(x=surface, color='red', linestyle='--', label=f'Surface: {surface} mm')
+        plt.xlabel("Distance (mm)")
+        plt.ylabel("Gradient of log force")
+        plt.title(f"Gradient of log force vs Distance {name}")
+        plt.grid()
+        plt.legend()
+        plt.show()
 
     return surface
 
