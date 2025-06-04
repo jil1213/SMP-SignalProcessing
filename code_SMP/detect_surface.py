@@ -30,7 +30,7 @@ def moving_linear_regression(x, y, window_mm=1.0):
     denominator = n * sum_x2 - sum_x ** 2
     slope = numerator / denominator
 
-    # Pad result to original length with NaNs on both sides -maybe not necessary(?) 
+    # Pad result to original length with NaNs on both sides 
     pad = (len(x) - len(slope)) // 2
     result = np.full_like(x, np.nan)
     result[pad:pad+len(slope)] = slope
@@ -38,44 +38,42 @@ def moving_linear_regression(x, y, window_mm=1.0):
     return result
 
 
-def detect_surface(df):
+def detect_surface(df, name):
     distance = df["distance"]
     force = df["force"]
 
-    # filter to only positive values for log calculation
-    mask = force > 0
-    log_force = np.log(force[mask])
-    log_distance = distance[mask]
-
     # calculate gradient - very exact uses two points and calculates slope
-    gradient = np.gradient(log_force, log_distance)
+    #gradient = np.gradient(log_force, log_distance)
 
     # gradient over window with 1mm 
-    grad = moving_linear_regression(log_distance, log_force, window_mm=1.0)
+    #grad = moving_linear_regression(log_distance, log_force, window_mm=1.0)
+    grad = moving_linear_regression(distance, force, window_mm=1.0)
+
+    # Threshold 
+    #method 1: take STD of the 1st to 2nd mm 
+    early_std = np.nanstd(grad[2500:5000])
+    threshold = 5 * early_std
+
+    # method 2: take mean --not that good than m1
+    #early_mean = np.nanmedian(np.abs(grad[2500:5000]))
+    #threshold = max(early_mean * 5, 0.02)  # if noise almost 0 take 0.02
+
+    # Find first significant gradient rise above threshold
+    for i in range(len(grad)):
+        if grad[i] > threshold:
+            surface = distance[i]
+            break
 
     #plot gradient 
     plt.figure(figsize=(8, 5))
-    #plt.plot(log_distance, gradient, label='Gradient of log force')
-    plt.plot(log_distance, grad, label='Moving Derivative (1mm window)', linestyle='--')
+    plt.plot(distance, grad, label='Moving Derivative (1mm window)', linestyle='--')
+    plt.axvline(x=surface, color='red', linestyle='--', label=f'Surface: {surface} mm')
     plt.xlabel("Distance (mm)")
     plt.ylabel("Gradient of log force")
-    plt.title("Gradient of log force vs Distance")
+    plt.title(f"Gradient of log force vs Distance {name}")
     plt.grid()
     plt.legend()
     plt.show()
-
-    start_idx = np.searchsorted(log_distance, 20)
-    dx = np.mean(np.diff(log_distance))              # Samplingrate of finding local minimas
-    window_size_mm = 10.0                    # size in mm of shot noise moving window 1,5,10mm, not overlapping
-    window_size = int(window_size_mm / dx)  # window size adapted to sampling of local minima
-
-    for i in range(start_idx + 50, len(gradient) - window_size):
-        mean_prev = np.mean(gradient[start_idx:i])  # mean
-        mean_window = np.mean(gradient[i:i + window_size])  # current window
-
-        if mean_window > mean_prev *2:  # change value for sensitivtiy
-            surface = log_distance[i]
-            break
 
     return surface
 
@@ -100,7 +98,7 @@ def plot_surface(df, name, surface):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles(pnt=True)
     for name, df in smp_profiles.items():
-        surface = detect_surface(df)
+        surface = detect_surface(df, name)
         print(f"Profile: {name}, Detected Surface: {surface} mm")
         #does not work yet because you need snowmicropyn profile
         #surface2 = detect_surface2(df)
