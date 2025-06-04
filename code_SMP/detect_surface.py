@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from snowmicropyn import Profile
-from code_SMP.readSMP import load_all_smp_profiles
+#from code_SMP.readSMP import load_all_smp_profiles
 import numpy as np
 
 def moving_linear_regression(x, y, window_mm=1.0):
