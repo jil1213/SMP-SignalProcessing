@@ -1,4 +1,3 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -63,6 +62,7 @@ def detect_surface(df, name, plot=False):
         if grad[i] > threshold:
             surface = distance[i]
             break
+
     if plot == True: 
         #plot gradient 
         plt.figure(figsize=(8, 5))

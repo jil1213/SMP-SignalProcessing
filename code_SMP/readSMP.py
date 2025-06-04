@@ -6,6 +6,7 @@ import glob
 from pathlib import Path # for os independent path handling
 from snowmicropyn import Profile #package snowmicropyn must be installed
 from code_SMP.detect_ground import detect_ground_csv #original method from snowmicropyn changed to work with csv files
+from code_SMP.detect_surface import detect_surface
 
 #todo: handle/detecting ground and surface? (especially ground should be removed..)
 
@@ -95,7 +96,7 @@ def trim_profile(profile, Allocation = True):
                 print("Invalid input. Please enter 'y' for Yes or 'n' for No.")
 
 #load files as data frame
-def load_pnt(file, Trim_ground = True, Trim = False):
+def load_pnt(file, Trim_ground = True, Trim_surface = True, Trim = False):
     smp_profile = Profile.load(file)
     profile_name = smp_profile.name #string
     spatial_resolution = smp_profile.spatial_resolution #float
@@ -106,16 +107,25 @@ def load_pnt(file, Trim_ground = True, Trim = False):
         ground = Profile.detect_ground(smp_profile)
         df = smp_profile.samples
         df = df[df["distance"] <= ground]
+        if Trim_surface == True:
+            surface = detect_surface(df)
+            df = df[df["distance"] >= surface]
     else: 
         df = smp_profile.samples # converting profile into a panda dataframe
+        if Trim_surface == True:
+            surface = detect_surface(df)
+            df = df[df["distance"] >= surface]
     return df, profile_name, spatial_resolution
 
-def load_csv(file, Trim_ground = True):
+def load_csv(file, Trim_ground = True, Trim_surface = True):
     profile_name = Path(file).stem
     df = pd.read_csv(file)
     if Trim_ground == True:
         ground = detect_ground_csv(df)
         df = df[df["distance"] <= ground]
+    if Trim_surface == True:
+        surface = detect_surface(df)
+        df = df[df["distance"] >= surface]
     return df, profile_name
 
 def plot_profiles(profiles, filename, save=True, target_dir=Path("output/visualizations")):
