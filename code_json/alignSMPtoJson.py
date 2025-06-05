@@ -17,12 +17,10 @@ def align_SMP_to_Snowprofile(df):
     # get day to knwo which profile to align 
     if df.attrs["date"] == 1: 
         #align to first Snowprofile
-        json, boundaries = load_lawis_profile("data/LawisProfile23044.json")
-        angle = 25
+        json, boundaries, angle = load_lawis_profile("data/LawisProfile23044.json")
     elif df.attrs["date"] == 2:
         #align to second Snowprofile
-        json, boundaries = load_lawis_profile("data/LawisProfile23778.json")
-        angle = 21
+        json, boundaries, angle = load_lawis_profile("data/LawisProfile23778.json")
 
     # adapt height of SMP to match the JSON (angle correction)
     df = correct_height(df, angle)

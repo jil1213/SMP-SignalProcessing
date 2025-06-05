@@ -56,6 +56,8 @@ def load_lawis_profile(json_path, resample=True):
         data = json.load(f)
     json_path = Path(json_path)
 
+    angle = data["location"]["slope_angle"]
+
     layers = data["profile"]
 
     records = []
@@ -120,7 +122,7 @@ def load_lawis_profile(json_path, resample=True):
         df, boundaries = resample_lawis_profile(df, json_path.stem)  # Resample to SMP resolution
     else:
         boundaries = pd.DataFrame({"distance": df["distance"].sort_values().unique()})
-    return df, boundaries
+    return df, boundaries, angle
 
 # plot hardness index over profile depth
 def plot_lawis_hardness(df, name="LAWIS_Profile"):
@@ -168,14 +170,14 @@ def plot_lawis_colored_grain(df, name="LAWIS_Profile"):
 
 if __name__ == "__main__":
     #load profile day 1
-    df_day1, boundaries1 = load_lawis_profile("data/LawisProfile23044.json")
+    df_day1, boundaries1, angle1 = load_lawis_profile("data/LawisProfile23044.json")
 
     plot_lawis_hardness(df_day1, name="LAWIS Profile Day 1")
     plot_lawis_colored_grain(df_day1, name="LAWIS Profile Day 1")
 
 
     #load profile day 2
-    df_day2, boundaries2 = load_lawis_profile("data/LawisProfile23778.json")
+    df_day2, boundaries2, angle2 = load_lawis_profile("data/LawisProfile23778.json")
 
     plot_lawis_hardness(df_day2, name="LAWIS Profile Day 2")
     plot_lawis_colored_grain(df_day2, name="LAWIS Profile Day 2")
