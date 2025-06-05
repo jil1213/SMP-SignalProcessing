@@ -5,15 +5,13 @@ from pathlib import Path
 
 from code_SMP.readSMP import load_all_smp_profiles
 from code_json.readjson import load_lawis_profile
+from code_visualizations.plot_mean import calc_mean
 
 def correct_height(df, angle):
-    #print(f"Max height {name}: ", df["distance"].max())
     df["distance"] = df["distance"] * np.cos(np.deg2rad(angle))
-    print(f"Max height after correction {name}: ", df["distance"].max())
-
     return df
 
-def align_SMP_to_Snowprofile(df):
+def align_SMP_to_Snowprofile(df, name, std=None):
     # get day to know which profile to align 
     if df.attrs["date"] == 1: 
         #align to first Snowprofile
@@ -24,6 +22,7 @@ def align_SMP_to_Snowprofile(df):
 
     # adapt height of SMP to match the JSON (angle correction)
     df = correct_height(df, angle)
+    #print(f"Max height after correction {name}: ", df["distance"].max())
 
     # Plot SMP together with JSON profile !!ATTENTION!! plot has fixed height for force (7) 
     fig, ax = plt.subplots(figsize=(8, 5))
@@ -44,6 +43,14 @@ def align_SMP_to_Snowprofile(df):
             ax.fill_betweenx([0, 7], start, end, color=current_color) #!Fixed height y axis
             start = end
             current_color = color
+
+    #plot std if available (when plotting mean)
+    if std is not None:
+        ax.fill_between(df["distance"],
+                        df["force"] - std,
+                        df["force"] + std,
+                        alpha=0.5,
+                        label="±1 SD")
 
     # Plot boundaries as vertical lines with 80% transparency
     for boundary in boundaries["distance"]:
@@ -73,7 +80,28 @@ def align_SMP_to_Snowprofile(df):
 
     plt.close()
 
+def align_mean_to_Snowprofile(all_mean_profiles): 
+    for date in [1, 2]:
+        for velocity in [8, 20]:
+            df_data = all_mean_profiles[date][velocity]
+            #changing column name from mean to force for easy handling
+            df = pd.DataFrame({
+                "distance": df_data["distance"],
+                "force": df_data["mean"]
+            })
+            df.attrs["date"] = date
+            name = f"Mean_Day_{date}_Veloc_{velocity}"
+            std = df_data["std"]
+            align_SMP_to_Snowprofile(df, name, std)
+
+
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles(pnt=True)
     for name, df in smp_profiles.items():
-        align_SMP_to_Snowprofile(df) 
+        align_SMP_to_Snowprofile(df, name) 
+
+    # Align mean to Snowprofile
+    # use buffered csv profiles aligned to first
+    smp_profiles = load_all_smp_profiles(pnt=False, aligned="first")
+    all_mean_profiles = calc_mean(smp_profiles, save=True)
+    align_mean_to_Snowprofile(all_mean_profiles)
