@@ -9,7 +9,7 @@ from code_json.readjson import load_lawis_profile
 def correct_height(df, angle):
     #print(f"Max height {name}: ", df["distance"].max())
     df["distance"] = df["distance"] * np.cos(np.deg2rad(angle))
-    #print(f"Max height after correction {name}: ", df["distance"].max())
+    print(f"Max height after correction {name}: ", df["distance"].max())
 
     return df
 
@@ -18,11 +18,11 @@ def align_SMP_to_Snowprofile(df):
     if df.attrs["date"] == 1: 
         #align to first Snowprofile
         json, boundaries = load_lawis_profile("data/LawisProfile23044.json")
-        angle = 21
+        angle = 25
     elif df.attrs["date"] == 2:
         #align to second Snowprofile
         json, boundaries = load_lawis_profile("data/LawisProfile23778.json")
-        angle = 25
+        angle = 21
 
     # adapt height of SMP to match the JSON (angle correction)
     df = correct_height(df, angle)
