@@ -6,14 +6,26 @@ from pathlib import Path
 from code_SMP.readSMP import load_all_smp_profiles
 from code_json.readjson import load_lawis_profile
 
+def correct_height(df, angle):
+    #print(f"Max height {name}: ", df["distance"].max())
+    df["distance"] = df["distance"] * np.cos(np.deg2rad(angle))
+    #print(f"Max height after correction {name}: ", df["distance"].max())
+
+    return df
+
 def align_SMP_to_Snowprofile(df):
     # get day to knwo which profile to align 
     if df.attrs["date"] == 1: 
         #align to first Snowprofile
         json, boundaries = load_lawis_profile("data/LawisProfile23044.json")
+        angle = 21
     elif df.attrs["date"] == 2:
         #align to second Snowprofile
         json, boundaries = load_lawis_profile("data/LawisProfile23778.json")
+        angle = 25
+
+    # adapt height of SMP to match the JSON (angle correction)
+    df = correct_height(df, angle)
 
     # Plot SMP together with JSON profile !!ATTENTION!! plot has fixed height for force (7) 
     fig, ax = plt.subplots(figsize=(8, 5))
@@ -58,8 +70,8 @@ def align_SMP_to_Snowprofile(df):
     target_dir = Path("output/SMPtoJson")
     plt.savefig((target_dir / f"{name}toJson").with_suffix(".png"))
     #save as pdf for better quality in another folder
-    (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
-    plt.savefig((target_dir / "pdf" / f"{name}toJson").with_suffix(".pdf"), format="pdf", bbox_inches="tight")
+    #(target_dir / "pdf").mkdir(parents=True, exist_ok=True)
+    #plt.savefig((target_dir / "pdf" / f"{name}toJson").with_suffix(".pdf"), format="pdf", bbox_inches="tight")
 
     plt.close()
 
