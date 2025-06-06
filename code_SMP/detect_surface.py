@@ -49,13 +49,11 @@ def detect_surface(df, name, plot=False):
     grad = moving_linear_regression(distance, force, window_mm=1.0)
 
     # Threshold 
-    #method 1: take STD of the 1st to 2nd mm 
+    # method: take STD of the 1st to 2nd mm 
+    # assumption I: the first two mm are always an air measurement
+    # assumption II: 1st mm is excluded in order to ignore the starting and possible disturbances
     early_std = np.nanstd(grad[2500:5000])
     threshold = 5 * early_std
-
-    # method 2: take mean --not that good than m1
-    #early_mean = np.nanmedian(np.abs(grad[2500:5000]))
-    #threshold = max(early_mean * 5, 0.02)  # if noise almost 0 take 0.02
 
     # Find first significant gradient rise above threshold
     for i in range(len(grad)):
