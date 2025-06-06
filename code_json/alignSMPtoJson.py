@@ -8,7 +8,7 @@ from code_json.readjson import load_lawis_profile
 from code_visualizations.plot_mean import calc_mean
 
 def correct_height(df, angle):
-    df["distance"] = df["distance"] * np.cos(np.deg2rad(angle))
+    df["distance"] = df["distance"]/ np.cos(np.deg2rad(angle))
     return df
 
 def align_SMP_to_Snowprofile(df, name, std=None):
