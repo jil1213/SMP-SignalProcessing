@@ -31,6 +31,7 @@ def align_SMP_to_Snowprofile(df, name, std=None):
     ax.plot(df["distance"], df["force"], label="SMP Force")
     ax.set_ylabel("Force (N)")
     ax.set_ylim(0, 7) # max fix y axis for better comparison
+    # ax.set_yscale('log') #for logarithmic scale
 
     # plot first grain colors as colored bands
     current_color = json["color"].iloc[0]
@@ -74,6 +75,7 @@ def align_SMP_to_Snowprofile(df, name, std=None):
     # save as figure png
     target_dir = Path("output/SMPtoJson")
     plt.savefig((target_dir / f"{name}toJson").with_suffix(".png"))
+    #plt.savefig((target_dir / f"log{name}toJson").with_suffix(".png")) #for logarithmic scale
     #save as pdf for better quality in another folder
     #(target_dir / "pdf").mkdir(parents=True, exist_ok=True)
     #plt.savefig((target_dir / "pdf" / f"{name}toJson").with_suffix(".pdf"), format="pdf", bbox_inches="tight")
