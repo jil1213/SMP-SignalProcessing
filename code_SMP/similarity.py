@@ -6,6 +6,7 @@ from pathlib import Path
 from code_SMP.readSMP import load_all_smp_profiles
 from code_visualizations.plotSMP import bulid_pairs
 from scipy.stats import pearsonr
+from pairs import single_distance_pairs, double_distance_pairs, increasing_distance_pairs, decreasing_distance_pairs
 
 #use same logic as in offset.py to build pairs of profiles to a reference profile
 def build_daywise_pairs(smp_profiles):
