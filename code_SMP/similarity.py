@@ -78,8 +78,9 @@ def plot_similarity_scores(data, day, alignment, save=True):
 
 
 if __name__ == "__main__":
-    # I: similarity scores for different velocities
-    # II: similarity scores for profiles aligned to first -> Distance 
+    # I: similarity scores for different velocities: pairs
+    # II: similarity scores for profiles aligned to first -> Distance : first 
+    # TODO Add cases for all profiles against each others but build crosscorrelation for them first 
     aligned_types = ["pairs", "first"]
 
     for aligned in aligned_types:
