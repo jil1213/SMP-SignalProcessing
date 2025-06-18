@@ -1,0 +1,38 @@
+Similarity scores for aligned first - Day 2:
+
+83 and 84:
+  Pearson Correlation: 0.6578 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7995
+
+83 and 85:
+  Pearson Correlation: 0.1408 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.4955
+
+83 and 86:
+  Pearson Correlation: 0.1554 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.4695
+
+83 and 87:
+  Pearson Correlation: 0.3492 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6193
+
+83 and 89:
+  Pearson Correlation: 0.7410 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8469
+
+83 and 90:
+  Pearson Correlation: 0.3076 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6041
+
+83 and 91:
+  Pearson Correlation: 0.0658 (p-value: 3.6667e-174)
+  Cosine Similarity:   0.4302
+
+83 and 92:
+  Pearson Correlation: 0.4024 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6294
+
+83 and 93:
+  Pearson Correlation: 0.3292 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6138
+
