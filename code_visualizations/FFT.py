@@ -23,10 +23,25 @@ def calc_psd(smp_profiles, sampling_rate):
     psd_results = {}
     for name, df in smp_profiles.items():
         signal = df["force"].values
+        n = len(signal)
+
+        fft = np.fft.fft(signal)
+        psd = (np.abs(fft) ** 2) / (n * sampling_rate)
+        freqs = np.fft.fftfreq(n, d=1/sampling_rate)
+
         freqs, psd = welch(signal, fs=sampling_rate, nperseg=1024) #Segmentlänge für Welch-Methode
-        psd_results[name] = (freqs, psd)
+        psd_results[name] = (freqs[:n // 2], psd[:n // 2])
     return psd_results
 
+# Welch method
+def calc_welch(smp_profiles, sampling_rate):
+
+    welch_results = {}
+    for name, df in smp_profiles.items():
+        signal = df["force"].values
+        freqs, welch_values = welch(signal, fs=sampling_rate, nperseg=1024) #Segmentlänge für Welch-Methode
+        welch_results[name] = (freqs, welch_values)
+    return welch_results
 
 def plot_fft(frequencies, magnitudes, title="FFT", save=False, filename=None, target_dir=Path("output/fft")):
 
@@ -52,9 +67,13 @@ if __name__ == "__main__":
     sampling_rate = 1 / res  # spatial resolution is in mm, convert to Hz
     fft_dict = calc_fourier_transform(smp_profiles, sampling_rate)
     psd_dict = calc_psd(smp_profiles, sampling_rate)
+    welch_dict = calc_welch(smp_profiles, sampling_rate)
 
     for name, (freqs, mags) in fft_dict.items():
         plot_fft(freqs, mags, title=f"FFT of {name}", save=True, filename=f"fft_{name}")
     for name, (freqs, psd) in psd_dict.items():
         #plot psd
         plot_fft(freqs, psd, title=f"PSD of {name}", save=True, filename=f"psd_{name}")
+
+    for name, (freqs, welch) in welch_dict.items():
+        plot_fft(freqs, welch, title=f"PSD (Welch) of {name}", save=True, filename=f"welch_{name}")
