@@ -12,6 +12,10 @@ target_dir = Path("output/cross_correlations")
 def get_offset(df1, df2, name1, name2, plot=True):
     """Calculate the offset between two profiles using cross-correlation."""
 
+    #make sure index starts with 0 -> surface detection earlier might made trouble here
+    df1 = df1.reset_index(drop=True)
+    df2 = df2.reset_index(drop=True)
+
     #Cut dfs to apply autocorrelation - only use for offset method!
     start = 50000
     end = 220000 #170.000 values
@@ -28,8 +32,8 @@ def get_offset(df1, df2, name1, name2, plot=True):
         start = 10000
         end = 50000
 
-    df1_cut = df1.iloc[start:end]
-    df2_cut = df2.iloc[start:end]
+    df1_cut = df1.iloc[start:end].reset_index(drop=True)
+    df2_cut = df2.iloc[start:end].reset_index(drop=True)
 
     # Calculate cross-correlation to cutted dfs
     correlation = np.correlate(df1_cut["force"], df2_cut["force"], mode='full')
@@ -160,8 +164,8 @@ def align_profiles(smp_profiles, paired_profiles=None, plot=True, save=False):
 
         # bring both to same length
         min_len = min(len(df1), len(df2_shifted))
-        df1 = df1.iloc[:min_len]
-        df2_shifted = df2_shifted.iloc[:min_len]
+        df1 = df1.iloc[:min_len].reset_index(drop=True) #reset index back to zero (surrface did set higher than 0 before)
+        df2_shifted = df2_shifted.iloc[:min_len].reset_index(drop=True)
 
         # cut both profiles to common length
         # find valid Index range
@@ -186,7 +190,7 @@ def align_profiles(smp_profiles, paired_profiles=None, plot=True, save=False):
         smp_profiles[name1] = df1_shifted
         smp_profiles[name2] = df2_shifted
     #save correlation results as csv
-    if save == True:
+    if paired_profiles is None and save == True:
         smp_profiles_shifted = smp_profiles.copy()
         save_dir = Path("data/aligned_pairs")
         save_dir.mkdir(parents=True, exist_ok=True)
@@ -201,6 +205,6 @@ def align_profiles(smp_profiles, paired_profiles=None, plot=True, save=False):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
-    smp_profiles_shifted = align_profiles(smp_profiles, paired_profiles=None, plot=True, save=True)
+    #smp_profiles_shifted = align_profiles(smp_profiles, paired_profiles=None, plot=True, save=True)
     #to align all profiles to the first one of the day
-    #smp_profiles_shifted = align_profiles_to_reference(smp_profiles, save=True)
+    smp_profiles_shifted = align_profiles_to_reference(smp_profiles, save=True)
