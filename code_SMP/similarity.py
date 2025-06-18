@@ -48,7 +48,8 @@ def plot_similarity_scores(pair_labels, pearson_list, cosine_list, save=True):
         output_dir = Path("output/similarity_scores")
         output_dir.mkdir(parents=True, exist_ok=True)
         plt.savefig(output_dir / "similarity_plot.png")
-    plt.show()
+    else:
+        plt.show()
 
 
 if __name__ == "__main__":
@@ -62,6 +63,7 @@ if __name__ == "__main__":
     pair_labels = []
     pearson_list = []
     cosine_list = []
+    results = []
 
     print("\nSimilarity scores for aligned velocity pairs:\n")
     for df8, name8, df20, name20 in paired_profiles:
@@ -77,6 +79,13 @@ if __name__ == "__main__":
         pair_labels.append(f"{name8[-10:-8]}–{name20[-10:-8]}") #taking the last two digits of profile name as label
         pearson_list.append(pearson)
         cosine_list.append(cosine)
+        # store result line
+        results.append(f"{name8} vs {name20}:\n  Pearson Correlation: {pearson:.4f} (p-value: {p_val:.4e})\n  Cosine Similarity:   {cosine:.4f}\n")
+
+    # write results to txt file
+    with open("output/similarity_scores/similarity_scores_velocities.txt", "w") as f:
+        f.write("Similarity scores for aligned velocity pairs:\n\n")
+        f.writelines(results)
 
     plot_similarity_scores(pair_labels, pearson_list, cosine_list, save=True)
 

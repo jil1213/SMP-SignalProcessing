@@ -1,0 +1,32 @@
+Similarity scores for aligned velocity pairs:
+
+S45M1061_aligned vs S45M1056_aligned:
+  Pearson Correlation: 0.7484 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8846
+S45M1062_aligned vs S45M1057_aligned:
+  Pearson Correlation: 0.6550 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8356
+S45M1063_aligned vs S45M1058_aligned:
+  Pearson Correlation: 0.8563 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9147
+S45M1064_aligned vs S45M1059_aligned:
+  Pearson Correlation: 0.7487 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8787
+S45M1065_aligned vs S45M1060_aligned:
+  Pearson Correlation: 0.6827 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8335
+S45M1089_aligned vs S45M1083_aligned:
+  Pearson Correlation: 0.6469 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7939
+S45M1090_aligned vs S45M1084_aligned:
+  Pearson Correlation: 0.5575 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7432
+S45M1091_aligned vs S45M1085_aligned:
+  Pearson Correlation: 0.4519 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6854
+S45M1092_aligned vs S45M1086_aligned:
+  Pearson Correlation: 0.6160 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7594
+S45M1093_aligned vs S45M1087_aligned:
+  Pearson Correlation: 0.7689 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8808
