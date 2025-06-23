@@ -1,22 +1,22 @@
 Similarity scores for aligned pairs - Day 1:
 
 61 and 56:
-  Pearson Correlation: 0.7484 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8846
+  Pearson Correlation: 0.8868 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9482
 
 62 and 57:
-  Pearson Correlation: 0.6550 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8356
+  Pearson Correlation: 0.7161 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8643
 
 63 and 58:
-  Pearson Correlation: 0.8563 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9147
+  Pearson Correlation: 0.9015 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9504
 
 64 and 59:
-  Pearson Correlation: 0.7487 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8787
+  Pearson Correlation: 0.8618 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9315
 
 65 and 60:
-  Pearson Correlation: 0.6827 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8335
+  Pearson Correlation: 0.6900 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8370
 

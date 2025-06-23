@@ -118,7 +118,7 @@ def load_pnt(file, Trim_ground = True, Trim_surface = True, Trim = False):
             df["distance"] = df["distance"] - surface  # reset distance so it starts at 0
     return df, profile_name, spatial_resolution
 
-def load_csv(file, Trim_ground = True, Trim_surface = True):
+def load_csv(file, Trim_ground = True, Trim_surface = False):
     profile_name = Path(file).stem
     df = pd.read_csv(file)
     if Trim_ground == True:

@@ -204,7 +204,7 @@ def align_profiles(smp_profiles, paired_profiles=None, plot=True, save=False):
 
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
-    #to aligning two profiles
+    #to align two profiles
     smp_profiles_shifted = align_profiles(smp_profiles, paired_profiles=None, plot=True, save=True)
     #to align all profiles to the first one of the day
     smp_profiles_shifted = align_profiles_to_reference(smp_profiles, save=True)
