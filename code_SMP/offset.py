@@ -150,7 +150,7 @@ def align_profiles_to_reference(smp_profiles, plot=True, save=False):
     return smp_profiles_shifted
 
 
-def align_profiles(smp_profiles, paired_profiles=None, plot=True, save=False): 
+def align_profiles(smp_profiles, paired_profiles=None, save_dir=None, plot=True, save=False): 
     #case only pairs to compare
     #names of pairs are input statement
     if paired_profiles is None:
@@ -186,16 +186,22 @@ def align_profiles(smp_profiles, paired_profiles=None, plot=True, save=False):
             filename = f"aligned_{name1}_to_{name2}"
             plot_pairs([(df1_shifted, name1, df2_shifted, name2)], filename, save=True, title=title, target_dir=target_dir)
 
-        # update/save in original dictionary
-        smp_profiles[name1] = df1_shifted
-        smp_profiles[name2] = df2_shifted
-    #save correlation results as csv
-    if paired_profiles is None and save == True:
-        smp_profiles_shifted = smp_profiles.copy()
-        save_dir = Path("data/aligned_pairs")
-        save_dir.mkdir(parents=True, exist_ok=True)
-        for name, df in smp_profiles.items():
-            df.to_csv(save_dir / f"{name}_aligned.csv", index=False)
+        if paired_profiles is not None:
+            #save aligned profiles in a new dictionary
+            df1_shifted.to_csv(save_dir / f"{name1}_alignedto{name2}.csv", index=False)
+            df2_shifted.to_csv(save_dir / f"{name2}_alignedto{name1}.csv", index=False)
+            #attention: dict smp_profiles does not get updated!
+        else: 
+            # update/save in original dictionary
+            smp_profiles[name1] = df1_shifted
+            smp_profiles[name2] = df2_shifted
+            #save correlation results as csv
+            if save == True:
+                smp_profiles_shifted = smp_profiles.copy()
+                save_dir = Path("data/aligned_pairs")
+                save_dir.mkdir(parents=True, exist_ok=True)
+                for name, df in smp_profiles.items():
+                    df.to_csv(save_dir / f"{name}_aligned.csv", index=False)
 
 
     smp_profiles_shifted = smp_profiles.copy()

@@ -116,3 +116,7 @@ if __name__ == "__main__":
         for day in sorted(data_by_day):
             if data_by_day[day]:
                 plot_similarity_scores(data_by_day[day], day, alignment=aligned, save=True)
+                
+    #for nex prfiles paries give them save_dir 
+    type = "pairs"  # change this for type 
+    save_dir= Path("data/aligned"+type)
