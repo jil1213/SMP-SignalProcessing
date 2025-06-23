@@ -17,13 +17,13 @@ def get_offset(df1, df2, name1, name2, plot=True):
     df2 = df2.reset_index(drop=True)
 
     #Cut dfs to apply autocorrelation - only use for offset method!
-    start = 50000
-    end = 220000 #170.000 values
+    start = 10000 # *0,004132 = 41,32mm // with surface trim I could also start with 0 
+    end = 220000 #909,94mm // only works for day 1 , profiles of day 2 are shorter
 
     #make shorter Array for day 2 (so ground peaks get cut off)
     if len(df2) < 250000: 
-        start = 50000
-        end = 200000 #170.000 values
+        start = 10000
+        end = 170000 # = 702,44mm 
 
     #check if array is long enough, if not: take a smaller range
     if len(df2) < end:
@@ -205,6 +205,6 @@ def align_profiles(smp_profiles, paired_profiles=None, plot=True, save=False):
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
     #to aligning two profiles
-    #smp_profiles_shifted = align_profiles(smp_profiles, paired_profiles=None, plot=True, save=True)
+    smp_profiles_shifted = align_profiles(smp_profiles, paired_profiles=None, plot=True, save=True)
     #to align all profiles to the first one of the day
     smp_profiles_shifted = align_profiles_to_reference(smp_profiles, save=True)
