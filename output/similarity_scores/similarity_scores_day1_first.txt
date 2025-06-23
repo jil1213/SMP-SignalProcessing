@@ -1,38 +1,78 @@
 Similarity scores for aligned first - Day 1:
 
 56 and 57:
+  Pearson Correlation: 0.7365 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8878
+
+56 and 58:
+  Pearson Correlation: 0.7485 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8826
+
+56 and 59:
+  Pearson Correlation: 0.6149 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8381
+
+56 and 60:
+  Pearson Correlation: 0.5092 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7889
+
+56 and 61:
+  Pearson Correlation: 0.8868 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9482
+
+56 and 62:
+  Pearson Correlation: 0.7628 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8985
+
+56 and 63:
+  Pearson Correlation: 0.7710 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8897
+
+56 and 64:
+  Pearson Correlation: 0.6519 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8484
+
+56 and 65:
+  Pearson Correlation: 0.7138 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8786
+
+56 and to:
+  Pearson Correlation: 1.0000 (p-value: 0.0000e+00)
+  Cosine Similarity:   1.0000
+
+56 and to:
   Pearson Correlation: 0.7782 (p-value: 0.0000e+00)
   Cosine Similarity:   0.9098
 
-56 and 58:
+56 and to:
   Pearson Correlation: 0.7572 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8591
 
-56 and 59:
+56 and to:
   Pearson Correlation: 0.6351 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8534
 
-56 and 60:
+56 and to:
   Pearson Correlation: 0.5734 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8225
 
-56 and 61:
+56 and to:
   Pearson Correlation: 0.8807 (p-value: 0.0000e+00)
   Cosine Similarity:   0.9477
 
-56 and 62:
+56 and to:
   Pearson Correlation: 0.8128 (p-value: 0.0000e+00)
   Cosine Similarity:   0.9241
 
-56 and 63:
+56 and to:
   Pearson Correlation: 0.8423 (p-value: 0.0000e+00)
   Cosine Similarity:   0.9192
 
-56 and 64:
+56 and to:
   Pearson Correlation: 0.7229 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8817
 
-56 and 65:
+56 and to:
   Pearson Correlation: 0.7538 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8998
 

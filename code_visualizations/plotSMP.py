@@ -38,7 +38,7 @@ def plot_pairs(pairs, filename, save=False, title=None, target_dir=Path("output/
             plt.savefig((target_dir / filename).with_suffix(".png"))
             #save as pdf for better quality in another folder
             (target_dir / "pdf").mkdir(parents=True, exist_ok=True)
-            plt.savefig((target_dir / "pdf" / filename).with_suffix(".pdf"), format="pdf", bbox_inches="tight")
+            #plt.savefig((target_dir / "pdf" / filename).with_suffix(".pdf"), format="pdf", bbox_inches="tight")
         else:
             plt.show()
         plt.close()

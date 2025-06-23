@@ -159,7 +159,14 @@ def load_all_smp_profiles(pnt=True, aligned="pairs"):
         if pnt == True:
             df, profile_name, spatial_res = load_pnt("data/smp_profiles/"+allocation["name"][i]+ ".PNT")
         else:
-            df, profile_name = load_csv("data/aligned_"+aligned+"/"+allocation["name"][i]+ "_aligned.csv")
+            # Search with wildcard to match any aligned file
+            name = allocation["name"][i]
+            search_pattern = f"data/aligned_{aligned}/{name}_aligned*.csv"
+            matched_files = glob.glob(search_pattern)
+            if not matched_files:
+                print(f"Warning: No file found for {name} in aligned_{aligned}")
+                continue
+            df, profile_name = load_csv(matched_files[0])
         df.attrs["date"] = allocation["date"][i]
         df.attrs["velocity"] = allocation["velocity"][i]
         df.attrs["spatial_resolution"] = spatial_res
