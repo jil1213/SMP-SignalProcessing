@@ -1,0 +1,34 @@
+Similarity scores for aligned increasing - Day 1:
+
+56 - 57:
+  Pearson Correlation: 0.7279 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8832
+
+56 - 58:
+  Pearson Correlation: 0.7505 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8560
+
+56 - 59:
+  Pearson Correlation: 0.6151 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8328
+
+56 - 60:
+  Pearson Correlation: 0.5147 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7914
+
+61 - 62:
+  Pearson Correlation: 0.7315 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8660
+
+61 - 63:
+  Pearson Correlation: 0.8479 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9224
+
+61 - 64:
+  Pearson Correlation: 0.6599 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8318
+
+61 - 65:
+  Pearson Correlation: 0.6555 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8160
+

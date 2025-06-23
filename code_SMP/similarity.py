@@ -134,58 +134,63 @@ if __name__ == "__main__":
     # III: similarity scores for new pairs of profiles
     # pairs of profiles saved as lists in code_SMP/pairs.py
 
-    # Step 1: crosscorrelate 
-    #under construction: correlate and make similarity scores for new pairs 
     smp_profiles = load_all_smp_profiles()
 
     #for new profiles pairs give them save_dir 
-    type = "double"  # change this for type 
-    save_dir= Path("data/aligned_"+type)
-    # build pairs for crosscorrelation 
-    paired_profiles = build_pairs_from_list(smp_profiles, double_distance_pairs)
-    # crosscorrelate pairs
-    #_ = align_profiles(smp_profiles, paired_profiles=paired_profiles, save_dir=save_dir, plot=True, save=False)
+    for type in ["single", "double", "increasing", "decreasing"]:
 
-    # Step 2: load all csv
-    smp_profiles = {}
+        save_dir= Path("data/aligned_"+type)
+        # build pairs for crosscorrelation 
+        if type == "double":
+            paired_profiles = build_pairs_from_list(smp_profiles, double_distance_pairs)
+        elif type == "single":
+            paired_profiles = build_pairs_from_list(smp_profiles, single_distance_pairs)
+        elif type == "increasing":
+            paired_profiles = build_pairs_from_list(smp_profiles, increasing_distance_pairs)
+        elif type == "decreasing":
+            paired_profiles = build_pairs_from_list(smp_profiles, decreasing_distance_pairs)
 
-    for file in Path(save_dir).iterdir():
-        df = pd.read_csv(file)
-        profile_name = Path(file).stem
+        # Step 1: crosscorrelate pairs
+        _ = align_profiles(smp_profiles, paired_profiles=paired_profiles, save_dir=save_dir, plot=True, save=False)
 
-        match = re.search(r'S(\d{2})M(\d{4})', profile_name)
-        if match:
-            number = int(match.group(2))  # z.B. 1053 → aus 'S45M1053'
-            df.attrs["date"] = 1 if number < 1083 else 2
-        smp_profiles[profile_name] = df
+        # Step 2: load all csv
+        smp_profiles = {}
 
-    # Step 3: calculate similarity scores for new pairs
-    data_by_day = {1: [], 2: []}
-    alignment = "double"  # oder was du für den Plot-Title willst
+        for file in Path(save_dir).iterdir():
+            df = pd.read_csv(file)
+            profile_name = Path(file).stem
 
-    print(f"\nSimilarity scores for manually defined {alignment} pairs:\n")
-    for df1, name1, df2, name2 in paired_profiles:
-        pearson, p_val, cosine = similarity(df1["force"].values, df2["force"].values)
+            match = re.search(r'S(\d{2})M(\d{4})', profile_name)
+            if match:
+                number = int(match.group(2))  # e.g. 1053 of 'S45M1053'
+                df.attrs["date"] = 1 if number < 1083 else 2
+            smp_profiles[profile_name] = df
 
-        # Simpler Label z. B. 53 and 56
-         # get label and day info
-        match1 = re.search(r"S\d{2}M\d{4}", name1)
-        match2 = re.search(r"S\d{2}M\d{4}", name2)
-        label = f"{match1.group()[-2:]} - {match2.group()[-2:]}"
-        day = df1.attrs.get("date", 0)
+        # Step 3: calculate similarity scores for new pairs
+        data_by_day = {1: [], 2: []}
 
-        print(f"{label} (Day {day}):")
-        print(f"  Pearson Correlation: {pearson:.4f} (p-value: {p_val:.4e})")
-        print(f"  Cosine Similarity:   {cosine:.4f}\n")
+        print(f"\nSimilarity scores for manually defined {type} pairs:\n")
+        for df1, name1, df2, name2 in paired_profiles:
+            pearson, p_val, cosine = similarity(df1["force"].values, df2["force"].values)
 
-        data_by_day[day].append({
-            "label": label,
-            "pearson": pearson,
-            "cosine": cosine,
-            "p_value": p_val
-        })
+            # get label and day info
+            match1 = re.search(r"S\d{2}M\d{4}", name1)
+            match2 = re.search(r"S\d{2}M\d{4}", name2)
+            label = f"{match1.group()[-2:]} - {match2.group()[-2:]}"
+            day = df1.attrs.get("date", 0)
 
-    # Step 4: plot similarity scores
-    for day in sorted(data_by_day):
-        if data_by_day[day]:
-            plot_similarity_scores(data_by_day[day], day, alignment=alignment, save=True)
+            print(f"{label} (Day {day}):")
+            print(f"  Pearson Correlation: {pearson:.4f} (p-value: {p_val:.4e})")
+            print(f"  Cosine Similarity:   {cosine:.4f}\n")
+
+            data_by_day[day].append({
+                "label": label,
+                "pearson": pearson,
+                "cosine": cosine,
+                "p_value": p_val
+            })
+
+        # Step 4: plot similarity scores and save as txt
+        for day in sorted(data_by_day):
+            if data_by_day[day]:
+                plot_similarity_scores(data_by_day[day], day, alignment=type, save=True)
