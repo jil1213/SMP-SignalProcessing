@@ -57,7 +57,7 @@ def plot_similarity_scores(data, day, alignment, save=True):
     cosine = [entry["cosine"] for entry in data]
     width = 3
 
-    fig, ax = plt.subplots(figsize=(10, 4))
+    fig, ax = plt.subplots(figsize=(11, 4))
     ax.set_title(f"Similarity of SMP Profiles aligned {alignment} (Day {day})")
     ax.set_ylabel("Similarity Score")
     ax.set_ylim(0, 1.1)
@@ -66,7 +66,7 @@ def plot_similarity_scores(data, day, alignment, save=True):
     # background lines and labels
     for xi, label in zip(x, pair_labels):
         ax.plot([xi, xi], [0, 1], color='lightgray', linestyle='--')
-        ax.text(xi, -0.05, label, ha='center', fontsize=9) #change 0.05 to set labels lower if additional distance values
+        ax.text(xi, -0.05, label, ha='center', fontsize=7) #change 0.05 to set labels lower if additional distance values
 
     # plot bars
     ax.bar(x - width, pearson, width=width, label="Pearson")
@@ -114,7 +114,9 @@ if __name__ == "__main__":
             pearson, p_val, cosine = similarity(df8["force"].values, df20["force"].values)
 
             # get label and day info
-            label = f"{name8[-10:-8]} and {name20[-10:-8]}"
+            match1 = re.search(r"S\d{2}M\d{4}", name8)
+            match2 = re.search(r"S\d{2}M\d{4}", name20)
+            label = f"{match1.group()[-2:]} - {match2.group()[-2:]}"
             day = df8.attrs.get("date", 0)
 
             print(f"{label} (Day {day}):")
@@ -127,6 +129,7 @@ if __name__ == "__main__":
         for day in sorted(data_by_day):
             if data_by_day[day]:
                 plot_similarity_scores(data_by_day[day], day, alignment=aligned, save=True)
+
 
     # III: similarity scores for new pairs of profiles
     # pairs of profiles saved as lists in code_SMP/pairs.py
@@ -165,7 +168,10 @@ if __name__ == "__main__":
         pearson, p_val, cosine = similarity(df1["force"].values, df2["force"].values)
 
         # Simpler Label z. B. 53 and 56
-        label = f"{name1[-10:-8]} and {name2[-10:-8]}"
+         # get label and day info
+        match1 = re.search(r"S\d{2}M\d{4}", name1)
+        match2 = re.search(r"S\d{2}M\d{4}", name2)
+        label = f"{match1.group()[-2:]} - {match2.group()[-2:]}"
         day = df1.attrs.get("date", 0)
 
         print(f"{label} (Day {day}):")

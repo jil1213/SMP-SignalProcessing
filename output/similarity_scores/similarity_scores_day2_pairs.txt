@@ -1,22 +1,22 @@
 Similarity scores for aligned pairs - Day 2:
 
-89 and 83:
+89 - 83:
   Pearson Correlation: 0.6434 (p-value: 0.0000e+00)
   Cosine Similarity:   0.7919
 
-90 and 84:
+90 - 84:
   Pearson Correlation: 0.5587 (p-value: 0.0000e+00)
   Cosine Similarity:   0.7439
 
-91 and 85:
+91 - 85:
   Pearson Correlation: 0.7376 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8493
 
-92 and 86:
+92 - 86:
   Pearson Correlation: 0.9216 (p-value: 0.0000e+00)
   Cosine Similarity:   0.9507
 
-93 and 87:
+93 - 87:
   Pearson Correlation: 0.8405 (p-value: 0.0000e+00)
   Cosine Similarity:   0.9177
 
