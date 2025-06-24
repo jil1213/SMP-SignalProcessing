@@ -130,7 +130,7 @@ if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
 
     # pairs of profiles saved as lists in code_SMP/pairs.py
-    for type in ["pairs", "first", "single", "double", "increasing", "decreasing"]:
+    for type in ["double"]:#["pairs", "first", "single", "double", "increasing", "decreasing"]:
 
         # build pairs for crosscorrelation 
         if type == "pairs":
@@ -154,15 +154,15 @@ if __name__ == "__main__":
             # Step 1: crosscorrelate pairs
             #check if crosscorr is already in cache 
             pair_key = tuple(sorted((name1, name2)))
-            if pair_key in cache:
-                lag = cache[pair_key]["lag"]
+            #if pair_key in cache:
+            #    lag = cache[pair_key]["lag"]
             # if not: crosscorrelate 
-            else:
-                offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=False)
-                # save offset in cache
-                cache[pair_key] = {"lag": lag}
-                with open(cache_path, "wb") as f:
-                    pickle.dump(cache, f)
+            #else:
+            offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=False)
+            # save offset in cache
+            cache[pair_key] = {"lag": lag}
+            with open(cache_path, "wb") as f:
+                pickle.dump(cache, f)
 
             # Step 2: Align profiles
             df1, df2 = align_profiles(df1, df2, name1, name2, lag)

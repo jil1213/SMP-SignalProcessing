@@ -13,8 +13,8 @@ Similarity scores for aligned double - Day 2:
   Cosine Similarity:   0.7929
 
 89 - 91:
-  Pearson Correlation: 0.0759 (p-value: 3.6550e-246)
-  Cosine Similarity:   0.4866
+  Pearson Correlation: 0.0758 (p-value: 1.9286e-245)
+  Cosine Similarity:   0.4865
 
 90 - 92:
   Pearson Correlation: 0.3672 (p-value: 0.0000e+00)

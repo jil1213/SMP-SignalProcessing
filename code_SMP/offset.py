@@ -16,12 +16,12 @@ def get_offset(df1, df2, name1, name2, plot=True):
     df2 = df2.reset_index(drop=True)
 
     #Cut dfs to apply autocorrelation - only use for offset method!
-    start = 10000 # *0,004132 = 41,32mm // with surface trim I could also start with 0 
+    start = 0 #10000 *0,004132 = 41,32mm // with surface trim I could also start with 0 
     end = 220000 #909,94mm // only works for day 1 , profiles of day 2 are shorter
 
     #make shorter Array for day 2 (so ground peaks get cut off)
     if len(df2) < 250000: 
-        start = 10000
+        start = 0 #10000
         end = 170000 # = 702,44mm 
 
     #check if array is long enough, if not: take a smaller range
