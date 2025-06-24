@@ -190,7 +190,7 @@ if __name__ == "__main__":
         # Step 4: plot similarity scores and save as .txt
         for day in sorted(data_by_day):
             if data_by_day[day]:
-                plot_similarity_scores(data_by_day[day], day, alignment=type, save=True)
+                plot_similarity_scores(data_by_day[day], day, alignment=type)
 
         for day in [1, 2]:
             corr_df = compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path)
