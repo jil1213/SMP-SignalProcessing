@@ -8,8 +8,9 @@ from snowmicropyn import Profile
 from pathlib import Path
 from code_SMP.detect_surface import detect_surface
 
+
 # import all SMP profiles existing in the folder (getting names out of )
-folder_path = Path("additional_code/test_data")
+folder_path = Path("additional_code/test_data1")
 smp_profiles = {}
 pnt_files = folder_path.glob("*.PNT")
 for file in pnt_files:

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+from skimage.filters import threshold_otsu
 from snowmicropyn import Profile
 #from code_SMP.readSMP import load_all_smp_profiles
 import numpy as np
