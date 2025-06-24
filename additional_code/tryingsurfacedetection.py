@@ -3,6 +3,7 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import configparser
 
 from snowmicropyn import Profile
 from pathlib import Path
@@ -10,10 +11,31 @@ from code_SMP.detect_surface import detect_surface
 
 
 # import all SMP profiles existing in the folder (getting names out of )
-folder_path = Path("additional_code/test_data1")
+folder_path = Path("additional_code/test_data3")
 smp_profiles = {}
-pnt_files = folder_path.glob("*.PNT")
+#pnt_files = folder_path.glob("*.PNT")
+pnt_files = folder_path.rglob("*.PNT") # for recurcsive search in subfolders for test_data3
 for file in pnt_files:
+        if folder_path == Path("additional_code/test_data3"):
+                ini_file = file.with_suffix(".ini") # get corresponing ini
+                config = configparser.ConfigParser()
+                config.read(ini_file)
+
+                # only keep profiles with qa_flag == 1
+                try:
+                        qa_flag = int(config["quality assurance"].get("qa_flag", 0))
+                except (KeyError, ValueError):
+                        qa_flag = 0
+
+                if qa_flag != 1:
+                        continue
+
+                # get surface from ini
+                try:
+                        surface_ini = float(config["markers"]["surface"])
+                except (KeyError, ValueError):
+                        surface_ini = None
+
         smp_profile = Profile.load(file)
         profile_name = smp_profile.name
         df = smp_profile.samples
@@ -38,6 +60,8 @@ for file in pnt_files:
         plt.plot(df["distance"], df["force"], label="Force Profile")
         plt.axvline(x=surface_old, color='red', linestyle='--', label=f'Surface (old method): {surface_old} mm')
         plt.axvline(x=surface_new, color='blue', linestyle='--', label=f'Surface (new method): {surface_new} mm')
+        if surface_ini is not None:
+            plt.axvline(x=surface_ini, color='green', linestyle='--', label=f'Surface (from ini): {surface_ini} mm')
         plt.xlabel("Distance (mm)")
         plt.ylabel("Force (N)")
         plt.title(f"Surface Detection for Profile: {profile_name}")
