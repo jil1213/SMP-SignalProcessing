@@ -21,8 +21,8 @@ Similarity scores for aligned single - Day 2:
   Cosine Similarity:   0.6065
 
 90 - 91:
-  Pearson Correlation: 0.4276 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.6800
+  Pearson Correlation: 0.4170 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6739
 
 91 - 92:
   Pearson Correlation: 0.3181 (p-value: 0.0000e+00)

@@ -1,34 +1,34 @@
 Similarity scores for aligned decreasing - Day 1:
 
 60 - 56:
-  Pearson Correlation: 0.4521 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7649
+  Pearson Correlation: 0.5588 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8108
 
 60 - 57:
   Pearson Correlation: 0.5825 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8282
 
 60 - 58:
-  Pearson Correlation: 0.4444 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7018
+  Pearson Correlation: 0.4620 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7184
 
 60 - 59:
-  Pearson Correlation: 0.5929 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8298
+  Pearson Correlation: 0.6092 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8351
 
 65 - 61:
-  Pearson Correlation: 0.6617 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8194
+  Pearson Correlation: 0.6500 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8130
 
 65 - 62:
   Pearson Correlation: 0.8762 (p-value: 0.0000e+00)
   Cosine Similarity:   0.9314
 
 65 - 63:
-  Pearson Correlation: 0.6443 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8032
+  Pearson Correlation: 0.6116 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7850
 
 65 - 64:
-  Pearson Correlation: 0.8476 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9158
+  Pearson Correlation: 0.8233 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9023
 
