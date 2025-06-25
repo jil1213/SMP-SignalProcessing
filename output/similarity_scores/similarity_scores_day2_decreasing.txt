@@ -1,34 +1,34 @@
 Similarity scores for aligned decreasing - Day 2:
 
 87 - 83:
-  Pearson Correlation: 0.3549 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.6235
+  Pearson Correlation: -0.1201 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.3439
 
 87 - 84:
-  Pearson Correlation: 0.4504 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.6990
+  Pearson Correlation: 0.1748 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.5287
 
 87 - 85:
-  Pearson Correlation: 0.6116 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7929
+  Pearson Correlation: 0.6170 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7963
 
 87 - 86:
-  Pearson Correlation: 0.5421 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7381
+  Pearson Correlation: 0.3439 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6232
 
 93 - 89:
-  Pearson Correlation: 0.4151 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7103
+  Pearson Correlation: -0.1316 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.4129
 
 93 - 90:
-  Pearson Correlation: 0.3886 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.6822
+  Pearson Correlation: 0.3078 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6401
 
 93 - 91:
-  Pearson Correlation: 0.5321 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7450
+  Pearson Correlation: -0.0610 (p-value: 1.1024e-163)
+  Cosine Similarity:   0.4190
 
 93 - 92:
-  Pearson Correlation: 0.7041 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8209
+  Pearson Correlation: 0.4239 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.6538
 

@@ -24,8 +24,8 @@ def bulid_pairs(smp_profiles):
 def plot_pairs(pairs, filename, save=False, title=None, target_dir=Path("output/visualizations")):
     for df8, name8, df20, name20 in pairs:
         plt.figure(figsize=(8, 5))
-        plt.plot(df20["distance"], df20["force"], label=f"{name20} (velocity=20)")
-        plt.plot(df8["distance"], df8["force"], label=f"{name8} (velocity=8)")
+        plt.plot(df20["distance"], df20["force"], label=f"{name20}") #(velocity=20)
+        plt.plot(df8["distance"], df8["force"], label=f"{name8}") #(velocity=8)
         plt.xlabel("Distance (mm)")
         plt.ylabel("Force (N)")
         if title == None: 

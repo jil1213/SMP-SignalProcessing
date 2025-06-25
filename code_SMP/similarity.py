@@ -154,18 +154,18 @@ if __name__ == "__main__":
             # Step 1: crosscorrelate pairs
             #check if crosscorr is already in cache 
             pair_key = tuple(sorted((name1, name2)))
-            #if pair_key in cache:
-            #    lag = cache[pair_key]["lag"]
+            if pair_key in cache:
+                lag = cache[pair_key]["lag"]
             # if not: crosscorrelate 
-            #else:
-            offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=False)
+            else:
+                offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=True)
             # save offset in cache
             cache[pair_key] = {"lag": lag}
             with open(cache_path, "wb") as f:
                 pickle.dump(cache, f)
 
             # Step 2: Align profiles
-            df1, df2 = align_profiles(df1, df2, name1, name2, lag)
+            df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=True)
 
             # Step 3: calculate similarity scores
             pearson, p_val, cosine = similarity(df1["force"].values, df2["force"].values)

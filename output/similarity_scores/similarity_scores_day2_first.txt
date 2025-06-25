@@ -17,8 +17,8 @@ Similarity scores for aligned first - Day 2:
   Cosine Similarity:   0.6134
 
 83 - 89:
-  Pearson Correlation: 0.7620 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8590
+  Pearson Correlation: 0.5398 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7333
 
 83 - 90:
   Pearson Correlation: 0.2706 (p-value: 0.0000e+00)
