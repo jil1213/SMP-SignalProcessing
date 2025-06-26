@@ -60,16 +60,22 @@ def detect_surface(df, name):
     early_std = np.nanstd(grad[2500:5000])
     threshold = 5 * early_std
 
+    surface = None 
+
     # Find first significant gradient rise above threshold
     for i in range(1000, len(grad)): #in snowmicropyn 100 but makes higher error here
         if grad[i] > threshold:
             check_window = grad[i+1 : i+1+window_len] # calculate gradient for 1mm after possible surface value
-            #surface = distance[i]
 
             if np.sum(check_window < threshold) / len(check_window) >= threshold: #make a different threshold here
                  continue
             surface = distance[i]
             break
+
+    # fallback when no surface can be found
+    if surface is None:
+        print(f"[{name}] No valid surface detected using new method.")
+        surface = distance[0] 
 
     return surface, grad, threshold
 

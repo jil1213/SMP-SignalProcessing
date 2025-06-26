@@ -5,6 +5,7 @@ from scipy.ndimage import uniform_filter1d
 import matplotlib.pyplot as plt
 import numpy as np
 import configparser
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 from snowmicropyn import Profile
 from pathlib import Path
@@ -20,6 +21,7 @@ surface_ini_all = []
 surface_old_all = []
 surface_new_all = []
 profile_names = []
+thresholds = []
 
 for file in pnt_files:
         surface_ini = None
@@ -65,12 +67,12 @@ for file in pnt_files:
         # plot only profiles where surface ini and new have a big distance
         #if surface_ini - surface_new > 5 or surface_new - surface_ini > 5: 
         plt.figure(figsize=(8, 5))
-        plt.plot(df["distance"], grad[:len(df)], label="Force Profile")
+        #plt.plot(df["distance"], grad[:len(df)], label="Force Profile")
+        plt.plot(df["distance"], df["force"], label="Force Profile")
         plt.axvline(x=surface_old, color='red', linestyle='--', label=f'Surface (old method): {surface_old} mm')
         plt.axvline(x=surface_new, color='blue', linestyle='--', label=f'Surface (new method): {surface_new} mm')
         if surface_ini is not None:
                 plt.axvline(x=surface_ini, color='green', linestyle='--', label=f'Surface (from ini): {surface_ini} mm')
-
         plt.xlabel("Distance (mm)")
         plt.ylabel("Force (N)")
         plt.title(f"Surface Detection for Profile: {profile_name}, threshold: {threshold:.4f}")
@@ -78,7 +80,7 @@ for file in pnt_files:
         plt.legend()
         plt.xlim(x_min, x_max)
         plt.ylim(y_min - 1, y_max + 1)
-        plt.savefig(folder_path / f"surface_{profile_name}.png")
+        #plt.savefig(folder_path / f"surface_{profile_name}.png")
         #plt.show()
         plt.close()
 
@@ -87,29 +89,45 @@ for file in pnt_files:
         surface_old_all.append(surface_old)
         surface_new_all.append(surface_new)
         profile_names.append(profile_name)
+        thresholds.append(threshold)
 
-surface_ini_all = np.array(surface_ini_all) #need numpy array for calculations
-surface_old_all = np.array(surface_old_all)
-surface_new_all = np.array(surface_new_all)
 
-# Fehler berechnen
-delta_old = np.abs(surface_old_all - surface_ini_all)
-delta_new = np.abs(surface_new_all - surface_ini_all)
+if surface_ini is not None: 
+        # convert to numpy arraay for calculations
+        surface_ini_all = np.array(surface_ini_all)
+        surface_old_all = np.array(surface_old_all)
+        surface_new_all = np.array(surface_new_all)
+        thresholds = np.array(thresholds)
 
-# calculate median of errors
-median_old = np.median(delta_old)
-median_new = np.median(delta_new)
-print(f"Median absolute deviation (old method): {median_old:.2f} mm")
-print(f"Median absolute deviation (new method): {median_new:.2f} mm")
+        # Fehler berechnen
+        delta_old = np.abs(surface_old_all - surface_ini_all)
+        delta_new = np.abs(surface_new_all - surface_ini_all)
 
-# Linienplot pro Profil
-plt.figure(figsize=(10, 5))
-plt.plot(delta_old, label="Old vs Ini", marker='.')
-plt.plot(delta_new, label="New vs Ini", marker='.')
-plt.xlabel("Profile Index")
-plt.ylabel("Absolute Deviation (mm)")
-plt.title("Deviation from Ground Truth (surface_ini)")
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-plt.savefig(folder_path / f"delta_error.png")
+
+        # calculate median of errors
+        median_old = np.median(delta_old)
+        median_new = np.median(delta_new)
+        print(f"Median absolute deviation (old method): {median_old:.2f} mm")
+        print(f"Median absolute deviation (new method): {median_new:.2f} mm")
+        
+        #calculate mean 
+        mae_new = mean_absolute_error(surface_ini_all, surface_new_all)
+        mae_old = mean_absolute_error(surface_ini_all, surface_old_all)
+        rmse_new = mean_squared_error(surface_ini_all, surface_new_all, squared=False)
+        rmse_old = mean_squared_error(surface_ini_all, surface_old_all, squared=False)
+        print(f"Mean Absolute Error (old method): {mae_old:.2f} mm")
+        print(f"Mean Absolute Error (new method): {mae_new:.2f} mm")
+        print(f"Root Mean Squared Error (old method): {rmse_old:.2f} mm")
+        print(f"Root Mean Squared Error (new method): {rmse_new:.2f} mm")
+
+        # Linienplot pro Profil
+        plt.figure(figsize=(10, 5))
+        plt.plot(delta_old, label="Old vs Ini", marker='.')
+        plt.plot(delta_new, label="New vs Ini", marker='.')
+        plt.xlabel("Profile Index")
+        plt.ylabel("Absolute Deviation (mm)")
+        plt.title("Deviation from Ground Truth (surface_ini)")
+        plt.grid(True)
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(folder_path / f"delta_error.png")
