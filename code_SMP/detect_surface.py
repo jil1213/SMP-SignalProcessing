@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from skimage.filters import threshold_otsu
 from snowmicropyn import Profile
+from snowmicropyn.tools import smooth
 #from code_SMP.readSMP import load_all_smp_profiles
 import numpy as np
 
@@ -29,7 +30,7 @@ def moving_linear_regression(x, y, window_mm=1.0):
     denominator = n * sum_x2 - sum_x ** 2
     slope = numerator / denominator
 
-    # Pad result to original length with NaNs on both sides 
+    # Pad result to original length with NaNs on both sides for 
     pad = (len(x) - len(slope)) // 2
     result = np.full_like(x, np.nan)
     result[pad:pad+len(slope)] = slope
@@ -37,43 +38,40 @@ def moving_linear_regression(x, y, window_mm=1.0):
     return result
 
 
-def detect_surface(df, name, plot=False):
+def detect_surface(df, name):
     distance = df["distance"]
     force = df["force"]
 
-    # calculate gradient - very exact uses two points and calculates slope
-    #gradient = np.gradient(log_force, log_distance)
-
-    # gradient over window with 1mm 
-    #grad = moving_linear_regression(log_distance, log_force, window_mm=1.0)
+    # gradient with linear regression over 1mm window
     grad = moving_linear_regression(distance, force, window_mm=1.0)
+    # nans to zero
+    grad = np.nan_to_num(grad, nan=0.0)
+    #smoothing with hanning, same as smooth() of snowmicropyn
+    grad = smooth(grad, 242)
+    window_len = 242 # thats 1mm/resolution of SMP 
+    #s = np.r_[grad[window_len - 1:0:-1], grad, grad[-1:-window_len:-1]]
+    #w = eval('np.' + 'hanning' + '(window_len)')
+    #grad = np.convolve(w / w.sum(), s, mode='valid')
 
     # Threshold 
-    # method: take STD of the 1st to 2nd mm 
+    # method: take STD of the 1st to 2nd cm -maybe try smaller range a bit earlier
     # assumption I: the first two mm are always an air measurement
     # assumption II: 1st mm is excluded in order to ignore the starting and possible disturbances
     early_std = np.nanstd(grad[2500:5000])
     threshold = 5 * early_std
 
     # Find first significant gradient rise above threshold
-    for i in range(len(grad)):
+    for i in range(1000, len(grad)): #in snowmicropyn 100 but makes higher error here
         if grad[i] > threshold:
+            check_window = grad[i+1 : i+1+window_len] # calculate gradient for 1mm after possible surface value
+            #surface = distance[i]
+
+            if np.sum(check_window < threshold) / len(check_window) >= threshold: #make a different threshold here
+                 continue
             surface = distance[i]
             break
 
-    if plot == True: 
-        #plot gradient 
-        plt.figure(figsize=(8, 5))
-        plt.plot(distance, grad, label='Moving Derivative (1mm window)', linestyle='--')
-        plt.axvline(x=surface, color='red', linestyle='--', label=f'Surface: {surface} mm')
-        plt.xlabel("Distance (mm)")
-        plt.ylabel("Gradient of log force")
-        plt.title(f"Gradient of log force vs Distance {name}")
-        plt.grid()
-        plt.legend()
-        plt.show()
-
-    return surface
+    return surface, grad, threshold
 
 def detect_surface_snowmicropyn(file):
     #compare with snowmicropyn package detection method
