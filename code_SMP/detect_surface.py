@@ -46,7 +46,7 @@ def detect_surface(df, name):
     grad = moving_linear_regression(distance, force, window_mm=1.0)
 
     #smoothing with hanning, same as smooth() of snowmicropyn
-    #grad = smooth(grad, 242)
+    grad = smooth(grad, 242)
     window_len = 242 # thats 1mm/resolution of SMP 
     #s = np.r_[grad[window_len - 1:0:-1], grad, grad[-1:-window_len:-1]]
     #w = eval('np.' + 'hanning' + '(window_len)')
@@ -74,7 +74,7 @@ def detect_surface(df, name):
             min_std = s
             air_std = s # use smallest std of gradient 
 
-    threshold = 5 * air_std
+    threshold = 4 * air_std
 
 
     surface = None 

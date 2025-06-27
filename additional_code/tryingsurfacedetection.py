@@ -19,7 +19,7 @@ def append_run_information(info_text, scores, target_file=Path("additional_code/
         with target_file.open("r", encoding="utf-8") as f:
             existing_content = f.read()
         if info_text in existing_content:
-            print("Information is already savedin file. Nothing appended.")
+            print("Information is already saved in file. Nothing appended.")
             return
     # Append content
     with target_file.open("a", encoding="utf-8") as f:
@@ -131,7 +131,7 @@ if surface_ini is not None:
         rmse_old = mean_squared_error(surface_ini_all, surface_old_all)
 
         # Change here for different parameter runs
-        info_text = (f"Run with moving linear regression without smooting grad in 1mm window and threshold finding with\n air_std over rolling window 10mm\n threshold = 5 * early_std\n")
+        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = 4 * early_std\n")
 
         # Input scores
         scores = (
