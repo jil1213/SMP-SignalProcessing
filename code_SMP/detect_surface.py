@@ -57,7 +57,32 @@ def detect_surface(df, name):
     # method: take STD of the 1st to 2nd cm -maybe try smaller range a bit earlier
     # assumption I: the first two mm are always an air measurement
     # assumption II: 1st mm is excluded in order to ignore the starting and possible disturbances
-    early_std = np.nanstd(grad[2500:5000])
+    #early_std = np.nanstd(grad[2500:5000])
+    #New method to find air std
+    # Parameters for rolling window
+    window_length_mm = 10.0  # length of rolling window in mm
+    max_scan_mm = 100.0      # scan only first 100mm (10cm) of measurement
+    resolution = 0.00413223123177886
+
+    window_size = int(window_length_mm / resolution)
+
+    # Initialize variables to track lowest std
+    min_std = np.inf
+    best_std = None
+
+    # Loop over indices in the first 10cm
+    for start_idx in range(0, len(grad) - window_size):
+        if distance[start_idx] > (distance[0] + max_scan_mm):
+            break
+        window_grad = grad[start_idx : start_idx + window_size]
+        s = np.std(window_grad)
+        if s < min_std:
+            min_std = s
+            best_std = s
+
+    # Use the smallest std found in any 1cm window in the first 10cm
+    early_std = best_std
+
     threshold = 5 * early_std
 
     surface = None 

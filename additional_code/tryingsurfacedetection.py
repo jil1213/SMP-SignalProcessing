@@ -12,7 +12,7 @@ from code_SMP.detect_surface import detect_surface
 
 def append_run_information(info_text, scores, target_file=Path("additional_code/test_data3/run_summary.txt")):
 
-    content = f"{info_text}\nScores:\n{scores}\n"
+    content = f"\n\n--------------------------------------\n\{info_text}\nScores:\n{scores}\n"
 
     # Check if info_text already exists in file
     if target_file.exists():
@@ -131,7 +131,7 @@ if surface_ini is not None:
         rmse_old = mean_squared_error(surface_ini_all, surface_old_all, squared=False)
 
         # Change here for different parameter runs
-        info_text = (f"Run with moving linear regression and threshold finding with\n early_std = np.nanstd(grad[2500:5000])\n threshold = 5 * early_std\n")
+        info_text = (f"Run with moving linear regression and threshold finding with\n early_std over rolling window 1mm\n threshold = 5 * early_std\n")
 
         # Input scores
         scores = (
