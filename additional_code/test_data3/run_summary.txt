@@ -12,12 +12,13 @@ RMSE old - new: 22.91 - 6.97 mm
 --------------------------------------
 Run with moving linear regression and threshold finding with
  air_std over rolling window 10mm
- threshold = 5 * early_std
+ threshold = 5*air_std
 
 Scores:
 Median old - new: 2.53 - 0.20 mm
 Mean Absolute Error old - new: 5.11 - 1.74 mm
-RMSE old - new: 22.91 - 9.57 mm
+RMSE old - new: 524.79 - 91.64 mm
+
 
 
 --------------------------------------
@@ -51,3 +52,4 @@ Scores:
 Median old - new: 2.53 - 0.21 mm
 Mean Absolute Error old - new: 5.11 - 1.76 mm
 RMSE old - new: 524.79 - 91.94 mm
+

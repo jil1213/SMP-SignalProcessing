@@ -97,7 +97,7 @@ for file in pnt_files:
         plt.legend()
         plt.xlim(x_min, x_max)
         plt.ylim(y_min - 1, y_max + 1)
-        #plt.savefig(folder_path / f"surface_{profile_name}.png")
+        plt.savefig(folder_path / f"surface_{profile_name}.png")
         #plt.show()
         plt.close()
 
@@ -131,7 +131,7 @@ if surface_ini is not None:
         rmse_old = mean_squared_error(surface_ini_all, surface_old_all)
 
         # Change here for different parameter runs
-        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = threshold = air_mean + 5 * air_std (same as snowmicropyn)\n")
+        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = 5*air_std\n")
 
         # Input scores
         scores = (
