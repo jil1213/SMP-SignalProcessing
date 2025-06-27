@@ -40,3 +40,14 @@ Scores:
 Median old - new: 2.53 - 0.22 mm
 Mean Absolute Error old - new: 5.11 - 2.29 mm
 RMSE old - new: 524.79 - 199.57 mm
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 10mm
+ threshold = threshold = air_mean + 5 * air_std (same as snowmicropyn)
+
+Scores:
+Median old - new: 2.53 - 0.21 mm
+Mean Absolute Error old - new: 5.11 - 1.76 mm
+RMSE old - new: 524.79 - 91.94 mm

@@ -64,17 +64,20 @@ def detect_surface(df, name):
     # Initialize variables before loop
     min_std = np.inf
     air_std = None
+    air_mean = None
 
     for start_idx in range(0, len(grad) - window):
         if distance[start_idx] > (distance[0] + max_distance_mm):
             break
         window_grad = grad[start_idx : start_idx + window]
         s = np.std(window_grad)
+        m = np.mean(window_grad)
         if s < min_std:
             min_std = s
             air_std = s # use smallest std of gradient 
+            air_mean = m
 
-    threshold = 4 * air_std
+    threshold = air_mean + 5 * air_std
 
 
     surface = None 
