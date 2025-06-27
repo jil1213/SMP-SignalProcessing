@@ -97,7 +97,7 @@ for file in pnt_files:
         plt.legend()
         plt.xlim(x_min, x_max)
         plt.ylim(y_min - 1, y_max + 1)
-        #plt.savefig(folder_path / f"surface_{profile_name}.png")
+        plt.savefig(folder_path / f"surface_{profile_name}.png")
         #plt.show()
         plt.close()
 
