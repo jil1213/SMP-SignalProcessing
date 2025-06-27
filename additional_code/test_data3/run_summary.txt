@@ -8,8 +8,10 @@ Mean Absolute Error old - new: 5.11 - 2.57 mm
 RMSE old - new: 22.91 - 6.97 mm
 
 
+
+--------------------------------------
 Run with moving linear regression and threshold finding with
- early_std over rolling window 1mm
+ air_std over rolling window 10mm
  threshold = 5 * early_std
 
 Scores:

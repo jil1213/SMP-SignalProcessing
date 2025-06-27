@@ -44,8 +44,7 @@ def detect_surface(df, name):
 
     # gradient with linear regression over 1mm window
     grad = moving_linear_regression(distance, force, window_mm=1.0)
-    # nans to zero
-    grad = np.nan_to_num(grad, nan=0.0)
+
     #smoothing with hanning, same as smooth() of snowmicropyn
     grad = smooth(grad, 242)
     window_len = 242 # thats 1mm/resolution of SMP 
@@ -53,37 +52,30 @@ def detect_surface(df, name):
     #w = eval('np.' + 'hanning' + '(window_len)')
     #grad = np.convolve(w / w.sum(), s, mode='valid')
 
+
     # Threshold 
-    # method: take STD of the 1st to 2nd cm -maybe try smaller range a bit earlier
-    # assumption I: the first two mm are always an air measurement
-    # assumption II: 1st mm is excluded in order to ignore the starting and possible disturbances
-    #early_std = np.nanstd(grad[2500:5000])
-    #New method to find air std
-    # Parameters for rolling window
-    window_length_mm = 10.0  # length of rolling window in mm
-    max_scan_mm = 100.0      # scan only first 100mm (10cm) of measurement
-    resolution = 0.00413223123177886
+    # method: take STD of the gradient from the air measurement without disturbances, form threshold out of it
+    # assumption I: the air measurement can be found in the first 10cm of the profile
+    # assumption II: to get a stable std a a value range of 10mm is used for the calculation -> window
 
-    window_size = int(window_length_mm / resolution)
+    max_distance_mm = 100.0      # assumption I: scan first 100mm (10cm) as possible air measurement
+    window = int(10 / 0.00413223123177886) # assumption II: 10mm window size for calc (length_mm/resolution)
 
-    # Initialize variables to track lowest std
+    # Initialize variables before loop
     min_std = np.inf
-    best_std = None
+    air_std = None
 
-    # Loop over indices in the first 10cm
-    for start_idx in range(0, len(grad) - window_size):
-        if distance[start_idx] > (distance[0] + max_scan_mm):
+    for start_idx in range(0, len(grad) - window):
+        if distance[start_idx] > (distance[0] + max_distance_mm):
             break
-        window_grad = grad[start_idx : start_idx + window_size]
+        window_grad = grad[start_idx : start_idx + window]
         s = np.std(window_grad)
         if s < min_std:
             min_std = s
-            best_std = s
+            air_std = s # use smallest std of gradient 
 
-    # Use the smallest std found in any 1cm window in the first 10cm
-    early_std = best_std
+    threshold = 5 * air_std
 
-    threshold = 5 * early_std
 
     surface = None 
 
