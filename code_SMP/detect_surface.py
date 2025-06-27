@@ -77,7 +77,7 @@ def detect_surface(df, name):
             air_std = s # use smallest std of gradient 
             air_mean = m
 
-    threshold = 5 * air_std #with air_mean +* air_std a very small bit worse - snowmicropyn method
+    threshold = 6 * air_std #with air_mean +* air_std a very small bit worse - snowmicropyn method
 
 
     surface = None 
