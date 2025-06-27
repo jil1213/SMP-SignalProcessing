@@ -131,7 +131,7 @@ if surface_ini is not None:
         rmse_old = mean_squared_error(surface_ini_all, surface_old_all)
 
         # Change here for different parameter runs
-        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = 6*air_std\n")
+        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = 7*air_std\n")
 
         # Input scores
         scores = (
