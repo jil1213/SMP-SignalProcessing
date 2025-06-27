@@ -9,6 +9,26 @@ from snowmicropyn import Profile
 from sklearn.metrics import mean_absolute_error,  mean_squared_error
 from code_SMP.detect_surface import detect_surface
 
+def compute_metrics(surface_ini_all, surface_old_all, surface_new_all, folder_path): 
+        # MAE - Mean Absolute Error
+        mae_old = mean_absolute_error(surface_ini_all, surface_old_all)
+        mae_new = mean_absolute_error(surface_ini_all, surface_new_all)
+
+        # MSE - Mean Squared Error
+        mse_old = mean_squared_error(surface_ini_all, surface_old_all)
+        mse_new = mean_squared_error(surface_ini_all, surface_new_all)
+
+        # RMSE - Root Mean Squared Error
+        rmse_old = np.sqrt(mse_old)
+        rmse_new = np.sqrt(mse_new)
+
+        # Create formatted text instead of array (for later use in .txt file)
+        scores = (
+        f"MAE old - new: {mae_old:.2f} - {mae_new:.2f}\n"
+        f"MSE old - new: {mse_old:.2f} - {mse_new:.2f} mm^2\n"
+        f"RMSEold - new: {rmse_old:.2f} - {rmse_new:.2f} mm\n")
+
+        return scores
 
 def append_run_information(info_text, scores, target_file=Path("additional_code/test_data3/run_summary.txt")):
 
@@ -117,39 +137,43 @@ if surface_ini is not None:
         thresholds = np.array(thresholds)
 
         # Calculate delta errors for each profile
-        delta_old = np.abs(surface_old_all - surface_ini_all)
-        delta_new = np.abs(surface_new_all - surface_ini_all)
+        delta_old = surface_old_all - surface_ini_all
+        delta_new = surface_new_all - surface_ini_all
 
-        # Calculate median
-        median_old = np.median(delta_old)
-        median_new = np.median(delta_new)
-
-        # Calculate mean 
-        mae_new = mean_absolute_error(surface_ini_all, surface_new_all)
-        mae_old = mean_absolute_error(surface_ini_all, surface_old_all)
-        rmse_new = mean_squared_error(surface_ini_all, surface_new_all)
-        rmse_old = mean_squared_error(surface_ini_all, surface_old_all)
+        #compute error metrics
+        scores = compute_metrics(surface_ini_all, surface_old_all, surface_new_all, folder_path)
 
         # Change here for different parameter runs
-        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = 7*air_std\n")
-
-        # Input scores
-        scores = (
-        f"Median old - new: {median_old:.2f} - {median_new:.2f} mm\n"
-        f"Mean Absolute Error old - new: {mae_old:.2f} - {mae_new:.2f} mm\n"
-        f"RMSE old - new: {rmse_old:.2f} - {rmse_new:.2f} mm")
+        info_text = (f"NEW METRICS: Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = 5*air_std\n")
 
         # Append information to the run_summary.txt
         append_run_information(info_text, scores)
 
-        # Linienplot pro Profil
+        # Plotting deviations
         plt.figure(figsize=(10, 5))
         plt.plot(delta_old, label="Old vs Ini", marker='.')
         plt.plot(delta_new, label="New vs Ini", marker='.')
+        # Dummy handle for text explanation
+        plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
         plt.xlabel("Profile Index")
-        plt.ylabel("Absolute Deviation (mm)")
+        plt.ylabel("Deviation (mm)")
         plt.title("Deviation from Ground Truth (surface_ini)")
-        plt.grid(True)
         plt.legend()
+        plt.grid()
         plt.tight_layout()
         plt.savefig(folder_path / f"delta_error.png")
+
+        # Zoomed plotting deviations for better focus on small values
+        plt.figure(figsize=(10, 5))
+        plt.plot(delta_old, label="Old vs Ini", marker='.')
+        plt.plot(delta_new, label="New vs Ini", marker='.')
+        # Dummy handle for text explanation
+        plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
+        plt.xlabel("Profile Index")
+        plt.ylabel("Deviation (mm)")
+        plt.title("Zoomed Deviation from Ground Truth (surface_ini)")
+        plt.ylim(-25, 25) #zoomed range but looses some profiles with high error
+        plt.legend()
+        plt.grid()
+        plt.tight_layout()
+        plt.savefig(folder_path / f"delta_error_zoomed.png")
