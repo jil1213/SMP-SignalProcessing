@@ -1,15 +1,32 @@
 # code to try out surface detection on other profiles 
 # visualizations of detected surface 
-from skimage.filters import threshold_otsu
-from scipy.ndimage import uniform_filter1d
 import matplotlib.pyplot as plt
 import numpy as np
 import configparser
-from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-from snowmicropyn import Profile
 from pathlib import Path
-from code_SMP.detect_surface import detect_surface, moving_linear_regression
+from snowmicropyn import Profile
+from sklearn.metrics import mean_absolute_error,  mean_squared_error
+from code_SMP.detect_surface import detect_surface
+
+
+def append_run_information(info_text, scores, target_file=Path("additional_code/test_data3/run_summary.txt")):
+
+    content = f"{info_text}\nScores:\n{scores}\n"
+
+    # Check if info_text already exists in file
+    if target_file.exists():
+        with target_file.open("r", encoding="utf-8") as f:
+            existing_content = f.read()
+        if info_text in existing_content:
+            print("Information is already savedin file. Nothing appended.")
+            return
+    # Append content
+    with target_file.open("a", encoding="utf-8") as f:
+        f.write(content)
+
+    print(f"Information successfully appended to {target_file}")
+
 
 # import all SMP profiles existing in the folder (getting names out of )
 folder_path = Path("additional_code/test_data3")
@@ -99,26 +116,31 @@ if surface_ini is not None:
         surface_new_all = np.array(surface_new_all)
         thresholds = np.array(thresholds)
 
-        # Fehler berechnen
+        # Calculate delta errors for each profile
         delta_old = np.abs(surface_old_all - surface_ini_all)
         delta_new = np.abs(surface_new_all - surface_ini_all)
 
-
-        # calculate median of errors
+        # Calculate median
         median_old = np.median(delta_old)
         median_new = np.median(delta_new)
-        print(f"Median absolute deviation (old method): {median_old:.2f} mm")
-        print(f"Median absolute deviation (new method): {median_new:.2f} mm")
-        
-        #calculate mean 
+
+        # Calculate mean 
         mae_new = mean_absolute_error(surface_ini_all, surface_new_all)
         mae_old = mean_absolute_error(surface_ini_all, surface_old_all)
         rmse_new = mean_squared_error(surface_ini_all, surface_new_all, squared=False)
         rmse_old = mean_squared_error(surface_ini_all, surface_old_all, squared=False)
-        print(f"Mean Absolute Error (old method): {mae_old:.2f} mm")
-        print(f"Mean Absolute Error (new method): {mae_new:.2f} mm")
-        print(f"Root Mean Squared Error (old method): {rmse_old:.2f} mm")
-        print(f"Root Mean Squared Error (new method): {rmse_new:.2f} mm")
+
+        # Change here for different parameter runs
+        info_text = (f"Run with moving linear regression and threshold finding with\n early_std = np.nanstd(grad[2500:5000])\n threshold = 5 * early_std\n")
+
+        # Input scores
+        scores = (
+        f"Median old - new: {median_old:.2f} - {median_new:.2f} mm\n"
+        f"Mean Absolute Error old - new: {mae_old:.2f} - {mae_new:.2f} mm\n"
+        f"RMSE old - new: {rmse_old:.2f} - {rmse_new:.2f} mm")
+
+        # Append information to the run_summary.txt
+        append_run_information(info_text, scores)
 
         # Linienplot pro Profil
         plt.figure(figsize=(10, 5))
