@@ -127,11 +127,11 @@ if surface_ini is not None:
         # Calculate mean 
         mae_new = mean_absolute_error(surface_ini_all, surface_new_all)
         mae_old = mean_absolute_error(surface_ini_all, surface_old_all)
-        rmse_new = mean_squared_error(surface_ini_all, surface_new_all, squared=False)
-        rmse_old = mean_squared_error(surface_ini_all, surface_old_all, squared=False)
+        rmse_new = mean_squared_error(surface_ini_all, surface_new_all)
+        rmse_old = mean_squared_error(surface_ini_all, surface_old_all)
 
         # Change here for different parameter runs
-        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = 5 * early_std\n")
+        info_text = (f"Run with moving linear regression without smooting grad in 1mm window and threshold finding with\n air_std over rolling window 10mm\n threshold = 5 * early_std\n")
 
         # Input scores
         scores = (

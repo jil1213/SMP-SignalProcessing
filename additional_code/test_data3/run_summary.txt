@@ -18,3 +18,14 @@ Scores:
 Median old - new: 2.53 - 0.20 mm
 Mean Absolute Error old - new: 5.11 - 1.74 mm
 RMSE old - new: 22.91 - 9.57 mm
+
+
+--------------------------------------
+Run with moving linear regression without smooting grad in 1mm window and threshold finding with
+ air_std over rolling window 10mm
+ threshold = 5 * early_std
+
+Scores:
+Median old - new: 2.53 - 0.65 mm
+Mean Absolute Error old - new: 5.11 - 3.71 mm
+RMSE old - new: 22.91 - 8.00 mm
