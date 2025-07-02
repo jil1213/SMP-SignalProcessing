@@ -1,12 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import pickle
 
 from pathlib import Path
 from scipy.signal import argrelextrema
 from scipy.interpolate import pchip_interpolate
 
 from code_SMP.readSMP import load_all_smp_profiles
+from code_SMP.pairs import pairs
+from code_SMP.offset import align_profiles, get_offset
+from code_SMP.similarity import load_offset_cache, build_pairs_from_list
 
 # Interpolation of minima with low pass filter
 
@@ -56,6 +60,35 @@ def interpolate(name, df, plot= False, save=False, target_dir=Path("output/inter
     return df_drift
 
 if __name__ == "__main__":
-    smp_profiles = load_all_smp_profiles(pnt=False, aligned="pairs") 
-    for name, df in smp_profiles.items():
-        interpolate(name, df, plot=True, save=True)
+    smp_profiles = load_all_smp_profiles()
+
+    # pairs of profiles saved as lists in code_SMP/pairs.py
+    type = "pairs"
+
+    # build pairs for crosscorrelation 
+    paired_profiles = build_pairs_from_list(smp_profiles, pairs)
+    
+    data_by_day = {1: [], 2: []}
+    cache_path = "output/similarity_scores/offset_cache.pkl"
+    cache = load_offset_cache(cache_path)
+    print(f"\nSimilarity scores for manually defined {type} pairs:\n")
+    for df1, name1, df2, name2 in paired_profiles:
+        # Step 1: crosscorrelate pairs
+        #check if crosscorr is already in cache 
+        pair_key = tuple(sorted((name1, name2)))
+        if pair_key in cache:
+            lag = cache[pair_key]["lag"]
+        # if not: crosscorrelate 
+        else:
+            offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=True)
+        # save offset in cache
+        cache[pair_key] = {"lag": lag}
+        with open(cache_path, "wb") as f:
+            pickle.dump(cache, f)
+
+        # Step 2: Align profiles
+        df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=True)
+        
+        # Step 3: Interpolate minima
+        df1_drift = interpolate(name1, df1, plot=True, save=False)
+        df2_drift = interpolate(name2, df2, plot=True, save=False)
