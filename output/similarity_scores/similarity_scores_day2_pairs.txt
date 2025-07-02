@@ -1,22 +1,27 @@
 Similarity scores for aligned pairs - Day 2:
 
 89 - 83:
-  Pearson Correlation: 0.7478 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8527
+  Pearson Correlation: 0.7503 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8542
 
+ Self-defined S value: 0.0000
 90 - 84:
-  Pearson Correlation: 0.5634 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7484
+  Pearson Correlation: 0.5511 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7413
 
+ Self-defined S value: 0.0000
 91 - 85:
-  Pearson Correlation: 0.7376 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8493
+  Pearson Correlation: 0.7401 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8508
 
+ Self-defined S value: 0.0000
 92 - 86:
-  Pearson Correlation: 0.9216 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9507
+  Pearson Correlation: 0.9141 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9460
 
+ Self-defined S value: 0.0000
 93 - 87:
-  Pearson Correlation: 0.8405 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9177
+  Pearson Correlation: 0.8338 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9145
 
+ Self-defined S value: 0.0000

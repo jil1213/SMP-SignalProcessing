@@ -37,7 +37,9 @@ def similarity(df1, df2):
     pearson_corr, p_value = pearsonr(df1, df2) #is the same as pearson_corr = np.corrcoef(df1, df2)[0, 1] -why is p_value always Zero? 
     # Cosine Similarity
     cosine = np.dot(df1, df2) / (np.linalg.norm(df1) * np.linalg.norm(df2))
-    return pearson_corr, p_value, cosine
+    # Self defined S value 
+    S = np.sum(df1*df2) / (np.sum(df1) * np.sum(df2))
+    return pearson_corr, p_value, cosine, S
 
 
 def plot_similarity_scores(data, day, alignment):
@@ -74,6 +76,7 @@ def plot_similarity_scores(data, day, alignment):
             f.write(f"{entry['label']}:\n")
             f.write(f"  Pearson Correlation: {entry['pearson']:.4f} (p-value: {entry['p_value']:.4e})\n")
             f.write(f"  Cosine Similarity:   {entry['cosine']:.4f}\n\n")
+            f.write(f" Self-defined S value: {entry['S']:.4f}\n")
 
 
 def compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path):
@@ -130,12 +133,14 @@ if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
 
     # pairs of profiles saved as lists in code_SMP/pairs.py
-    for type in ["pairs", "first", "single", "double", "increasing", "decreasing"]:
+    for type in ["first_mean"]:#["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
 
         # build pairs for crosscorrelation 
         if type == "pairs":
             paired_profiles = build_pairs_from_list(smp_profiles, pairs)
         elif type == "first":
+            paired_profiles = build_pairs_from_list(smp_profiles, first)
+        elif type == "first_mean":
             paired_profiles = build_pairs_from_list(smp_profiles, first)
         elif type == "double":
             paired_profiles = build_pairs_from_list(smp_profiles, double_distance_pairs)
@@ -166,9 +171,25 @@ if __name__ == "__main__":
 
             # Step 2: Align profiles
             df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=True)
-
+            # Addition: for first profiles correlate also mean 
+            if type == "first_mean":
+                # group profiles by velocity (right now only day 1)
+                profiles_day1_v8 = [df for name, df in smp_profiles.items() 
+                                    if df.attrs["date"] == 1 and df.attrs["velocity"] == 8]
+                profiles_day1_v20 = [df for name, df in smp_profiles.items()
+                                    if df.attrs["date"] == 1 and df.attrs["velocity"] == 20]
+                # make sure length is the same
+                min_len = min(min(len(df) for df in profiles_day1_v8), min(len(df) for df in profiles_day1_v20))
+                # calc means 
+                forces_v8 = np.stack([df["force"].values[:min_len]  for df in profiles_day1_v8])
+                mean_v8 = np.mean(forces_v8, axis=0)
+                forces_v20 = np.stack([df["force"].values[:min_len]  for df in profiles_day1_v20])
+                mean_v20 = np.mean(forces_v20, axis=0)
+                # calc similarity scores for means 
+                pearson, p_val, cosine, S = similarity(mean_v8, mean_v20)
             # Step 3: calculate similarity scores
-            pearson, p_val, cosine = similarity(df1["force"].values, df2["force"].values)
+            else:
+                pearson, p_val, cosine, S = similarity(df1["force"].values, df2["force"].values)
 
             # get label and day info
             match1 = re.search(r"S\d{2}M\d{4}", name1)
@@ -178,13 +199,15 @@ if __name__ == "__main__":
 
             print(f"{label} (Day {day}):")
             print(f"  Pearson Correlation: {pearson:.4f} (p-value: {p_val:.4e})")
-            print(f"  Cosine Similarity:   {cosine:.4f}\n")
+            print(f"  Cosine Similarity:   {cosine:.4f}")
+            print(f" Self-defined S value: {S:.4f}\n")
 
             data_by_day[day].append({
                 "label": label,
                 "pearson": pearson,
                 "cosine": cosine,
-                "p_value": p_val
+                "p_value": p_val, 
+                "S": S
             })
 
         # Step 4: plot similarity scores and save as .txt

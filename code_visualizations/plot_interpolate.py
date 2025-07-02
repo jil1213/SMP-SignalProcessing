@@ -62,16 +62,13 @@ def interpolate(name, df, plot= False, save=False, target_dir=Path("output/inter
 if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
 
-    # pairs of profiles saved as lists in code_SMP/pairs.py
-    type = "pairs"
-
-    # build pairs for crosscorrelation 
+    # build pairs for crosscorrelation - pairs of profiles saved as lists in code_SMP/pairs.py
     paired_profiles = build_pairs_from_list(smp_profiles, pairs)
     
     data_by_day = {1: [], 2: []}
     cache_path = "output/similarity_scores/offset_cache.pkl"
     cache = load_offset_cache(cache_path)
-    print(f"\nSimilarity scores for manually defined {type} pairs:\n")
+    print(f"\nSimilarity scores for manually defined {"pairs"} pairs:\n")
     for df1, name1, df2, name2 in paired_profiles:
         # Step 1: crosscorrelate pairs
         #check if crosscorr is already in cache 

@@ -1,26 +1,32 @@
 Similarity scores for aligned double - Day 1:
 
 56 - 58:
-  Pearson Correlation: 0.7572 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8591
+  Pearson Correlation: 0.7628 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8621
 
+ Self-defined S value: 0.0000
 57 - 59:
-  Pearson Correlation: 0.7542 (p-value: 0.0000e+00)
+  Pearson Correlation: 0.7541 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8982
 
+ Self-defined S value: 0.0000
 58 - 60:
-  Pearson Correlation: 0.4472 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7032
+  Pearson Correlation: 0.4475 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7033
 
+ Self-defined S value: 0.0000
 61 - 63:
-  Pearson Correlation: 0.8338 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9155
+  Pearson Correlation: 0.7820 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8899
 
+ Self-defined S value: 0.0000
 62 - 64:
-  Pearson Correlation: 0.7742 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8826
+  Pearson Correlation: 0.7738 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8824
 
+ Self-defined S value: 0.0000
 63 - 65:
-  Pearson Correlation: 0.6116 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.7850
+  Pearson Correlation: 0.5989 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.7791
 
+ Self-defined S value: 0.0000

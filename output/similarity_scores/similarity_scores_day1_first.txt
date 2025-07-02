@@ -1,38 +1,47 @@
 Similarity scores for aligned first - Day 1:
 
 56 - 57:
-  Pearson Correlation: 0.7930 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9109
+  Pearson Correlation: 0.7925 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9107
 
+ Self-defined S value: 0.0000
 56 - 58:
-  Pearson Correlation: 0.7572 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8591
+  Pearson Correlation: 0.7628 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8621
 
+ Self-defined S value: 0.0000
 56 - 59:
   Pearson Correlation: 0.6917 (p-value: 0.0000e+00)
   Cosine Similarity:   0.8658
 
+ Self-defined S value: 0.0000
 56 - 60:
-  Pearson Correlation: 0.5712 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8150
+  Pearson Correlation: 0.5710 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8149
 
+ Self-defined S value: 0.0000
 56 - 61:
-  Pearson Correlation: 0.8861 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9477
+  Pearson Correlation: 0.8863 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.9478
 
+ Self-defined S value: 0.0000
 56 - 62:
-  Pearson Correlation: 0.7353 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8719
+  Pearson Correlation: 0.7350 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8717
 
+ Self-defined S value: 0.0000
 56 - 63:
-  Pearson Correlation: 0.8322 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.9149
+  Pearson Correlation: 0.7862 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8928
 
+ Self-defined S value: 0.0000
 56 - 64:
-  Pearson Correlation: 0.7438 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8752
+  Pearson Correlation: 0.7441 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8754
 
+ Self-defined S value: 0.0000
 56 - 65:
-  Pearson Correlation: 0.6780 (p-value: 0.0000e+00)
-  Cosine Similarity:   0.8428
+  Pearson Correlation: 0.6777 (p-value: 0.0000e+00)
+  Cosine Similarity:   0.8426
 
+ Self-defined S value: 0.0000
