@@ -1,0 +1,29 @@
+Similarity score for aligned first - Day 2:
+
+83 - 84:
+  Cosine Similarity:   0.7580
+
+83 - 85:
+  Cosine Similarity:   0.5336
+
+83 - 86:
+  Cosine Similarity:   0.7293
+
+83 - 87:
+  Cosine Similarity:   0.6088
+
+83 - 89:
+  Cosine Similarity:   0.7482
+
+83 - 90:
+  Cosine Similarity:   0.5851
+
+83 - 91:
+  Cosine Similarity:   0.4626
+
+83 - 92:
+  Cosine Similarity:   0.7550
+
+83 - 93:
+  Cosine Similarity:   0.6172
+

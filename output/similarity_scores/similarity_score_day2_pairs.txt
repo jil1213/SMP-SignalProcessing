@@ -1,0 +1,17 @@
+Similarity score for aligned pairs - Day 2:
+
+89 - 83:
+  Cosine Similarity:   0.8542
+
+90 - 84:
+  Cosine Similarity:   0.7413
+
+91 - 85:
+  Cosine Similarity:   0.8508
+
+92 - 86:
+  Cosine Similarity:   0.9460
+
+93 - 87:
+  Cosine Similarity:   0.9145
+

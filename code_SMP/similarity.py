@@ -6,7 +6,6 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from scipy.stats import pearsonr
 from code_SMP.readSMP import load_all_smp_profiles
 from code_SMP.offset import align_profiles, get_offset
 from code_SMP.pairs import pairs, first, single_distance_pairs, double_distance_pairs, increasing_distance_pairs, decreasing_distance_pairs
@@ -29,29 +28,21 @@ def build_pairs_from_list(smp_profiles, name_pairs):
 
 
 def similarity(df1, df2):
-    #make sure they have the same length -I thought they have the same length? Check again!
-    #min_len = min(len(df1), len(df2))
-    #df1 = df1[:min_len]
-    #df2 = df2[:min_len]
-    # Pearson Correlation
-    pearson_corr, p_value = pearsonr(df1, df2) #is the same as pearson_corr = np.corrcoef(df1, df2)[0, 1] -why is p_value always Zero? 
     # Cosine Similarity
     cosine = np.dot(df1, df2) / (np.linalg.norm(df1) * np.linalg.norm(df2))
-    # Self defined S value 
-    S = np.sum(df1*df2) / (np.sum(df1) * np.sum(df2))
-    return pearson_corr, p_value, cosine, S
+    return cosine
 
 
 def plot_similarity_scores(data, day, alignment):
     pair_labels = [entry["label"] for entry in data]
     x = np.arange(len(pair_labels)) * 20  # simulate 20cm spacing
-    pearson = [entry["pearson"] for entry in data]
     cosine = [entry["cosine"] for entry in data]
     width = 3
 
     fig, ax = plt.subplots(figsize=(11, 4))
     ax.set_title(f"Similarity of SMP Profiles aligned {alignment} (Day {day})")
-    ax.set_ylabel("Similarity Score")
+    ax.set_ylabel("Cosine Similarity Score / -")
+    ax.set_xlabel("Profile Pairs / -")
     ax.set_ylim(0, 1.1)
     ax.set_xticks([])
 
@@ -60,23 +51,19 @@ def plot_similarity_scores(data, day, alignment):
         ax.plot([xi, xi], [0, 1], color='lightgray', linestyle='--')
         ax.text(xi, -0.05, label, ha='center', fontsize=7) #change 0.05 to set labels lower if additional distance values
 
-    # plot bars
-    ax.bar(x - width, pearson, width=width, label="Pearson")
-    ax.bar(x + width, cosine, width=width, label="Cosine")
+    # plot bar
+    ax.bar(x + width, cosine, width=width)
 
-    ax.legend()
     ax.grid(axis='y')
     plt.tight_layout()
     plt.savefig(f"output/similarity_scores/similarity_plot_day{day}_{alignment}.png")
 
     # save as txt 
-    with open(f"output/similarity_scores/similarity_scores_day{day}_{alignment}.txt", "w") as f:
-        f.write(f"Similarity scores for aligned {alignment} - Day {day}:\n\n")
+    with open(f"output/similarity_scores/similarity_score_day{day}_{alignment}.txt", "w") as f:
+        f.write(f"Similarity score for aligned {alignment} - Day {day}:\n\n")
         for entry in data:
             f.write(f"{entry['label']}:\n")
-            f.write(f"  Pearson Correlation: {entry['pearson']:.4f} (p-value: {entry['p_value']:.4e})\n")
             f.write(f"  Cosine Similarity:   {entry['cosine']:.4f}\n\n")
-            f.write(f" Self-defined S value: {entry['S']:.4f}\n")
 
 
 def compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path):
@@ -97,7 +84,7 @@ def compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path):
                 pair_key = tuple(sorted((name1, name2)))
 
                 if name1 == name2:
-                    corr = 1.0
+                    cosine = 1.0
                 else:
                     if pair_key in cache:
                         lag = cache[pair_key]["lag"]
@@ -112,10 +99,10 @@ def compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path):
 
                     f1 = df1["force"].values
                     f2 = df2["force"].values
-                    corr = np.corrcoef(f1, f2)[0, 1]
+                    cosine = similarity(f1, f2)
 
-                corr_matrix[i, j] = corr
-                corr_matrix[j, i] = corr
+                corr_matrix[i, j] = cosine
+                corr_matrix[j, i] = cosine
 
     return pd.DataFrame(corr_matrix, index=names, columns=names)
 
@@ -133,7 +120,7 @@ if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
 
     # pairs of profiles saved as lists in code_SMP/pairs.py
-    for type in ["first_mean"]:#["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
+    for type in ["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
 
         # build pairs for crosscorrelation 
         if type == "pairs":
@@ -186,10 +173,10 @@ if __name__ == "__main__":
                 forces_v20 = np.stack([df["force"].values[:min_len]  for df in profiles_day1_v20])
                 mean_v20 = np.mean(forces_v20, axis=0)
                 # calc similarity scores for means 
-                pearson, p_val, cosine, S = similarity(mean_v8, mean_v20)
+                cosine = similarity(mean_v8, mean_v20)
             # Step 3: calculate similarity scores
             else:
-                pearson, p_val, cosine, S = similarity(df1["force"].values, df2["force"].values)
+                cosine = similarity(df1["force"].values, df2["force"].values)
 
             # get label and day info
             match1 = re.search(r"S\d{2}M\d{4}", name1)
@@ -198,16 +185,11 @@ if __name__ == "__main__":
             day = df1.attrs.get("date", 0)
 
             print(f"{label} (Day {day}):")
-            print(f"  Pearson Correlation: {pearson:.4f} (p-value: {p_val:.4e})")
             print(f"  Cosine Similarity:   {cosine:.4f}")
-            print(f" Self-defined S value: {S:.4f}\n")
 
             data_by_day[day].append({
                 "label": label,
-                "pearson": pearson,
-                "cosine": cosine,
-                "p_value": p_val, 
-                "S": S
+                "cosine": cosine
             })
 
         # Step 4: plot similarity scores and save as .txt

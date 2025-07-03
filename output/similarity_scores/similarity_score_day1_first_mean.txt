@@ -1,0 +1,29 @@
+Similarity score for aligned first_mean - Day 1:
+
+56 - 57:
+  Cosine Similarity:   0.9704
+
+56 - 58:
+  Cosine Similarity:   0.9704
+
+56 - 59:
+  Cosine Similarity:   0.9704
+
+56 - 60:
+  Cosine Similarity:   0.9704
+
+56 - 61:
+  Cosine Similarity:   0.9704
+
+56 - 62:
+  Cosine Similarity:   0.9704
+
+56 - 63:
+  Cosine Similarity:   0.9704
+
+56 - 64:
+  Cosine Similarity:   0.9704
+
+56 - 65:
+  Cosine Similarity:   0.9704
+

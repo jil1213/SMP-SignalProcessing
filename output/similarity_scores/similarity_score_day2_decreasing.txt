@@ -1,0 +1,26 @@
+Similarity score for aligned decreasing - Day 2:
+
+87 - 83:
+  Cosine Similarity:   0.3469
+
+87 - 84:
+  Cosine Similarity:   0.5261
+
+87 - 85:
+  Cosine Similarity:   0.8006
+
+87 - 86:
+  Cosine Similarity:   0.6197
+
+93 - 89:
+  Cosine Similarity:   0.4118
+
+93 - 90:
+  Cosine Similarity:   0.6399
+
+93 - 91:
+  Cosine Similarity:   0.4192
+
+93 - 92:
+  Cosine Similarity:   0.6539
+

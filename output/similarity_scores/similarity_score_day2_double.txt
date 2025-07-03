@@ -1,0 +1,20 @@
+Similarity score for aligned double - Day 2:
+
+83 - 85:
+  Cosine Similarity:   0.5336
+
+84 - 86:
+  Cosine Similarity:   0.6144
+
+85 - 87:
+  Cosine Similarity:   0.7930
+
+89 - 91:
+  Cosine Similarity:   0.4861
+
+90 - 92:
+  Cosine Similarity:   0.6408
+
+91 - 93:
+  Cosine Similarity:   0.7450
+

@@ -1,0 +1,26 @@
+Similarity score for aligned increasing - Day 1:
+
+56 - 57:
+  Cosine Similarity:   0.9107
+
+56 - 58:
+  Cosine Similarity:   0.8621
+
+56 - 59:
+  Cosine Similarity:   0.8658
+
+56 - 60:
+  Cosine Similarity:   0.8149
+
+61 - 62:
+  Cosine Similarity:   0.8654
+
+61 - 63:
+  Cosine Similarity:   0.8899
+
+61 - 64:
+  Cosine Similarity:   0.8772
+
+61 - 65:
+  Cosine Similarity:   0.8130
+
