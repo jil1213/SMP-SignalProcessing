@@ -66,11 +66,15 @@ def plot_similarity_scores(data, day, alignment):
             f.write(f"  Cosine Similarity:   {entry['cosine']:.4f}\n\n")
 
 
-def compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path):
-    day_profiles = {
+def compute_aligned_correlation_matrix(smp_profiles, day, velocity, cache, cache_path):
+    if velocity == 0: #compute for both velocities together
+        day_profiles = {
+            name: df for name, df in smp_profiles.items()
+            if df.attrs.get("date") == day and df.attrs.get("velocity", 0) != 0}
+    else: 
+        day_profiles = {
         name: df for name, df in smp_profiles.items()
-        if df.attrs.get("date") == day and df.attrs.get("velocity", 0) != 0
-    }
+        if df.attrs.get("date") == day and df.attrs.get("velocity", 0) == velocity}
 
     names = list(day_profiles.keys())
     n = len(names)
@@ -107,12 +111,16 @@ def compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path):
     return pd.DataFrame(corr_matrix, index=names, columns=names)
 
 
-def plot_correlation_matrix(corr_df, day):
+def plot_correlation_matrix(corr_df, day, velocity):
     plt.figure(figsize=(10, 8))
-    sns.heatmap(corr_df, annot=True, cmap="coolwarm", vmin=-1, vmax=1)
-    plt.title(f"Aligned Correlation Matrix - Day {day}")
+    sns.heatmap(corr_df, annot=True, cmap="coolwarm", vmin=0, vmax=1)
     plt.tight_layout()
-    plt.savefig(f"output/aligned_correlation_matrix_day{day}.png")
+    if velocity == 0:
+        plt.title(f"Cosine Correlation Matrix - Day {day}")
+        plt.savefig(f"output/similarity_scores/correlation_matrix_day{day}.png")
+    else:
+        plt.title(f"Cosine Correlation Matrix - Day {day}, Velocity {velocity}")
+        plt.savefig(f"output/similarity_scores/correlation_matrix_day{day}_v{velocity}.png")
     plt.close()
 
 
@@ -120,7 +128,7 @@ if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
 
     # pairs of profiles saved as lists in code_SMP/pairs.py
-    for type in ["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
+    for type in ["double"]: #["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
 
         # build pairs for crosscorrelation 
         if type == "pairs":
@@ -197,6 +205,7 @@ if __name__ == "__main__":
             if data_by_day[day]:
                 plot_similarity_scores(data_by_day[day], day, alignment=type)
 
-        for day in [1, 2]:
-            corr_df = compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path)
-            plot_correlation_matrix(corr_df, day)
+    for day in [1, 2]:
+        for velocity in [8, 20, 0]:
+            corr_df = compute_aligned_correlation_matrix(smp_profiles, day, velocity, cache, cache_path)
+            plot_correlation_matrix(corr_df, day, velocity)
