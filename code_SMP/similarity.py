@@ -128,7 +128,7 @@ if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
 
     # pairs of profiles saved as lists in code_SMP/pairs.py
-    for type in ["first_mean"]: #["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
+    for type in ["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
 
         # build pairs for crosscorrelation 
         if type == "pairs":

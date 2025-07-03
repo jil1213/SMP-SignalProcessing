@@ -1,17 +1,17 @@
 Similarity score for aligned pairs - Day 1:
 
 56 - 61:
-  Cosine Similarity:   0.9478
+  Cosine Similarity:   0.9477
 
-62 - 57:
-  Cosine Similarity:   0.8641
+57 - 62:
+  Cosine Similarity:   0.8684
 
-63 - 58:
-  Cosine Similarity:   0.9313
+58 - 63:
+  Cosine Similarity:   0.9198
 
-64 - 59:
-  Cosine Similarity:   0.9315
+59 - 64:
+  Cosine Similarity:   0.9333
 
-65 - 60:
-  Cosine Similarity:   0.8369
+60 - 65:
+  Cosine Similarity:   0.8370
 
