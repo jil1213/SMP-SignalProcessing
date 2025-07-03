@@ -42,7 +42,7 @@ def plot_similarity_scores(data, day, alignment):
     fig, ax = plt.subplots(figsize=(11, 4))
     ax.set_title(f"Similarity of SMP Profiles aligned {alignment} (Day {day})")
     ax.set_ylabel("Cosine Similarity Score / -")
-    ax.set_xlabel("Profile Pairs / -")
+    ax.set_xlabel("Profile Pairs / -", labelpad=15)
     ax.set_ylim(0, 1.1)
     ax.set_xticks([])
 
@@ -128,7 +128,7 @@ if __name__ == "__main__":
     smp_profiles = load_all_smp_profiles()
 
     # pairs of profiles saved as lists in code_SMP/pairs.py
-    for type in ["double"]: #["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
+    for type in ["first_mean"]: #["pairs", "first", "first_mean", "single", "double", "increasing", "decreasing"]:
 
         # build pairs for crosscorrelation 
         if type == "pairs":
@@ -168,20 +168,21 @@ if __name__ == "__main__":
             df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=True)
             # Addition: for first profiles correlate also mean 
             if type == "first_mean":
-                # group profiles by velocity (right now only day 1)
-                profiles_day1_v8 = [df for name, df in smp_profiles.items() 
-                                    if df.attrs["date"] == 1 and df.attrs["velocity"] == 8]
-                profiles_day1_v20 = [df for name, df in smp_profiles.items()
-                                    if df.attrs["date"] == 1 and df.attrs["velocity"] == 20]
-                # make sure length is the same
-                min_len = min(min(len(df) for df in profiles_day1_v8), min(len(df) for df in profiles_day1_v20))
-                # calc means 
-                forces_v8 = np.stack([df["force"].values[:min_len]  for df in profiles_day1_v8])
-                mean_v8 = np.mean(forces_v8, axis=0)
-                forces_v20 = np.stack([df["force"].values[:min_len]  for df in profiles_day1_v20])
-                mean_v20 = np.mean(forces_v20, axis=0)
-                # calc similarity scores for means 
-                cosine = similarity(mean_v8, mean_v20)
+                for day in [1, 2]:
+                    # group profiles by velocity (right now only day 1)
+                    profiles_v8 = [df for name, df in smp_profiles.items() 
+                                        if df.attrs["date"] == day and df.attrs["velocity"] == 8]
+                    profiles_v20 = [df for name, df in smp_profiles.items()
+                                        if df.attrs["date"] == day and df.attrs["velocity"] == 20]
+                    # make sure length is the same
+                    min_len = min(min(len(df) for df in profiles_v8), min(len(df) for df in profiles_v20))
+                    # calc means 
+                    forces_v8 = np.stack([df["force"].values[:min_len]  for df in profiles_v8])
+                    mean_v8 = np.mean(forces_v8, axis=0)
+                    forces_v20 = np.stack([df["force"].values[:min_len]  for df in profiles_v20])
+                    mean_v20 = np.mean(forces_v20, axis=0)
+                    # calc similarity scores for means 
+                    cosine = similarity(mean_v8, mean_v20)
             # Step 3: calculate similarity scores
             else:
                 cosine = similarity(df1["force"].values, df2["force"].values)
