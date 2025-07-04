@@ -33,7 +33,7 @@ def similarity(df1, df2):
     return cosine
 
 
-def plot_similarity_scores(data, day, alignment):
+def plot_similarity_scores(data, day, alignment, savedir="output/similarity_scores"):
     pair_labels = [entry["label"] for entry in data]
     x = np.arange(len(pair_labels)) * 20  # simulate 20cm spacing
     cosine = [entry["cosine"] for entry in data]
@@ -56,10 +56,10 @@ def plot_similarity_scores(data, day, alignment):
 
     ax.grid(axis='y')
     plt.tight_layout()
-    plt.savefig(f"output/similarity_scores/similarity_plot_day{day}_{alignment}.png")
+    plt.savefig(savedir + f"/similarity_plot_day{day}_{alignment}.png")
 
     # save as txt 
-    with open(f"output/similarity_scores/similarity_score_day{day}_{alignment}.txt", "w") as f:
+    with open(savedir + f"/similarity_score_day{day}_{alignment}.txt", "w") as f:
         f.write(f"Similarity score for aligned {alignment} - Day {day}:\n\n")
         for entry in data:
             f.write(f"{entry['label']}:\n")

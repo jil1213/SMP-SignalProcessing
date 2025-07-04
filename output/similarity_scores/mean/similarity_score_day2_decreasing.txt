@@ -1,0 +1,50 @@
+Similarity score for aligned decreasing - Day 2:
+
+mean83 - 84:
+  Cosine Similarity:   0.7298
+
+mean84 - 85:
+  Cosine Similarity:   0.6980
+
+mean85 - 86:
+  Cosine Similarity:   0.6145
+
+mean86 - 87:
+  Cosine Similarity:   0.7623
+
+mean83 - 84:
+  Cosine Similarity:   0.7298
+
+mean84 - 85:
+  Cosine Similarity:   0.6980
+
+mean85 - 86:
+  Cosine Similarity:   0.6145
+
+mean86 - 87:
+  Cosine Similarity:   0.7623
+
+mean83 - 84:
+  Cosine Similarity:   0.7298
+
+mean84 - 85:
+  Cosine Similarity:   0.6980
+
+mean85 - 86:
+  Cosine Similarity:   0.6145
+
+mean86 - 87:
+  Cosine Similarity:   0.7623
+
+mean83 - 84:
+  Cosine Similarity:   0.7298
+
+mean84 - 85:
+  Cosine Similarity:   0.6980
+
+mean85 - 86:
+  Cosine Similarity:   0.6145
+
+mean86 - 87:
+  Cosine Similarity:   0.7623
+
