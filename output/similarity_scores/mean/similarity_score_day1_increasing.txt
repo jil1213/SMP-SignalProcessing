@@ -1,4 +1,4 @@
-Similarity score for aligned decreasing - Day 1:
+Similarity score for aligned increasing - Day 1:
 
 mean56 - 57:
   Cosine Similarity:   0.9111
@@ -32,16 +32,4 @@ mean56 - 59:
 
 mean56 - 60:
   Cosine Similarity:   0.8601
-
-mean56 - 60:
-  Cosine Similarity:   0.8601
-
-mean57 - 60:
-  Cosine Similarity:   0.9069
-
-mean58 - 60:
-  Cosine Similarity:   0.8328
-
-mean59 - 60:
-  Cosine Similarity:   0.8921
 

@@ -1,4 +1,4 @@
-Similarity score for aligned decreasing - Day 2:
+Similarity score for aligned increasing - Day 2:
 
 mean83 - 84:
   Cosine Similarity:   0.7298
@@ -32,16 +32,4 @@ mean83 - 86:
 
 mean83 - 87:
   Cosine Similarity:   0.5792
-
-mean83 - 87:
-  Cosine Similarity:   0.5792
-
-mean84 - 87:
-  Cosine Similarity:   0.6906
-
-mean85 - 87:
-  Cosine Similarity:   0.7778
-
-mean86 - 87:
-  Cosine Similarity:   0.7623
 
