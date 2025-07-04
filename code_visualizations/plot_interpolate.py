@@ -5,7 +5,6 @@ import pickle
 
 from pathlib import Path
 from scipy.signal import argrelextrema
-from scipy.interpolate import pchip_interpolate
 
 from code_SMP.readSMP import load_all_smp_profiles
 from code_SMP.pairs import pairs
@@ -100,3 +99,14 @@ if __name__ == "__main__":
         # Step 3: Interpolate minima
         df1_drift = interpolate(name1, df1, plot=True, save=True)
         df2_drift = interpolate(name2, df2, plot=True, save=True)
+        
+        # Step 4 plot both drifts together 
+        plt.figure(figsize=(8, 5))
+        plt.plot(df1_drift["distance"], df1_drift["force"], label=name1)
+        plt.plot(df2_drift["distance"], df2_drift["force"], label=name2)
+        plt.xlabel("Distance (mm)")
+        plt.ylabel("Force (N)")
+        plt.title(f"Comparison of drift curves {name1} and {name2}")
+        plt.legend()
+        plt.grid()
+        plt.savefig(f"output/interpolation/drift_{name1}_{name2}.png")
