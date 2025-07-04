@@ -20,21 +20,33 @@ def interpolate(name, df, plot= False, save=False, target_dir=Path("output/inter
     force = df["force"].values
     spatial_res = df.attrs["spatial_resolution"]
 
+    #smooth force over 1mm window
+    window_size = int(1 / spatial_res)  # window size adapted to sampling of local minima
+    force = np.convolve(force, np.ones(window_size)/window_size, mode="same")
+
     # find local minimas
     minima_indices = argrelextrema(force, np.less, order=int(1/spatial_res))[0]  # sampling finding minimas: order=242, approx. 1mm
     minima_distances = distance[minima_indices]
     minima_forces = force[minima_indices]
 
-    # Interploation
-    x_fit = np.linspace(minima_distances.min(), minima_distances.max(), int(minima_distances.max() - minima_distances.min())) #sampling 1mm
-    y_fit = pchip_interpolate(minima_distances, minima_forces, x_fit)
+    #find lowest two indices 
+    profile_midpoint = distance.max() / 2
 
-    # Low Pass Filter over Interpolation to get flatten curve
-    dx = np.mean(np.diff(x_fit))              # Samplingrate of finding local minimas
-    moving_window = 10.0                    # size in mm of shot noise moving window 1,5,10mm, not overlapping
-    moving_window_minimas = int(moving_window / dx)  # window size adapted to sampling of local minima
-    y_smooth = np.convolve(y_fit, np.ones(moving_window_minimas)/moving_window_minimas, mode='same')
+    # Indizes der tiefsten Minima in jeder Hälfte
+    idx_first = np.where(minima_distances <= profile_midpoint)[0][np.argmin(minima_forces[minima_distances <= profile_midpoint])]
+    idx_second = np.where(minima_distances > profile_midpoint)[0][np.argmin(minima_forces[minima_distances > profile_midpoint])]
 
+    lowest_indices = [idx_first, idx_second]
+
+    # Punkte extrahieren
+    x_points = minima_distances[lowest_indices]
+    y_points = minima_forces[lowest_indices]
+
+    # Lineare Fit-Koeffizienten bestimmen (y = m*x + b)
+    coeffs = np.polyfit(x_points, y_points, deg=1)
+
+    # Trendlinie berechnen
+    y_trend = np.polyval(coeffs, distance)
 
     # Plot
     if plot == True:
@@ -43,8 +55,8 @@ def interpolate(name, df, plot= False, save=False, target_dir=Path("output/inter
         plt.plot(minima_distances, minima_forces, 'ro', label="Minima",  markersize=2)
 
         # Interpolated minima
-        plt.plot(x_fit, y_smooth, 'b--', label="PCHIP Interpolation")
-
+        plt.plot(x_points, y_points, 'go', label="Lowest Minima", markersize=5)
+        plt.plot(distance, y_trend, 'b--', label="Low Pass Filtered Interpolation")
         plt.xlabel("Distance (mm)")
         plt.ylabel("Force (N)")
         plt.title(f"Interpolate minima with low pass filter- {name}")
@@ -56,7 +68,7 @@ def interpolate(name, df, plot= False, save=False, target_dir=Path("output/inter
         else:
             plt.show()
         plt.close()
-    df_drift = pd.DataFrame({"distance": x_fit, "force": y_smooth})
+    df_drift = pd.DataFrame({"distance": distance, "force": y_trend})
     return df_drift
 
 if __name__ == "__main__":
@@ -68,7 +80,6 @@ if __name__ == "__main__":
     data_by_day = {1: [], 2: []}
     cache_path = "output/similarity_scores/offset_cache.pkl"
     cache = load_offset_cache(cache_path)
-    print(f"\nSimilarity scores for manually defined {"pairs"} pairs:\n")
     for df1, name1, df2, name2 in paired_profiles:
         # Step 1: crosscorrelate pairs
         #check if crosscorr is already in cache 
@@ -85,7 +96,7 @@ if __name__ == "__main__":
 
         # Step 2: Align profiles
         df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=True)
-        
+
         # Step 3: Interpolate minima
-        df1_drift = interpolate(name1, df1, plot=True, save=False)
-        df2_drift = interpolate(name2, df2, plot=True, save=False)
+        df1_drift = interpolate(name1, df1, plot=True, save=True)
+        df2_drift = interpolate(name2, df2, plot=True, save=True)
