@@ -33,6 +33,34 @@ def similarity(df1, df2):
     return cosine
 
 
+def regplot(df1, df2, name1, name2, target_dir="output/similarity_scores/regplots"):
+
+    x = df1["force"].values
+    y = df2["force"].values
+
+    # Linear fit and R^2
+    coeffs = np.polyfit(x, y, 1)
+    y_fit = np.polyval(coeffs, x)
+    r2 = 1 - np.sum((y - y_fit)**2) / np.sum((y - y.mean())**2)
+
+    plt.figure(figsize=(6, 6))
+    sns.regplot(
+        x=x, y=y,
+        line_kws={"color": "red"},
+        scatter_kws={"alpha": 0.5}
+    )
+    plt.text(0.05, 0.95, f"$R^2 = {r2:.3f}$", transform=plt.gca().transAxes,
+            fontsize=10, va="top")
+    plt.xlabel(f"Force {name1} (N)")
+    plt.ylabel(f"Force {name2} (N)")
+    plt.title(f"Regplot: {name1} vs {name2}")
+    plt.grid(True)
+
+    plt.tight_layout()
+    plt.savefig(target_dir + f"regplot_{name1}_vs_{name2}.png")
+    plt.close()
+
+
 def plot_similarity_scores(data, day, alignment, savedir="output/similarity_scores"):
     pair_labels = [entry["label"] for entry in data]
     x = np.arange(len(pair_labels)) * 20  # simulate 20cm spacing
@@ -183,6 +211,11 @@ if __name__ == "__main__":
                     mean_v20 = np.mean(forces_v20, axis=0)
                     # calc similarity scores for means 
                     cosine = similarity(mean_v8, mean_v20)
+            elif type == "pairs":
+                # calculate similarity
+                cosine = similarity(df1["force"].values, df2["force"].values)
+                # make regplots 
+                regplot(df1, df2, name1, name2, target_dir="output/similarity_scores/regplots/")
             # Step 3: calculate similarity scores
             else:
                 cosine = similarity(df1["force"].values, df2["force"].values)
