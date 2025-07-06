@@ -1,0 +1,20 @@
+Similarity score for not aligned double - Day 1:
+
+56 - 58:
+  Cosine Similarity:   0.8488
+
+57 - 59:
+  Cosine Similarity:   0.8815
+
+58 - 60:
+  Cosine Similarity:   0.7025
+
+61 - 63:
+  Cosine Similarity:   0.9221
+
+62 - 64:
+  Cosine Similarity:   0.9111
+
+63 - 65:
+  Cosine Similarity:   0.7836
+
