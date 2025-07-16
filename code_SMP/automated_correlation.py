@@ -71,10 +71,11 @@ def find_highest_similarity_pairs(similarity_matrix, labels):
         labels (list): list of profile names (strings)
 
     Returns:
-        pairs (list of tuple): list of unique sorted pairs (label1, label2)
+        pairs (list of tuple): list of unique sorted pairs with similarity
+                               (label1, label2, similarity)
     """
     n = similarity_matrix.shape[0]
-    pairs_set = set()
+    pairs_dict = {}
 
     for i in range(n):
         sims = [(j, similarity_matrix[j, i]) for j in range(n) if j != i]
@@ -86,11 +87,12 @@ def find_highest_similarity_pairs(similarity_matrix, labels):
         else:
             pair = (labels[j_max], labels[i])
 
-        if pair not in pairs_set:
-            pairs_set.add(pair)
+        # if not already added, add with score
+        if pair not in pairs_dict:
+            pairs_dict[pair] = max_sim
 
-    # Convert set to sorted list
-    pairs = sorted(list(pairs_set))
+    # convert dict to sorted list of tuples
+    pairs = sorted([(a, b, score) for (a, b), score in pairs_dict.items()])
     return pairs
 
 
@@ -196,9 +198,9 @@ if __name__ == "__main__":
 
     pairs = find_highest_similarity_pairs(S, labels)
 
-    print("\nUnique pairs:")
-    for p in pairs:
-        print(p)
+    print("\nUnique pairs with scores:")
+    for a, b, score in pairs:
+        print(f"{a} - {b}: Similarity = {score:.4f}")
 
     groups = find_all_threshold_groups(S, labels, threshold)
 
