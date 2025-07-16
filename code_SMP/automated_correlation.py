@@ -14,8 +14,8 @@ def find_reference_profile(similarity_matrix, threshold, labels=None):
         labels (list): optional profile names
 
     Returns:
-        (reference_index, remaining_indices): index of reference profile,
-                                              list of indices of neighbors
+        (reference_index, remaining_indices, mean_score): index of reference profile,
+                                              list of indices of neighbors, mean of similarity scores
     """
     n = similarity_matrix.shape[0]
     M = list(range(n))
@@ -38,7 +38,7 @@ def find_reference_profile(similarity_matrix, threshold, labels=None):
             candidates.append((i, count, min_sim, mean_sim, neighbors))
 
     if not candidates:
-        return None, []
+        return None, [], 0.0
 
     # 1. Select by highest count
     max_count = max(c[1] for c in candidates)
@@ -46,7 +46,7 @@ def find_reference_profile(similarity_matrix, threshold, labels=None):
 
     if len(best_candidates) == 1:
         best = best_candidates[0]
-        return best[0], best[4]
+        return best[0], best[4], best[3] # save also mean score (best[3])
 
     # 2. Select by highest minimal similarity
     max_min = max(c[2] for c in best_candidates)
@@ -54,11 +54,11 @@ def find_reference_profile(similarity_matrix, threshold, labels=None):
 
     if len(best_min_candidates) == 1:
         best = best_min_candidates[0]
-        return best[0], best[4]
+        return best[0], best[4], best[3] 
 
     # 3. Select by highest mean similarity
     best = max(best_min_candidates, key=lambda x: x[3])
-    return best[0], best[4]
+    return best[0], best[4], best[3]
 
 
 def find_highest_similarity_pairs(similarity_matrix, labels):
@@ -188,11 +188,12 @@ if __name__ == "__main__":
     # good threshold for day 2 , day 1 = 0.85
     threshold = 0.75
 
-    ref_idx, remaining = find_reference_profile(S, threshold, labels)
+    ref_idx, remaining, mean_score = find_reference_profile(S, threshold, labels)
 
     if ref_idx is not None:
         print(f"\nSelected reference profile: {labels[ref_idx]}")
         print(f"Remaining profiles: {[labels[i] for i in remaining]}")
+        print(f"Mean similarity score: {mean_score:.4f}")
     else:
         print("No valid group was found.")
 
@@ -210,11 +211,12 @@ if __name__ == "__main__":
         print(g["matrix"])
 
     for group in groups:
-        ref_idx, remaining = find_reference_profile(
+        ref_idx, remaining, mean_score = find_reference_profile(
         group["matrix"],
         threshold,
         labels=group["labels"])
         if ref_idx is not None:
             print(f"\nSelected reference profile: {labels[ref_idx]}")
             print(f"Remaining profiles: {[labels[i] for i in remaining]}")
+            print(f"Mean similarity score: {mean_score:.4f}")
 
