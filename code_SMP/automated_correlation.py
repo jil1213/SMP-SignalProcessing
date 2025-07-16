@@ -2,12 +2,11 @@ import numpy as np
 
 def find_reference_profile(similarity_matrix, threshold, labels=None):
     """
-    Finds a reference profile:
-    For each ptetntial reference profile, collects the neighbors ≥ threshold.
+    Finds best reference profile
     Selection order:
-        1. Max number of neighbors.
-        2. Highest minimal similarity among neighbors.
-        3. Highest mean similarity among neighbors.
+        1. Max number of neighbors
+        2. Highest minimal similarity among neighbors
+        3. Highest mean similarity among neighbors
 
     Parameters:
         similarity_matrix (np.ndarray): square similarity matrix
@@ -62,7 +61,7 @@ def find_reference_profile(similarity_matrix, threshold, labels=None):
     return best[0], best[4]
 
 
-def extract_top_similarity_pairs(similarity_matrix, labels):
+def find_highest_similarity_pairs(similarity_matrix, labels):
     """
     For each profile, find the profile with the highest similarity
     (excluding itself) and build pairs.
@@ -135,6 +134,7 @@ if __name__ == "__main__":
         [0.76, 0.62, 0.62, 0.95, 0.73, 0.67, 0.64, 0.60, 1.00, 0.82],
         [0.62, 0.64, 0.78, 0.82, 0.86, 0.67, 0.68, 0.74, 0.82, 1.00]
     ])
+
     # good threshold for day 2 , day 1 = 0.85
     threshold = 0.75
 
@@ -146,7 +146,7 @@ if __name__ == "__main__":
     else:
         print("No valid group was found.")
 
-    pairs = extract_top_similarity_pairs(S, labels)
+    pairs = find_highest_similarity_pairs(S, labels)
 
     print("\nUnique pairs:")
     for p in pairs:
