@@ -94,6 +94,53 @@ def find_highest_similarity_pairs(similarity_matrix, labels):
     return pairs
 
 
+def find_all_threshold_groups(similarity_matrix, labels, threshold):
+    """
+    For each profile, build a group by adding all profiles with similarity ≥ threshold
+    to all current group members
+
+    Parameters:
+        similarity_matrix (np.ndarray): square similarity matrix
+        labels (list of str): profile names
+        threshold (float): similarity threshold
+
+    Returns:
+        list of dict: groups with labels and submatrix
+    """
+    n = similarity_matrix.shape[0]
+    all_groups = []
+
+    for i in range(n):
+
+        current_group = [i]
+
+        for j in range(n):
+            if j == i:
+                continue
+            all_above = True
+            for k in current_group:
+                sim = similarity_matrix[j, k] 
+                if sim < threshold: # Below threshold-> candidate rejected
+                    all_above = False
+                    break
+            if all_above:
+                current_group.append(j) #else candidate accepted
+
+        if len(current_group) > 1:
+            group_labels = sorted([labels[idx] for idx in current_group])
+            # Check if same label combination already saved
+            if not any(set(group_labels) == set(g['labels']) for g in all_groups):
+                # Extract submatrix
+                idx_sorted = [labels.index(l) for l in group_labels]
+                submatrix = similarity_matrix[np.ix_(idx_sorted, idx_sorted)]
+                all_groups.append({
+                    "labels": group_labels,
+                    "matrix": submatrix
+                })
+
+    return all_groups
+
+
 if __name__ == "__main__":
     # Labels for day 1
     labels = [
@@ -135,6 +182,7 @@ if __name__ == "__main__":
         [0.62, 0.64, 0.78, 0.82, 0.86, 0.67, 0.68, 0.74, 0.82, 1.00]
     ])
 
+
     # good threshold for day 2 , day 1 = 0.85
     threshold = 0.75
 
@@ -151,3 +199,20 @@ if __name__ == "__main__":
     print("\nUnique pairs:")
     for p in pairs:
         print(p)
+
+    groups = find_all_threshold_groups(S, labels, threshold)
+
+    print("\nGroups ready for further processing:")
+    for idx, g in enumerate(groups, 1):
+        print(f"\nGroup {idx}: {g['labels']}")
+        print(g["matrix"])
+
+    for group in groups:
+        ref_idx, remaining = find_reference_profile(
+        group["matrix"],
+        threshold,
+        labels=group["labels"])
+        if ref_idx is not None:
+            print(f"\nSelected reference profile: {labels[ref_idx]}")
+            print(f"Remaining profiles: {[labels[i] for i in remaining]}")
+
