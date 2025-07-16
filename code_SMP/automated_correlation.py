@@ -62,6 +62,39 @@ def find_reference_profile(similarity_matrix, threshold, labels=None):
     return best[0], best[4]
 
 
+def extract_top_similarity_pairs(similarity_matrix, labels):
+    """
+    For each profile, find the profile with the highest similarity
+    (excluding itself) and build pairs.
+
+    Parameters:
+        similarity_matrix (np.ndarray): square similarity matrix
+        labels (list): list of profile names (strings)
+
+    Returns:
+        pairs (list of tuple): list of unique sorted pairs (label1, label2)
+    """
+    n = similarity_matrix.shape[0]
+    pairs_set = set()
+
+    for i in range(n):
+        sims = [(j, similarity_matrix[j, i]) for j in range(n) if j != i]
+        j_max, max_sim = max(sims, key=lambda x: x[1])
+
+        # be sure smaller number (=last 4 digits of label) is first profile! 
+        if labels[i][-4:] <= labels[j_max][-4:]:
+            pair = (labels[i], labels[j_max])
+        else:
+            pair = (labels[j_max], labels[i])
+
+        if pair not in pairs_set:
+            pairs_set.add(pair)
+
+    # Convert set to sorted list
+    pairs = sorted(list(pairs_set))
+    return pairs
+
+
 if __name__ == "__main__":
     # Labels for day 1
     labels = [
@@ -112,3 +145,9 @@ if __name__ == "__main__":
         print(f"Remaining profiles: {[labels[i] for i in remaining]}")
     else:
         print("No valid group was found.")
+
+    pairs = extract_top_similarity_pairs(S, labels)
+
+    print("\nUnique pairs:")
+    for p in pairs:
+        print(p)
