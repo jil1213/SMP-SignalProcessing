@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from code_SMP.readSMP import load_all_smp_profiles
 from code_SMP.offset import align_profiles, get_offset
-from code_SMP.similarity import load_offset_cache
+from code_SMP.automated_similarity import load_cache
 from code_SMP.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 
 
@@ -14,7 +14,7 @@ def compute_aligned_mean(smp_profiles, values, cache_path="output/similarity_sco
     df_ref = smp_profiles[ref_name]
     aligned_dfs = [df_ref.reset_index(drop=True)]
 
-    cache = load_offset_cache(cache_path)
+    cache = load_cache(cache_path)
 
     for name in other_names:
         df = smp_profiles[name]
