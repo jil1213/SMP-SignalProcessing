@@ -93,7 +93,7 @@ if __name__ == "__main__":
         if not os.path.exists(path):
             corr_df = compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_cache_path)
         else: 
-            with open(path) as f:
+            with open(path, "rb") as f:
                 data = pickle.load(f)
             corr_df = pd.DataFrame(data["matrix"], index=data["labels"], columns=data["labels"])
         plot_correlation_matrix(corr_df, day)
