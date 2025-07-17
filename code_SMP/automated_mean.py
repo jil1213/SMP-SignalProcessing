@@ -5,16 +5,12 @@ import matplotlib.pyplot as plt
 from code_SMP.readSMP import load_all_smp_profiles
 from code_SMP.offset import align_profiles, get_offset
 from code_SMP.similarity import load_offset_cache
-from code_SMP.automated_correlation import find_reference_profile
+from code_SMP.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 
 
-def compute_aligned_mean(indices, labels, cache_path="output/similarity_scores/offset_cache.pkl"):
-    ref_index, other_indices, mean_score = indices
-    ref_name = labels[ref_index]
-    other_names = [labels[i] for i in other_indices]
-    all_names = [ref_name] + other_names
+def compute_aligned_mean(smp_profiles, values, cache_path="output/similarity_scores/offset_cache.pkl"):
+    ref_name, other_names, mean_score = values
 
-    smp_profiles = load_all_smp_profiles(pnt=True)
     df_ref = smp_profiles[ref_name]
     aligned_dfs = [df_ref.reset_index(drop=True)]
 
@@ -76,20 +72,21 @@ def plot_aligned_mean(distance, mean_force, std, info):
     plt.xlabel("Distance (mm)")
     plt.ylabel("Force (N)")
     n_profiles = len(info["aligned_profiles"])
-    title = f"Mean of \n Reference {info['reference_profile']} with {n_profiles-1} Profile(s) \nMean Similarity: {info['mean_similarity']:.3f}"
+    title = f"Mean of \n Reference {info['reference_profile']} with {n_profiles} Profile(s) \nMean Similarity: {info['mean_similarity']:.3f}"
     plt.title(title)
     plt.legend()
     plt.grid()
     plt.tight_layout()
 
     # Create save path
-    filename = f"mean_{info['reference_profile']}_with_{n_profiles-1}profiles.png"
+    filename = f"mean_{info['reference_profile']}_with_{n_profiles}profiles.png"
     save_path = "output/automated_mean/" + filename
 
     plt.savefig(save_path)
 
 
 if __name__ == "__main__":
+    smp_profiles = load_all_smp_profiles(pnt=True)
 
     # Labels for day 1
     labels = [
@@ -111,39 +108,29 @@ if __name__ == "__main__":
         [0.84, 0.82, 0.83, 0.86, 0.84, 0.81, 0.93, 0.78, 0.90, 1.00]
     ])
 
-    #labels for day 2
-    labels = [
-        "S45M1083", "S45M1084", "S45M1085", "S45M1086", "S45M1087",
-        "S45M1089", "S45M1090", "S45M1091", "S45M1092", "S45M1093"
-    ]
-
-    # Cosine Similarity Matrix Day 2
-    S = np.array([
-        [1.00, 0.79, 0.53, 0.75, 0.61, 0.86, 0.59, 0.46, 0.76, 0.62],
-        [0.79, 1.00, 0.75, 0.62, 0.68, 0.78, 0.75, 0.56, 0.62, 0.64],
-        [0.53, 0.75, 1.00, 0.62, 0.79, 0.59, 0.69, 0.85, 0.62, 0.78],
-        [0.75, 0.62, 0.62, 1.00, 0.74, 0.66, 0.64, 0.59, 0.95, 0.82],
-        [0.61, 0.68, 0.79, 0.74, 1.00, 0.69, 0.62, 0.73, 0.73, 0.86],
-        [0.86, 0.78, 0.59, 0.66, 0.69, 1.00, 0.61, 0.49, 0.67, 0.67],
-        [0.59, 0.75, 0.69, 0.64, 0.62, 0.61, 1.00, 0.68, 0.64, 0.68],
-        [0.46, 0.56, 0.85, 0.59, 0.73, 0.49, 0.68, 1.00, 0.60, 0.74],
-        [0.76, 0.62, 0.62, 0.95, 0.73, 0.67, 0.64, 0.60, 1.00, 0.82],
-        [0.62, 0.64, 0.78, 0.82, 0.86, 0.67, 0.68, 0.74, 0.82, 1.00]
-    ])
     # good threshold for day 2 , day 1 = 0.85
-    threshold = 0.75
+    threshold = 0.85
 
-    # Find reference profile
-    #TO DO: later it can be more than one groups-> iterate over groups/reference profiles
-    ref_idx, remaining, mean_score = find_reference_profile(S, threshold, labels)
+    # Find reference profile for whole day
+    ref_name, remaining, mean_score = find_reference_profile(S, threshold, labels)
 
-    if ref_idx is not None:
-        print(f"\nSelected reference profile: {labels[ref_idx]}")
-        print(f"Remaining profiles: {[labels[i] for i in remaining]}")
+    if ref_name is not None:
+        print(f"\nSelected reference profile: {ref_name}")
+        print(f"Remaining profiles: {remaining}")
         print(f"Mean similarity score: {mean_score:.4f}")
 
         # Compute aligned mean profile
-        result_df, info = compute_aligned_mean((ref_idx, remaining, mean_score), labels)
+        result_df, info = compute_aligned_mean(smp_profiles, (ref_name, remaining, mean_score))
 
         # Plot the aligned mean profile
+        plot_aligned_mean(result_df["distance"], result_df["mean_force"], result_df["std_force"], info)
+
+    # Find Pairs of best similarity and build mean for them
+    pairs = find_highest_similarity_pairs(S, labels)
+    print(pairs)
+    for ref_name, remaining, score in pairs:
+        print(f"{ref_name} - {remaining}: Similarity = {score:.4f}")
+        # Compute mean for each pair 
+        result_df, info = compute_aligned_mean(smp_profiles, (ref_name, [remaining], score))
+        # Plot the aligned mean profile for each pair
         plot_aligned_mean(result_df["distance"], result_df["mean_force"], result_df["std_force"], info)
