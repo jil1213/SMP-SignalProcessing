@@ -11,7 +11,7 @@ Folder `data` stores the measured data and converted files
 
 ### profiles_parameters.py
 
-contains listed labels for snow grain type and according colour sheme for plotting. Can be aesiliy used to align an existing lawis snowprofiles to the correct snow grain tpe labels and colours.
+contains listed labels for snow grain type and according colour sheme for plotting. Can be used to align an existing lawis snowprofiles to the correct snow grain tpe labels and colours.
 
 ### readjson.py
 
@@ -20,7 +20,7 @@ Can plot the colour scheme and hardness profile of manual snowprofiles.
 
 ### alignSMPtoJson.py
 
-can be used to align a SMP .pnt profile to the related json manual snow profile. Also takes into account the angle correction between the profiles and stores the snow types in the graphical output with the color according to the standard (Fierz et al 2009) and gives the hardness of the layer as dashed hardness index.
+can be used to align a SMP .pnt profile to the related json manual snow profile. Also takes into account the angle correction between the profiles and stores the snow types in the graphical output with the color according to the standard (Fierz et al. 2009) and gives the hardness of the layer as dashed hardness index.
 
 ## Code_SMP
 
@@ -32,11 +32,9 @@ Autocorrelation of single profiles
 
 This script analyzes structural similarity between SMP profiles based on cosine similarity. It includes three core methods:
 
-    `find_reference_profile`: Automatically selects the most representative profile in a group by optimizing for number of similar neighbors, their minimum similarity, and their mean similarity.
-
-    `find_highest_similarity_pairs`: Identifies unique pairs of profiles with the highest mutual similarity.
-
-    `find_all_threshold_groups` : Constructs groups of profiles in which all members exceed a specified similarity threshold to one another.
+`find_reference_profile`: Automatically selects the most representative profile in a group by optimizing for number of similar neighbors, their minimum similarity, and their mean similarity.
+`find_highest_similarity_pairs`: Identifies unique pairs of profiles with the highest mutual similarity.
+`find_all_threshold_groups` : Constructs groups of profiles in which all members exceed a specified similarity threshold to one another.
 
 ### automated_mean.py
 
@@ -85,11 +83,11 @@ This script evaluates the similarity between SMP profiles using cosine similarit
 It supports various predefined profile pairings (e.g. fixed pairs, adjacent profiles, increasing spacing) and computes pairwise similarity scores after alignment via cross-correlation.
 The results include:
 
-    Similarity plots (bar charts and regression plots)
+Similarity plots (bar charts and regression plots)
 
-    Correlation matrices for full days and velocities
+Correlation matrices for full days and velocities
 
-    Offset caching to avoid redundant computations
+Offset caching to avoid redundant computations
 
 All results are saved to `output/similarity_scores`.
 
