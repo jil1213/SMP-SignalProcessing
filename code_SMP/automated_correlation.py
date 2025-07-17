@@ -219,4 +219,3 @@ if __name__ == "__main__":
             print(f"\nSelected reference profile: {labels[ref_idx]}")
             print(f"Remaining profiles: {[labels[i] for i in remaining]}")
             print(f"Mean similarity score: {mean_score:.4f}")
-
