@@ -5,7 +5,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from code_SMP.readSMP import load_all_smp_profiles
+from pathlib import Path
+from code_automated_correlation.automated_processing import load_profiles
 from code_SMP.offset import align_profiles, get_offset
 
 
@@ -23,11 +24,13 @@ def similarity(df1, df2):
 
 
 def compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_cache_path, save=True, velocity=None):
-    if velocity == 0 or velocity==None: #compute for both velocities together
+    if velocity is None:
+        day_profiles = smp_profiles
+    elif velocity == 0: #only use for my special dataset to devide whole set into subsets (compute for both velocities together)
         day_profiles = {
             name: df for name, df in smp_profiles.items()
             if df.attrs.get("date") == day and df.attrs.get("velocity", 0) != 0}
-    else: 
+    else: #only use for my special dataset to devide whole set into subsets
         day_profiles = {
         name: df for name, df in smp_profiles.items()
         if df.attrs.get("date") == day and df.attrs.get("velocity", 0) == velocity}
@@ -65,7 +68,7 @@ def compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_c
                 corr_matrix[j, i] = cosine
 
     if save == True:
-        with open(f"output/similarity_scores/corr_data_day{day}.pkl", "wb") as f:
+        with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}.pkl", "wb") as f:
             pickle.dump({"labels": names, "matrix": corr_matrix}, f)
 
     return pd.DataFrame(corr_matrix, index=names, columns=names)
@@ -75,7 +78,10 @@ def plot_correlation_matrix(corr_df, day, velocity=None):
     plt.figure(figsize=(10, 8))
     sns.heatmap(corr_df, annot=True, cmap="coolwarm", vmin=0, vmax=1)
     plt.tight_layout()
-    if velocity == 0 or velocity is None:
+    if velocity is None:
+        plt.title(f"Cosine Correlation Matrix - Day {day}")
+        plt.savefig(f"code_automated_correlation/output/similarity_scores/correlation_matrix_day{day}.png")
+    elif velocity == 0:
         plt.title(f"Cosine Correlation Matrix - Day {day}")
         plt.savefig(f"output/similarity_scores/correlation_matrix_day{day}.png")
     else:
@@ -85,15 +91,23 @@ def plot_correlation_matrix(corr_df, day, velocity=None):
 
 
 if __name__ == "__main__":
-    smp_profiles = load_all_smp_profiles()
-    offset_cache_path = "output/similarity_scores/offset_cache.pkl"
+    root = Path(__file__).resolve().parent 
+    input_root = root/ "raw_data"
+    output_root = root / "output" / "similarity_scores"
+    offset_cache_path = output_root / "offset_cache.pkl"
+
     offset_cache = load_cache(offset_cache_path)
-    for day in [1, 2]:
-        path = f"output/similarity_scores/corr_data_day{day}.pkl"
-        if not os.path.exists(path):
+
+    for folder_path in sorted(input_root.iterdir()):
+        if folder_path.is_dir():
+            day = folder_path.name
+            smp_profiles = load_profiles(folder_path)
+
+        corr_path = output_root / f"corr_data_day{day}.pkl"
+        if not os.path.exists(corr_path): 
             corr_df = compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_cache_path)
         else: 
-            with open(path, "rb") as f:
+            with open(corr_path, "rb") as f:
                 data = pickle.load(f)
             corr_df = pd.DataFrame(data["matrix"], index=data["labels"], columns=data["labels"])
         plot_correlation_matrix(corr_df, day)

@@ -25,12 +25,14 @@ def load_profiles(folder_path):
 if __name__ == "__main__":
     # Load all profiles from all days (means all folders)
     # Use default folder "./raw_data" in current directory
-    input_root = Path(__file__).resolve().parent / "raw_data"
+    root = Path(__file__).resolve().parent 
+    input_root = root/ "raw_data"
 
     all_day_profiles = {}
 
     for folder_path in sorted(input_root.iterdir()):
         if folder_path.is_dir():
-            print(f"Processing {folder_path.name}")
-            profiles = load_profiles(folder_path)
-            all_day_profiles.update(profiles)
+            day = folder_path.name
+            print(f"Processing {day}")
+            smp_profiles = load_profiles(folder_path)
+            all_day_profiles.update(smp_profiles)
