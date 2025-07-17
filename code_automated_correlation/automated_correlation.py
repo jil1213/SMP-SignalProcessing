@@ -1,5 +1,8 @@
+import os
 import pickle
 import numpy as np
+
+from pathlib import Path
 
 def find_reference_profile(similarity_matrix, threshold, labels):
     """
@@ -144,45 +147,51 @@ def find_all_threshold_groups(similarity_matrix, labels, threshold):
 
 if __name__ == "__main__":
 
-    day = 1  # or 2
-    data_path = f"output/similarity_scores/corr_data_day{day}.pkl"
+    root = Path(__file__).resolve().parent 
+    input_root = root/ "raw_data"
+    output_root = root / "output" / "similarity_scores"
 
-    with open(data_path, "rb") as f:
-        data = pickle.load(f)
+    for folder_path in sorted(input_root.iterdir()):
+        if folder_path.is_dir():
+            day = folder_path.name
 
-    S = data["matrix"]
-    labels = data["labels"]
+        corr_path = output_root / f"corr_data_day{day}.pkl"
+        with open(corr_path, "rb") as f:
+            data = pickle.load(f)
 
-    if day == 1: 
-        threshold = 0.85 
-    else: 
-        threshold = 0.75 # good threshold for day 2 , day 1 = 0.85
+        S = data["matrix"]
+        labels = data["labels"]
 
-    ref_name, remaining, mean_score = find_reference_profile(S, threshold, labels)
+        if day == 20250131: 
+            threshold = 0.85 
+        else: 
+            threshold = 0.75 # good threshold for day 2 , day 1 = 0.85
 
-    if ref_name is not None:
-        print(f"\nSelected reference profile: {ref_name}")
-        print(f"Remaining profiles: {remaining}")
-        print(f"Mean similarity score: {mean_score:.4f}")
-    else:
-        print("No valid group was found.")
+        ref_name, remaining, mean_score = find_reference_profile(S, threshold, labels)
 
-    pairs = find_highest_similarity_pairs(S, labels)
-
-    print("\nUnique pairs with scores:")
-    for a, b, score in pairs:
-        print(f"{a} - {b}: Similarity = {score:.4f}")
-
-    groups = find_all_threshold_groups(S, labels, threshold)
-
-    print("\nGroups ready for further processing:")
-    for idx, g in enumerate(groups, 1):
-        print(f"\nGroup {idx}: {g['labels']}")
-        print(g["matrix"])
-
-    for group in groups:
-        ref_name, remaining, mean_score = find_reference_profile(group["matrix"], threshold, labels=group["labels"])
         if ref_name is not None:
             print(f"\nSelected reference profile: {ref_name}")
             print(f"Remaining profiles: {remaining}")
             print(f"Mean similarity score: {mean_score:.4f}")
+        else:
+            print("No valid group was found.")
+
+        pairs = find_highest_similarity_pairs(S, labels)
+
+        print("\nUnique pairs with scores:")
+        for a, b, score in pairs:
+            print(f"{a} - {b}: Similarity = {score:.4f}")
+
+        groups = find_all_threshold_groups(S, labels, threshold)
+
+        print("\nGroups ready for further processing:")
+        for idx, g in enumerate(groups, 1):
+            print(f"\nGroup {idx}: {g['labels']}")
+            print(g["matrix"])
+
+        for group in groups:
+            ref_name, remaining, mean_score = find_reference_profile(group["matrix"], threshold, labels=group["labels"])
+            if ref_name is not None:
+                print(f"\nSelected reference profile: {ref_name}")
+                print(f"Remaining profiles: {remaining}")
+                print(f"Mean similarity score: {mean_score:.4f}")
