@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 from code_SMP.readSMP import load_all_smp_profiles
 from code_SMP.offset import align_profiles, get_offset
-from code_SMP.automated_similarity import load_cache
-from code_SMP.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
+from code_automated_correlation.automated_similarity import load_cache
+from code_automated_correlation.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 
 
 def compute_aligned_mean(smp_profiles, values, cache_path="output/similarity_scores/offset_cache.pkl"):

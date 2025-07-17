@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from code_SMP.readSMP import load_all_smp_profiles
 from code_SMP.offset import align_profiles, get_offset
 from code_SMP.pairs import pairs, first, single_distance_pairs, double_distance_pairs, increasing_distance_pairs, decreasing_distance_pairs
-from code_SMP.automated_similarity import load_cache, similarity, compute_aligned_correlation_matrix, plot_correlation_matrix
+from code_automated_correlation.automated_similarity import load_cache, similarity, compute_aligned_correlation_matrix, plot_correlation_matrix
 
 
 def build_pairs_from_list(smp_profiles, name_pairs):
