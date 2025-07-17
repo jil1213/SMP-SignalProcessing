@@ -169,5 +169,5 @@ if __name__ == "__main__":
 
     for day in [1, 2]:
         for velocity in [8, 20, 0]:
-            corr_df = compute_aligned_correlation_matrix(smp_profiles, day, velocity, cache, cache_path)
-            plot_correlation_matrix(corr_df, day, velocity)
+            corr_df = compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path, save=False, velocity=velocity)
+            plot_correlation_matrix(corr_df, day, velocity=velocity)

@@ -22,8 +22,8 @@ def similarity(df1, df2):
     return cosine
 
 
-def compute_aligned_correlation_matrix(smp_profiles, day, velocity, offset_cache, offset_cache_path, save=True):
-    if velocity == 0: #compute for both velocities together
+def compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_cache_path, save=True, velocity=None):
+    if velocity == 0 or velocity==None: #compute for both velocities together
         day_profiles = {
             name: df for name, df in smp_profiles.items()
             if df.attrs.get("date") == day and df.attrs.get("velocity", 0) != 0}
@@ -65,17 +65,17 @@ def compute_aligned_correlation_matrix(smp_profiles, day, velocity, offset_cache
                 corr_matrix[j, i] = cosine
 
     if save == True:
-        with open(f"output/similarity_scores/corr_data_day{day}_v{velocity}.pkl", "wb") as f:
+        with open(f"output/similarity_scores/corr_data_day{day}.pkl", "wb") as f:
             pickle.dump({"labels": names, "matrix": corr_matrix}, f)
 
     return pd.DataFrame(corr_matrix, index=names, columns=names)
 
 
-def plot_correlation_matrix(corr_df, day, velocity):
+def plot_correlation_matrix(corr_df, day, velocity=None):
     plt.figure(figsize=(10, 8))
     sns.heatmap(corr_df, annot=True, cmap="coolwarm", vmin=0, vmax=1)
     plt.tight_layout()
-    if velocity == 0:
+    if velocity == 0 or velocity is None:
         plt.title(f"Cosine Correlation Matrix - Day {day}")
         plt.savefig(f"output/similarity_scores/correlation_matrix_day{day}.png")
     else:
@@ -89,12 +89,11 @@ if __name__ == "__main__":
     offset_cache_path = "output/similarity_scores/offset_cache.pkl"
     offset_cache = load_cache(offset_cache_path)
     for day in [1, 2]:
-        for velocity in [8, 20, 0]:
-            path = f"output/similarity_scores/corr_data_day{day}_v{velocity}.pkl"
-            if not os.path.exists(path):
-                corr_df = compute_aligned_correlation_matrix(smp_profiles, day, velocity, offset_cache, offset_cache_path)
-            else: 
-                with open(path) as f:
-                    data = pickle.load(f)
-                corr_df = pd.DataFrame(data["matrix"], index=data["labels"], columns=data["labels"])
-            plot_correlation_matrix(corr_df, day, velocity)
+        path = f"output/similarity_scores/corr_data_day{day}.pkl"
+        if not os.path.exists(path):
+            corr_df = compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_cache_path)
+        else: 
+            with open(path) as f:
+                data = pickle.load(f)
+            corr_df = pd.DataFrame(data["matrix"], index=data["labels"], columns=data["labels"])
+        plot_correlation_matrix(corr_df, day)
