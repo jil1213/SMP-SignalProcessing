@@ -26,7 +26,8 @@ def compute_aligned_mean(indices, labels, cache_path="output/similarity_scores/o
 
         if pair_key in cache:
             lag = cache[pair_key]["lag"]
-            # Check if the original key order in cache is reversed (necessary because lags are always defined from lower profile name to higher)
+            # Check if the original key order in cache is reversed 
+            # !necessary because lags are always defined from lower profile name to higher
             if (ref_name, name) == (pair_key[1], pair_key[0]):
                 # Reverse the sign of lag if names are in opposite order
                 lag = -lag
@@ -43,10 +44,12 @@ def compute_aligned_mean(indices, labels, cache_path="output/similarity_scores/o
         _, df_aligned = align_profiles(df_ref, df, ref_name, name, lag, plot=False)
         aligned_dfs.append(df_aligned)
 
+    # Cut all profiles to same min length
     min_len = min(len(df) for df in aligned_dfs)
     trimmed_forces = np.stack([df["force"].values[:min_len] for df in aligned_dfs])
     distance = aligned_dfs[0]["distance"].values[:min_len]
 
+    # Compute mean and std
     mean_force = np.mean(trimmed_forces, axis=0)
     std_force = np.std(trimmed_forces, axis=0, ddof=1)
 
@@ -58,10 +61,32 @@ def compute_aligned_mean(indices, labels, cache_path="output/similarity_scores/o
 
     info = {
         "reference_profile": ref_name,
-        "aligned_profiles": all_names,
+        "aligned_profiles": other_names,
         "mean_similarity": mean_score}
 
     return result_df, info
+
+def plot_aligned_mean(distance, mean_force, std, info):
+    plt.figure(figsize=(8, 5))
+    aligned_block = "\n".join([", ".join(info['aligned_profiles'][i:i+3]) for i in range(0, len(info['aligned_profiles']), 3)])
+    # Label with information about averaged profiles
+    label = f"Mean Force\nReference: {info['reference_profile']}\nAligned Profiles:\n{aligned_block}"
+    plt.plot(distance, mean_force, label=label)
+    plt.fill_between(distance, mean_force - std, mean_force + std, alpha=0.3, label="±1 SD")
+    plt.xlabel("Distance (mm)")
+    plt.ylabel("Force (N)")
+    n_profiles = len(info["aligned_profiles"])
+    title = f"Mean of \n Reference {info['reference_profile']} with {n_profiles-1} Profile(s) \nMean Similarity: {info['mean_similarity']:.3f}"
+    plt.title(title)
+    plt.legend()
+    plt.grid()
+    plt.tight_layout()
+
+    # Create save path
+    filename = f"mean_{info['reference_profile']}_with_{n_profiles-1}profiles.png"
+    save_path = "output/automated_mean/" + filename
+
+    plt.savefig(save_path)
 
 
 if __name__ == "__main__":
@@ -105,8 +130,6 @@ if __name__ == "__main__":
         [0.76, 0.62, 0.62, 0.95, 0.73, 0.67, 0.64, 0.60, 1.00, 0.82],
         [0.62, 0.64, 0.78, 0.82, 0.86, 0.67, 0.68, 0.74, 0.82, 1.00]
     ])
-
-
     # good threshold for day 2 , day 1 = 0.85
     threshold = 0.75
 
@@ -122,25 +145,5 @@ if __name__ == "__main__":
         # Compute aligned mean profile
         result_df, info = compute_aligned_mean((ref_idx, remaining, mean_score), labels)
 
-        print("\nAlignment info:")
-        print(info)
-
-        # Plot result
-        plt.figure(figsize=(8, 5))
-        plt.plot(result_df["distance"], result_df["mean_force"], label="Mean Force")
-        plt.fill_between(
-            result_df["distance"],
-            result_df["mean_force"] - result_df["std_force"],
-            result_df["mean_force"] + result_df["std_force"],
-            alpha=0.3,
-            label="±1 SD"
-        )
-        plt.xlabel("Distance (mm)")
-        plt.ylabel("Force (N)")
-        title = f"Mean Profile:\nReference {info['reference_profile']} + {info['aligned_profiles']} \nMean Similarity: {info['mean_similarity']:.3f}"
-        plt.title(title)
-        plt.legend()
-        plt.grid()
-        plt.tight_layout()
-        #plt.savefig("output/mean_profile.png")
-        plt.show()
+        # Plot the aligned mean profile
+        plot_aligned_mean(result_df["distance"], result_df["mean_force"], result_df["std_force"], info)
