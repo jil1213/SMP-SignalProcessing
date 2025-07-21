@@ -9,7 +9,7 @@ from pathlib import Path
 from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
 
 
-def load_cache(cache_path):
+def load_cache(cache_path): #not used in automated codes, only for old versions necessary
     if os.path.exists(cache_path):
         with open(cache_path, "rb") as f:
             return pickle.load(f)
@@ -44,9 +44,9 @@ def compute_aligned_correlation_matrix(smp_profiles, day, save=True, velocity=No
                 df1 = day_profiles[name1]
                 df2 = day_profiles[name2]
 
-                offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=False, target_dir=output_aligned)
+                offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=False)
 
-                df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=False, target_dir=output_aligned)
+                df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=False)
 
                 f1 = df1["force"].values
                 f2 = df2["force"].values

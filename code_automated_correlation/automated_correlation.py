@@ -4,6 +4,9 @@ import numpy as np
 
 from pathlib import Path
 
+from code_automated_correlation.automated_processing import load_profiles
+from code_automated_correlation.automated_similarity import compute_aligned_correlation_matrix
+
 def find_reference_profile(similarity_matrix, threshold, labels):
     """
     Finds best reference profile
@@ -154,13 +157,12 @@ if __name__ == "__main__":
     for folder_path in sorted(input_root.iterdir()):
         if folder_path.is_dir():
             day = folder_path.name
+            smp_profiles = load_profiles(folder_path)
 
-        corr_path = output_root / f"corr_data_day{day}.pkl"
-        with open(corr_path, "rb") as f:
-            data = pickle.load(f)
-
-        S = data["matrix"]
-        labels = data["labels"]
+        # calculate Similarity matrix S and labels
+        corr_df = compute_aligned_correlation_matrix(smp_profiles, day)
+        S = corr_df.values
+        labels = corr_df.index.tolist()
 
         if day == 20250131: 
             threshold = 0.85 

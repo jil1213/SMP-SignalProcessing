@@ -5,38 +5,21 @@ import matplotlib.pyplot as plt
 
 from pathlib import Path
 from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
-from code_automated_correlation.automated_similarity import load_cache
+from code_automated_correlation.automated_similarity import compute_aligned_correlation_matrix
 from code_automated_correlation.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 
 
-def compute_aligned_mean(smp_profiles, values, cache_path="output/similarity_scores/offset_cache.pkl"):
+def compute_aligned_mean(smp_profiles, values):
     ref_name, other_names, mean_score = values
 
     df_ref = smp_profiles[ref_name]
     aligned_dfs = [df_ref.reset_index(drop=True)]
 
-    cache = load_cache(cache_path)
-
     for name in other_names:
         df = smp_profiles[name]
-        pair_key = tuple(sorted((ref_name, name)))
 
-        if pair_key in cache:
-            lag = cache[pair_key]["lag"]
-            # Check if the original key order in cache is reversed 
-            # !necessary because lags are always defined from lower profile name to higher
-            if (ref_name, name) == (pair_key[1], pair_key[0]):
-                # Reverse the sign of lag if names are in opposite order
-                lag = -lag
-        else:
-            print("There is no lag value in cache for pair ", pair_key)
-            exit(0)
-            #offset_mm, _, lag = get_offset(df_ref, df, ref_name, name, plot=False)
-            #cache[pair_key] = {"lag": lag}
-            # Save updated cache
-            #with open(cache_path, "wb") as f:
-            #    pickle.dump(cache, f)
-
+        # calculate lag 
+        _, _, lag = get_offset(df_ref, df, ref_name, name, plot=False)
         _, df_aligned = align_profiles(df_ref, df, ref_name, name, lag, plot=False)
         aligned_dfs.append(df_aligned)
 
@@ -99,12 +82,10 @@ if __name__ == "__main__":
             day = folder_path.name
             smp_profiles = load_profiles(folder_path)
 
-        corr_path = output_root / f"corr_data_day{day}.pkl"
-        with open(corr_path, "rb") as f:
-            data = pickle.load(f)
-
-        S = data["matrix"]
-        labels = data["labels"]
+        # calculate Similarity matrix S and labels
+        corr_df = compute_aligned_correlation_matrix(smp_profiles, day)
+        S = corr_df.values
+        labels = corr_df.index.tolist()
 
         if day == 20250131: 
             threshold = 0.85 
