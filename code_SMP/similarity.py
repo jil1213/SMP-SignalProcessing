@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from code_SMP.readSMP import load_all_smp_profiles
 from code_automated_correlation.automated_processing import get_offset, align_profiles
 from code_SMP.pairs import pairs, first, single_distance_pairs, double_distance_pairs, increasing_distance_pairs, decreasing_distance_pairs
-from code_automated_correlation.automated_similarity import load_cache, similarity, compute_aligned_correlation_matrix, plot_correlation_matrix
+from code_automated_correlation.automated_similarity import load_cache, similarity, compute_aligned_similarity_matrix, plot_correlation_matrix
 
 
 def build_pairs_from_list(smp_profiles, name_pairs):
@@ -169,5 +169,5 @@ if __name__ == "__main__":
 
     for day in [1, 2]:
         for velocity in [8, 20, 0]:
-            corr_df = compute_aligned_correlation_matrix(smp_profiles, day, cache, cache_path, save=False, velocity=velocity)
+            corr_df = compute_aligned_similarity_matrix(smp_profiles, day, cache, cache_path, save=False, velocity=velocity)
             plot_correlation_matrix(corr_df, day, velocity=velocity)
