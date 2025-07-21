@@ -22,7 +22,7 @@ def similarity(df1, df2):
     return cosine
 
 
-def compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_cache_path, save=True, velocity=None):
+def compute_aligned_correlation_matrix(smp_profiles, day, save=True, velocity=None):
     if velocity is None:
         day_profiles = smp_profiles
     elif velocity == 0: #only use for my special dataset to devide whole set into subsets (compute for both velocities together)
@@ -43,25 +43,14 @@ def compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_c
             if i <= j:
                 df1 = day_profiles[name1]
                 df2 = day_profiles[name2]
-                pair_key = tuple(sorted((name1, name2)))
 
-                if name1 == name2:
-                    cosine = 1.0
-                else:
-                    if pair_key in offset_cache:
-                        lag = offset_cache[pair_key]["lag"]
-                    else:
-                        offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=False)
-                        # save offset in cache
-                        offset_cache[pair_key] = {"lag": lag}
-                        with open(offset_cache_path, "wb") as f:
-                            pickle.dump(offset_cache, f)
+                offset_mm, _, lag = get_offset(df1, df2, name1, name2, plot=False, target_dir=output_aligned)
 
-                    df1, df2 = align_profiles(df1, df2, name1, name2, lag)
+                df1, df2 = align_profiles(df1, df2, name1, name2, lag, plot=False, target_dir=output_aligned)
 
-                    f1 = df1["force"].values
-                    f2 = df2["force"].values
-                    cosine = similarity(f1, f2)
+                f1 = df1["force"].values
+                f2 = df2["force"].values
+                cosine = similarity(f1, f2)
 
                 corr_matrix[i, j] = cosine
                 corr_matrix[j, i] = cosine
@@ -93,20 +82,14 @@ if __name__ == "__main__":
     root = Path(__file__).resolve().parent 
     input_root = root/ "raw_data"
     output_root = root / "output" / "similarity_scores"
-    offset_cache_path = output_root / "offset_cache.pkl"
+    output_aligned = root / "output" / "crosscorrelation"
 
-    offset_cache = load_cache(offset_cache_path)
 
     for folder_path in sorted(input_root.iterdir()):
         if folder_path.is_dir():
             day = folder_path.name
             smp_profiles = load_profiles(folder_path)
 
-        corr_path = output_root / f"corr_data_day{day}.pkl"
-        if not os.path.exists(corr_path): 
-            corr_df = compute_aligned_correlation_matrix(smp_profiles, day, offset_cache, offset_cache_path)
-        else: 
-            with open(corr_path, "rb") as f:
-                data = pickle.load(f)
-            corr_df = pd.DataFrame(data["matrix"], index=data["labels"], columns=data["labels"])
+        corr_df = compute_aligned_correlation_matrix(smp_profiles, day)
+
         plot_correlation_matrix(corr_df, day)
