@@ -6,8 +6,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from pathlib import Path
-from code_automated_correlation.automated_processing import load_profiles
-from code_SMP.offset import align_profiles, get_offset
+from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
 
 
 def load_cache(cache_path):

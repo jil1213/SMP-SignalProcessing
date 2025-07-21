@@ -3,7 +3,7 @@ import numpy as np
 
 from pathlib import Path
 from code_SMP.readSMP import load_all_smp_profiles
-from code_SMP.offset import align_profiles
+from code_automated_correlation.automated_processing import get_offset, align_profiles
 
 def plot_mean(distance, mean_force, std, date, velocity, target_dir, save):
     # Plot Mean with CI 95% 

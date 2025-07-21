@@ -4,8 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from pathlib import Path
-from code_SMP.offset import align_profiles, get_offset
-from code_automated_correlation.automated_processing import load_profiles
+from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
 from code_automated_correlation.automated_similarity import load_cache
 from code_automated_correlation.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 
