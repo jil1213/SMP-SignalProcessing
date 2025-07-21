@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from pathlib import Path
 from snowmicropyn import Profile
+from scipy.signal import correlate
 
 from code_visualizations.plotSMP import plot_pairs # function to plot to smp profiles together, not necessary for offset
 from code_SMP.detect_surface import detect_surface  # my own method to detect surface
@@ -46,8 +47,8 @@ def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crossc
     df1_cut = df1.iloc[start:end].reset_index(drop=True)
     df2_cut = df2.iloc[start:end].reset_index(drop=True)
 
-    # Calculate cross-correlation to cutted dfs
-    correlation = np.correlate(df1_cut["force"], df2_cut["force"], mode='full')
+    # Calculate cross-correlation to cutted dfs with scipy FFT correlate (faster than np.correlate))
+    correlation = correlate(df1_cut["force"], df2_cut["force"], mode='full', method='fft')
 
     dx = np.mean(np.diff(df1_cut["distance"]))  # mean spacing in mm
 
