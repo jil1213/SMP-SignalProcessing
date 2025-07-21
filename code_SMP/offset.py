@@ -16,20 +16,14 @@ def get_offset(df1, df2, name1, name2, plot=True):
     df2 = df2.reset_index(drop=True)
 
     #Cut dfs to apply autocorrelation - only use for offset method!
-    start = 0 #10000 *0,004132 = 41,32mm // with surface trim I could also start with 0 
-    end = 220000 #909,94mm // only works for day 1 , profiles of day 2 are shorter
-
-    #make shorter Array for day 2 (so ground peaks get cut off)
-    if len(df2) < 250000: 
-        start = 0 #10000
-        end = 170000 # = 702,44mm 
+    start = 0
+    end = min(len(df1), len(df2))- 24200 # cut off last 24.200 values (=100mm), because they somitimes include ground peaks
 
     #check if array is long enough, if not: take a smaller range
-    if len(df2) < end:
+    if len(df1) & len(df2) < end:
         print(f"Profile is too short, using smaller range for cross-correlation.")
-        print(len(df2))
-        start = 10000
-        end = 50000
+        start = 0
+        end = min(len(df1), len(df2))
 
     df1_cut = df1.iloc[start:end].reset_index(drop=True)
     df2_cut = df2.iloc[start:end].reset_index(drop=True)
@@ -45,7 +39,7 @@ def get_offset(df1, df2, name1, name2, plot=True):
     # Lag with max correlation 
     # lag_max = np.argmax(correlation) - (len(df1_cut["force"]) - 1) # lag with max correlation global
     # local max  around center (most realistic)
-    start, end = len(correlation) // 2 - 20000, len(correlation) // 2 + 20000 # Assumption: max shift is not more than 8cm in both directions
+    start, end = len(correlation) // 2 - 24200, len(correlation) // 2 + 24200 # Assumption: max shift is not more than 100cm in both directions
     lag_local = np.argmax(correlation[start:end])
     lag_max = (start + lag_local) - (len(df1_cut["force"]) - 1) #  absolute index of whole array - centre
 
