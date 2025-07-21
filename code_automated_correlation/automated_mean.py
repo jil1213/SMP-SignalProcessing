@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 from pathlib import Path
 from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
-from code_automated_correlation.automated_similarity import compute_aligned_correlation_matrix
+from code_automated_correlation.automated_similarity import compute_aligned_similarity_matrix
 from code_automated_correlation.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 
 
@@ -83,7 +83,7 @@ if __name__ == "__main__":
             smp_profiles = load_profiles(folder_path)
 
         # calculate Similarity matrix S and labels
-        corr_df = compute_aligned_correlation_matrix(smp_profiles, day)
+        corr_df = compute_aligned_similarity_matrix(smp_profiles, day)
         S = corr_df.values
         labels = corr_df.index.tolist()
 

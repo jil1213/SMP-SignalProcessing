@@ -22,7 +22,7 @@ def similarity(df1, df2):
     return cosine
 
 
-def compute_aligned_correlation_matrix(smp_profiles, day, save=True, velocity=None):
+def compute_aligned_similarity_matrix(smp_profiles, day, save=True, velocity=None):
     if velocity is None:
         day_profiles = smp_profiles
     elif velocity == 0: #only use for my special dataset to devide whole set into subsets (compute for both velocities together)
@@ -90,6 +90,6 @@ if __name__ == "__main__":
             day = folder_path.name
             smp_profiles = load_profiles(folder_path)
 
-        corr_df = compute_aligned_correlation_matrix(smp_profiles, day)
+        corr_df = compute_aligned_similarity_matrix(smp_profiles, day)
 
         plot_correlation_matrix(corr_df, day)
