@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from snowmicropyn import Profile
 
-from code_visualizations.plotSMP import plot_pairs #function to plot to smp profiles together, not necessary for offset
+from code_visualizations.plotSMP import plot_pairs # function to plot to smp profiles together, not necessary for offset
 from code_SMP.detect_surface import detect_surface  # my own method to detect surface
 
 
@@ -27,18 +27,18 @@ def load_profiles(folder_path):
 
 
 #method to get the offset of two profiles by crosscorrelation
-def get_offset(df1, df2, name1, name2, plot=True):
+def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crosscorrelation")):
 
-    #make sure index starts with 0 -> surface detection earlier might made trouble here
+    # make sure index starts with 0 -> surface detection earlier might make trouble here
     df1 = df1.reset_index(drop=True)
     df2 = df2.reset_index(drop=True)
 
-    #Cut dfs to apply autocorrelation - only use for offset method!
+    # Cut dfs to apply autocorrelation - only use for offset method!
     start = 0
-    end = min(len(df1), len(df2))- 24200 # cut off last 24.200 values (=100mm), because they somitimes include ground peaks
+    end = min(len(df1), len(df2))- 24200 # cut off last 24.200 values (=100mm), because they sometimes include ground peaks
 
-    #check if array is long enough, if not: take a smaller range
-    if len(df1) & len(df2) < end:
+    # check if array is long enough to cut of 100mm, if not: take smaller range
+    if end < 0:
         print(f"Profile is too short, using smaller range for cross-correlation.")
         start = 0
         end = min(len(df1), len(df2))
@@ -51,7 +51,7 @@ def get_offset(df1, df2, name1, name2, plot=True):
 
     dx = np.mean(np.diff(df1_cut["distance"]))  # mean spacing in mm
 
-    index_shifts = np.arange(-len(df1_cut["force"]) + 1, len(df1_cut["force"]))       # create array of right size, starting from -n+1 to n
+    index_shifts = np.arange(-len(df1_cut["force"]) + 1, len(df1_cut["force"])) # create array of right size, starting from -n+1 to n
     index_shifts_mm = index_shifts * dx #convert lags into distances in mm
 
     # Lag with max correlation 
@@ -80,7 +80,7 @@ def get_offset(df1, df2, name1, name2, plot=True):
 
     return offset_mm, correlation, lag_max
 
-def align_profiles(df1, df2, name1, name2, lag, plot=True):
+def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("output/crosscorrelation")):
     df2_shifted = df2.copy()
     # shift indices of df2 with lag to get max correlation
     # positive lag shift to right side - negative lag shift to left side
@@ -117,6 +117,7 @@ if __name__ == "__main__":
     # Use default folder "./raw_data" in current directory
     root = Path(__file__).resolve().parent 
     input_root = root/ "raw_data"
+    output_root = root / "output" / "crosscorrelation"
 
     all_day_profiles = {}
 
@@ -126,3 +127,11 @@ if __name__ == "__main__":
             print(f"Processing {day}")
             smp_profiles = load_profiles(folder_path)
             all_day_profiles.update(smp_profiles)
+
+    # Do crosscorellation for two profiles as a test
+    df1 = all_day_profiles["S45M1056"]
+    df2 = all_day_profiles["S45M1057"]
+    # get offset
+    offset_mm, correlation, lag = get_offset(df1, df2, "S45M1056", "S45M1057", plot=True, target_dir=output_root)
+    # align profiles
+    align_profiles(df1, df2, "S45M1056", "S45M1057", lag, plot=True, target_dir=output_root)
