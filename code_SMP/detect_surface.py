@@ -73,7 +73,7 @@ def detect_surface(df, name):
     # assumption II: to get a stable std a a value range of 10mm is used for the calculation -> window
 
     max_distance_mm = 100.0      # assumption I: scan first 100mm (10cm) as possible air measurement
-    window = int(20 / 0.00413223123177886) # assumption II: 10mm window size to calculate std air (length_mm/resolution)
+    window = int(15 / 0.00413223123177886) # assumption II: 10mm window size to calculate std air (length_mm/resolution)
 
     # Initialize variables before loop
     min_std = np.inf
