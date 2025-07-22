@@ -1,12 +1,9 @@
-import matplotlib.pyplot as plt
 import numpy as np
-from skimage.filters import threshold_otsu
+import matplotlib.pyplot as plt
+
 from snowmicropyn import Profile
 from snowmicropyn.tools import smooth
 #from code_SMP.readSMP import load_all_smp_profiles
-import numpy as np
-import time
-import pandas as pd
 
 def moving_linear_regression(x, y, window_mm=1.0):
     # calculate window size 
@@ -27,9 +24,8 @@ def moving_linear_regression(x, y, window_mm=1.0):
     sum_x2 = np.convolve(x * x, ones, mode='valid')
 
     # use linear regression formula to calculate slope
-    n = window_size
-    numerator = n * sum_xy - sum_x * sum_y
-    denominator = n * sum_x2 - sum_x ** 2
+    numerator = window_size * sum_xy - sum_x * sum_y
+    denominator = window_size * sum_x2 - sum_x ** 2
     slope = numerator / denominator
 
     # Pad result to original length with NaNs on both sides for 
@@ -77,7 +73,7 @@ def detect_surface(df, name):
     # assumption II: to get a stable std a a value range of 10mm is used for the calculation -> window
 
     max_distance_mm = 100.0      # assumption I: scan first 100mm (10cm) as possible air measurement
-    window = int(10 / 0.00413223123177886) # assumption II: 10mm window size for calc (length_mm/resolution)
+    window = int(20 / 0.00413223123177886) # assumption II: 10mm window size to calculate std air (length_mm/resolution)
 
     # Initialize variables before loop
     min_std = np.inf

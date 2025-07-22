@@ -123,3 +123,15 @@ MAE old - new: 5.11 - 1.76
 MSE old - new: 524.79 - 91.94 mm^2
 RMSEold - new: 22.91 - 9.59 mm
 
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+
+Scores:
+MAE old - new: 5.11 - 1.25
+MSE old - new: 524.79 - 11.76 mm^2
+RMSEold - new: 22.91 - 3.43 mm
+

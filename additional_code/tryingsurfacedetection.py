@@ -1,8 +1,8 @@
 # code to try out surface detection on other profiles 
 # visualizations of detected surface 
-import matplotlib.pyplot as plt
 import numpy as np
 import configparser
+import matplotlib.pyplot as plt
 
 from pathlib import Path
 from snowmicropyn import Profile
@@ -29,6 +29,7 @@ def compute_metrics(surface_ini_all, surface_old_all, surface_new_all, folder_pa
         f"RMSEold - new: {rmse_old:.2f} - {rmse_new:.2f} mm\n")
 
         return scores
+
 
 def append_run_information(info_text, scores, target_file=Path("additional_code/test_data3/run_summary.txt")):
 
@@ -144,7 +145,7 @@ if surface_ini is not None:
         scores = compute_metrics(surface_ini_all, surface_old_all, surface_new_all, folder_path)
 
         # Change here for different parameter runs
-        info_text = (f"NEW METRICS: Run with moving linear regression and threshold finding with\n air_std over rolling window 10mm\n threshold = threshold = 5 * air_std \n")
+        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 20mm\n threshold = threshold = 5 * air_std \n")
 
         # Append information to the run_summary.txt
         append_run_information(info_text, scores)
