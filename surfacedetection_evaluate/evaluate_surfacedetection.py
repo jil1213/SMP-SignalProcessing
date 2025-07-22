@@ -4,6 +4,19 @@ from pathlib import Path
 import configparser
 import pandas as pd
 from code_SMP.detect_surface import detect_surface
+from surfacedetection_tuning.tune_surfacedetection import compute_metrics, plot_delta_error
+
+def load_surface_data(csv_path):
+    """
+    Loads surface detection results from CSV and returns arrays for evaluation.
+    """
+    df = pd.read_csv(csv_path)
+    surface_ini_all = df["surface_ini"].dropna().values
+    surface_old_all = df.loc[df["surface_ini"].notna(), "surface_old"].values
+    surface_new_all = df.loc[df["surface_ini"].notna(), "surface_new"].values
+    profile_names = df.loc[df["surface_ini"].notna(), "profile_name"].values
+    return surface_ini_all, surface_old_all, surface_new_all, profile_names
+
 
 def calculate_surfaces(folder_path):
     """
@@ -68,8 +81,18 @@ if __name__ == "__main__":
     # Define input and output paths
     root = Path(__file__).resolve().parent.parent.parent
     folder_path = root / "raw_data"
-    output_file = root / "SMP-SignalProcessing" / "surfacedetection_evaluate" / "surface_detection_cache.csv"
+    output_path = root / "SMP-SignalProcessing" / "surfacedetection_evaluate"
+    csv_file = output_path / "surface_detection_cache.csv"
 
     # Calculate and save results
-    results = calculate_surfaces(folder_path)
-    save_surface_results_to_csv(results, output_file)
+    #results = calculate_surfaces(folder_path)
+    #save_surface_results_to_csv(results, output_file)
+    
+    # Load data and compute metrics
+    surface_ini_all, surface_old_all, surface_new_all, profile_names = load_surface_data(csv_file)
+    scores = compute_metrics(surface_ini_all, surface_old_all, surface_new_all)
+
+    print("Evaluation scores:", scores)
+    
+    # Plot delta errors
+    plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, output_path)
