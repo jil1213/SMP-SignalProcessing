@@ -45,6 +45,16 @@ Can use output of `automated_correlation.py` to compute and visualize mean of gr
 
 ...under construction...
 
+## Surface_detection tuning + evaluation
+
+### surfacedetection_tuning
+
+Surface detetection method of `code_SMP.detect_surface.py` is tuned on testdata.
+
+### surfacedetection_evaluate
+
+Contains script and outputs for new surface detection method for all profiles of [WFJ Daily SMP Dataset](https://envidat.ch/#/metadata/wfj_dailysmp) with quality flag = 1 (2815 profiles). Error metrics are computed.
+
 ## Code_json
 
 ### profiles_parameters.py
