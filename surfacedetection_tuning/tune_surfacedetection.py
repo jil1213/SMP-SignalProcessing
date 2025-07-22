@@ -145,7 +145,7 @@ if surface_ini is not None:
         scores = compute_metrics(surface_ini_all, surface_old_all, surface_new_all, folder_path)
 
         # Change here for different parameter runs
-        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 15mm\n threshold = threshold = 5 * air_std \n")
+        info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 20mm\n threshold = threshold = 5 * air_std \n")
 
         # Append information to the run_summary.txt
         append_run_information(info_text, scores)
