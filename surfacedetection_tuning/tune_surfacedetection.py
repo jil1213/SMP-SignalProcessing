@@ -69,14 +69,15 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
 
         # Zoomed plotting deviations for better focus on small values
         plt.figure(figsize=(10, 5))
-        plt.plot(delta_old, label="Old vs Ini", marker='.')
-        plt.plot(delta_new, label="New vs Ini", marker='.')
+        plt.plot(delta_old, marker='.', linestyle='None', label="Old vs Ini")
+        plt.plot(delta_new, marker='.', linestyle='None', label="New vs Ini")
         # Dummy handle for text explanation
         plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
         plt.xlabel("Profile Index")
         plt.ylabel("Deviation (mm)")
         plt.title("Zoomed Deviation from Ground Truth (surface_ini)")
-        plt.ylim(-25, 25) #zoomed range but looses some profiles with high error
+        #plt.ylim(-25, 25) #zoomed range but looses some profiles with high error
+        plt.ylim(-10, 10) #zoomed range for better visibility of small errors
         plt.legend()
         plt.grid()
         plt.tight_layout()
