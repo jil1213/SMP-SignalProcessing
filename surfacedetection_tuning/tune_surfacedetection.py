@@ -50,7 +50,7 @@ def append_run_information(info_text, scores, target_file=Path("additional_code/
 
 
 # import all SMP profiles existing in the folder (getting names out of )
-folder_path = Path("tune_surfacedetection/test_data3")
+folder_path = Path("surfacedetection_tuning/test_data3")
 smp_profiles = {}
 pnt_files = folder_path.rglob("*.PNT") # for recurcsive search in subfolders for test_data3
 
@@ -63,7 +63,7 @@ thresholds = []
 
 for file in pnt_files:
         surface_ini = None
-        if folder_path == Path("tune_surfacedetection/test_data3"):
+        if folder_path == Path("surfacedetection_tuning/test_data3"):
                 ini_file = file.with_suffix(".ini") # get corresponing ini
                 config = configparser.ConfigParser()
                 config.read(ini_file)
