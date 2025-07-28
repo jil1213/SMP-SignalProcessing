@@ -8,6 +8,7 @@ from pathlib import Path
 from snowmicropyn import Profile
 from sklearn.metrics import mean_absolute_error,  mean_squared_error
 from code_SMP.detect_surface import detect_surface
+plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 def compute_metrics(surface_ini_all, surface_old_all, surface_new_all): 
         # MAE - Mean Absolute Error
@@ -55,43 +56,58 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
 
         # Plotting deviations
         plt.figure(figsize=(10, 5))
-        plt.plot(delta_old, label="Old vs Ini", marker='.', linestyle='None')
-        plt.plot(delta_new, label="New vs Ini", marker='.', linestyle='None')
+        plt.plot(delta_old, label="Existing method", marker='.', linestyle='None', markersize=5)
+        plt.plot(delta_new, label="New method ", marker='.', linestyle='None', markersize=5)
         # Dummy handle for text explanation
-        plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
+        #plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
         plt.xlabel("Profile Index")
-        plt.ylabel("Deviation (mm)")
-        plt.title("Deviation from Ground Truth (surface_ini)")
+        plt.ylabel("Deviation to manual reference (mm)")
+        #plt.title("Deviation from Ground Truth (surface_ini)")
         plt.legend()
         plt.grid()
         plt.tight_layout()
         plt.savefig(folder_path / f"delta_error.png")
+        plt.savefig(folder_path / "delta_error.svg")  # for master thesis vector graphic
+
 
         # Zoomed plotting deviations for better focus on small values
         plt.figure(figsize=(10, 5))
-        plt.plot(delta_old, marker='.', linestyle='None', label="Old vs Ini")
-        plt.plot(delta_new, marker='.', linestyle='None', label="New vs Ini")
+        plt.plot(delta_old, label="Existing method", marker='.', linestyle='None', markersize=5)
+        plt.plot(delta_new, label="New method ", marker='.', linestyle='None', markersize=5)
         # Dummy handle for text explanation
-        plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
+        #plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
         plt.xlabel("Profile Index")
-        plt.ylabel("Deviation (mm)")
-        plt.title("Zoomed Deviation from Ground Truth (surface_ini)")
+        plt.ylabel("Deviation to manual reference (mm)")
+        #plt.title("Zoomed Deviation from Ground Truth (surface_ini)")
         #plt.ylim(-25, 25) #zoomed range but looses some profiles with high error
         plt.ylim(-10, 10) #zoomed range for better visibility of small errors
         plt.legend()
         plt.grid()
         plt.tight_layout()
         plt.savefig(folder_path / f"delta_error_zoomed.png")
-        
+        plt.savefig(folder_path / "delta_error_zoomed.svg")  # for master thesis vector graphic
+
         # Boxplot
         plt.figure(figsize=(8, 5))
-        plt.boxplot([delta_old, delta_new], labels=["Old vs Ini", "New vs Ini"])
-        plt.ylabel("Deviation (mm)")
-        plt.title("Zoomed Boxplot of Surface Detection Deviations")
+        plt.boxplot([delta_old, delta_new], labels=["Existing method", "New method"])
+        plt.ylabel("Deviation to manual reference (mm)")
+        #plt.title("Boxplot of Surface Detection Deviations")
+        plt.grid()
+        plt.tight_layout()
+        plt.savefig(folder_path / "delta_error_boxplot.png")
+        plt.savefig(folder_path / "delta_error_boxplot.svg")  # for master thesis vector graphic
+        plt.close()
+
+        # Boxplot zoomed
+        plt.figure(figsize=(8, 5))
+        plt.boxplot([delta_old, delta_new], labels=["Existing method", "New method"])
+        plt.ylabel("Deviation to manual reference (mm)")
+        #plt.title("Zoomed Boxplot of Surface Detection Deviations")
         plt.grid()
         plt.ylim(-10, 10)
         plt.tight_layout()
-        plt.savefig(folder_path / "delta_error_boxplot.png")
+        plt.savefig(folder_path / "delta_error_boxplot_zoomed.png")
+        plt.savefig(folder_path / "delta_error_boxplot_zoomed.svg")  # for master thesis vector graphic
         plt.close()
 
 
