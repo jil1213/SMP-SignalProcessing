@@ -55,8 +55,8 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
 
         # Plotting deviations
         plt.figure(figsize=(10, 5))
-        plt.plot(delta_old, label="Old vs Ini", marker='.')
-        plt.plot(delta_new, label="New vs Ini", marker='.')
+        plt.plot(delta_old, label="Old vs Ini", marker='.', linestyle='None')
+        plt.plot(delta_new, label="New vs Ini", marker='.', linestyle='None')
         # Dummy handle for text explanation
         plt.plot([], [], ' ',label="Note:\nNegative values mean surface is detected earlier\nthan in manually ini file.\n delta = surface - surface_ini")
         plt.xlabel("Profile Index")
@@ -82,6 +82,18 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
         plt.grid()
         plt.tight_layout()
         plt.savefig(folder_path / f"delta_error_zoomed.png")
+        
+        # Boxplot
+        plt.figure(figsize=(8, 5))
+        plt.boxplot([delta_old, delta_new], labels=["Old vs Ini", "New vs Ini"])
+        plt.ylabel("Deviation (mm)")
+        plt.title("Zoomed Boxplot of Surface Detection Deviations")
+        plt.grid()
+        plt.ylim(-10, 10)
+        plt.tight_layout()
+        plt.savefig(folder_path / "delta_error_boxplot.png")
+        plt.close()
+
 
 
 if __name__ == "__main__":
