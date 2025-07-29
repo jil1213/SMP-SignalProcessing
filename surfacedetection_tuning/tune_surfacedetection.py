@@ -8,7 +8,6 @@ from pathlib import Path
 from snowmicropyn import Profile
 from sklearn.metrics import mean_absolute_error,  mean_squared_error
 from code_SMP.detect_surface import detect_surface
-from scipy.stats import wilcoxon
 plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 def compute_metrics(surface_ini_all, surface_old_all, surface_new_all): 
@@ -55,18 +54,20 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
         delta_old = surface_old_all - surface_ini_all
         delta_new = surface_new_all - surface_ini_all
 
-        # --- Wilcoxon Signed-Rank Test ---
-        try:
-                stat, p_value = wilcoxon(delta_old, delta_new)
-                print(f"Wilcoxon Signed-Rank Test:")
-                print(f"  Statistic = {stat:.4f}")
-                print(f"p-value = {p_value:.20e}")
-                if p_value < 0.05:
-                        print(" Statistically significant difference between methods (p < 0.05)")
-                else:
-                        print("No statistically significant difference (p ≥ 0.05)")
-        except ValueError as e:
-                print("Wilcoxon test could not be performed:", e)
+        #Shapiro-Wilk Test to test normality of the distributions
+        from scipy.stats import shapiro
+
+        stat_old, p_old = shapiro(delta_old)
+        stat_new, p_new = shapiro(delta_new)
+
+        print(f"Shapiro-Wilk Test (existing method): p = {p_old:.4e}")
+        print(f"Shapiro-Wilk Test (new method):      p = {p_new:.4e}")
+        print("not normally distributed, when p < 0.05")
+
+        # Mann Whitney U Test
+        from scipy.stats import mannwhitneyu
+        stat_mw, p_mw = mannwhitneyu(delta_old, delta_new, alternative='two-sided')
+        print(f"Mann-Whitney U Test: Statistic = {stat_mw:.4f}, p-value = {p_mw:.4e}")
 
         # Plotting deviations
         plt.figure(figsize=(10, 5))
