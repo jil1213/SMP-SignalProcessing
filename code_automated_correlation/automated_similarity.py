@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 
 from pathlib import Path
 from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
+plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
+
 
 
 def load_cache(cache_path): #not used in automated codes, only for old versions necessary
@@ -64,11 +66,11 @@ def compute_aligned_similarity_matrix(smp_profiles, day, save=True, velocity=Non
 
 def plot_correlation_matrix(corr_df, day, velocity=None):
     plt.figure(figsize=(10, 8))
-    sns.heatmap(corr_df, annot=True, cmap="coolwarm", vmin=0, vmax=1)
+    sns.heatmap(corr_df, annot=True, cmap="coolwarm", vmin=0, vmax=1, annot_kws={"size": 15})
     plt.tight_layout()
     if velocity is None:
-        plt.title(f"Cosine Correlation Matrix - Day {day}")
-        plt.savefig(f"code_automated_correlation/output/similarity_scores/correlation_matrix_day{day}.png")
+        #plt.title(f"Cosine Correlation Matrix - Day {day}")
+        plt.savefig(f"code_automated_correlation/output/similarity_scores/correlation_matrix_day{day}.svg")
     elif velocity == 0:
         plt.title(f"Cosine Correlation Matrix - Day {day}")
         plt.savefig(f"output/similarity_scores/correlation_matrix_day{day}.png")

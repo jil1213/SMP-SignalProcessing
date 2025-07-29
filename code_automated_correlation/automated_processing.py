@@ -7,6 +7,7 @@ from scipy.signal import correlate
 
 from code_visualizations.plotSMP import plot_pairs # function to plot to smp profiles together, not necessary for offset
 from code_SMP.detect_surface import detect_surface  # my own method to detect surface
+plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 
 def load_profiles(folder_path):
@@ -69,14 +70,18 @@ def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crossc
     print(f"Max corr: {np.max(correlation)}")
     print(f"Offset: {offset_mm:.2f} mm (lag: {lag_max})")
     if plot == True:
-        plt.figure(figsize=(8, 4))
-        plt.plot(index_shifts_mm, correlation)
-        plt.title(f"Cross-Correlation over distance {name1} & {name2}")
+        plt.figure(figsize=(5.5, 3.5)) #(8, 4))
+        plt.plot(index_shifts_mm, correlation, label=f"Cross-Correlation: {name1}, {name2}")
+        plt.axvspan(index_shifts_mm[start], index_shifts_mm[end], color='gray', alpha=0.2)
+        #plt.title(f"Cross-Correlation over distance {name1} & {name2}")
         plt.xlabel("Distance (mm)")
         plt.ylabel("Correlation")
         plt.grid(True)
         #plt.show()
-        plt.savefig(target_dir / f"corr_{name1}_{name2}.png")
+        plt.tight_layout()
+        plt.legend(fontsize="small")
+        plt.savefig(f"output/masterthesis/crosscorrelation{name1}_{name2}.svg") #this onyl for master thesis plots
+        #plt.savefig(target_dir / f"corr_{name1}_{name2}.png")
         plt.close()
 
     return offset_mm, correlation, lag_max
