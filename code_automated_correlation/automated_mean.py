@@ -7,6 +7,7 @@ from pathlib import Path
 from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
 from code_automated_correlation.automated_similarity import compute_aligned_similarity_matrix
 from code_automated_correlation.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
+plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 
 def compute_aligned_mean(smp_profiles, values):
@@ -46,23 +47,23 @@ def compute_aligned_mean(smp_profiles, values):
     return result_df, info
 
 def plot_aligned_mean(distance, mean_force, std, info, group_idx=None):
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize= (5.5,3.5)) #(8, 5))
     aligned_block = "\n".join([", ".join(info['aligned_profiles'][i:i+3]) for i in range(0, len(info['aligned_profiles']), 3)])
     # Label with information about averaged profiles
     label = f"Mean Force\nReference: {info['reference_profile']}\nAligned Profiles:\n{aligned_block}"
     plt.plot(distance, mean_force, label=label)
-    plt.fill_between(distance, mean_force - std, mean_force + std, alpha=0.3, label="±1 SD")
+    plt.fill_between(distance, mean_force - std, mean_force + std, alpha=0.3, label="±1 standard deviation")
     plt.xlabel("Distance (mm)")
     plt.ylabel("Force (N)")
     n_profiles = len(info["aligned_profiles"])
-    title = f"Mean of \n Reference {info['reference_profile']} with {n_profiles} Profile(s) \nMean Similarity: {info['mean_similarity']:.3f}"
-    plt.title(title)
+    #title = f"Mean of \n Reference {info['reference_profile']} with {n_profiles} Profile(s) \nMean Similarity: {info['mean_similarity']:.3f}"
+    #plt.title(title)
     plt.legend()
     plt.grid()
     plt.tight_layout()
 
     # Create save path
-    filename = f"mean_{info['reference_profile']}_with_{n_profiles}profiles.png"
+    filename = f"mean_{info['reference_profile']}_with_{n_profiles}profiles.svg"
     if group_idx is not None:
         filename = f"group{group_idx}_" + filename
     save_path = "output/automated_mean/" + filename
@@ -87,7 +88,7 @@ if __name__ == "__main__":
         S = corr_df.values
         labels = corr_df.index.tolist()
 
-        if day == 20250131: 
+        if day == '20250131': 
             threshold = 0.85 
         else: 
             threshold = 0.75 # good threshold for day 2 , day 1 = 0.85
@@ -98,7 +99,7 @@ if __name__ == "__main__":
         if ref_name is not None:
             # Compute aligned mean profile
             result_df, info = compute_aligned_mean(smp_profiles, (ref_name, remaining, mean_score))
-
+            print(info)
             # Plot the aligned mean profile
             plot_aligned_mean(result_df["distance"], result_df["mean_force"], result_df["std_force"], info)
 
@@ -119,4 +120,4 @@ if __name__ == "__main__":
             ref_name, remaining, mean_score = find_reference_profile(group["matrix"], threshold, labels=group["labels"])
             if ref_name is not None:
                 result_df, info = compute_aligned_mean(smp_profiles, (ref_name, remaining, mean_score))
-                plot_aligned_mean(result_df["distance"], result_df["mean_force"], result_df["std_force"], info, group_idx=idx)
+                #plot_aligned_mean(result_df["distance"], result_df["mean_force"], result_df["std_force"], info, group_idx=idx)

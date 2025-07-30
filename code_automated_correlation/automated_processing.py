@@ -66,9 +66,9 @@ def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crossc
     offset_mm = lag_max * dx #distance offset
 
     #Print results
-    print(f"Crosscorrelation {name1} - {name2}")
-    print(f"Max corr: {np.max(correlation)}")
-    print(f"Offset: {offset_mm:.2f} mm (lag: {lag_max})")
+    #print(f"Crosscorrelation {name1} - {name2}")
+    #print(f"Max corr: {np.max(correlation)}")
+    #print(f"Offset: {offset_mm:.2f} mm (lag: {lag_max})")
     if plot == True:
         plt.figure(figsize=(5.5, 3.5)) #(8, 4))
         plt.plot(index_shifts_mm, correlation, label=f"Cross-Correlation: {name1}, {name2}")

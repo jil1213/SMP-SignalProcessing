@@ -164,7 +164,7 @@ if __name__ == "__main__":
         S = corr_df.values
         labels = corr_df.index.tolist()
 
-        if day == 20250131: 
+        if day == '20250131': 
             threshold = 0.85 
         else: 
             threshold = 0.75 # good threshold for day 2 , day 1 = 0.85
