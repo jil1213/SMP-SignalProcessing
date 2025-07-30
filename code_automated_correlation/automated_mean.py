@@ -48,11 +48,12 @@ def compute_aligned_mean(smp_profiles, values):
 
 def plot_aligned_mean(distance, mean_force, std, info, group_idx=None):
     plt.figure(figsize= (5.5,3.5)) #(8, 5))
-    aligned_block = "\n".join([", ".join(info['aligned_profiles'][i:i+3]) for i in range(0, len(info['aligned_profiles']), 3)])
+    #aligned_block = "\n".join([", ".join(info['aligned_profiles'][i:i+3]) for i in range(0, len(info['aligned_profiles']), 3)])
     # Label with information about averaged profiles
-    label = f"Mean Force\nReference: {info['reference_profile']}\nAligned Profiles:\n{aligned_block}"
+    #label = f"Mean Force\nReference: {info['reference_profile']}\nAligned Profiles:\n{aligned_block}"
+    label =f"Mean" #for masterthesis
     plt.plot(distance, mean_force, label=label)
-    plt.fill_between(distance, mean_force - std, mean_force + std, alpha=0.3, label="±1 standard deviation")
+    plt.fill_between(distance, mean_force - std, mean_force + std, alpha=0.3, label="Standard Deviation")
     plt.xlabel("Distance (mm)")
     plt.ylabel("Force (N)")
     n_profiles = len(info["aligned_profiles"])
@@ -109,9 +110,25 @@ if __name__ == "__main__":
         for ref_name, remaining, score in pairs:
             # Compute mean for each pair 
             result_df, info = compute_aligned_mean(smp_profiles, (ref_name, [remaining], score))
-            # Plot the aligned mean profile for each pair
-            plot_aligned_mean(result_df["distance"], result_df["mean_force"], result_df["std_force"], info)
 
+            # For Pairs, plot only signals and mean, no std 
+            plt.figure(figsize= (5.5,3.5)) #(8, 5))
+            #plot single signals
+            plt.plot(smp_profiles[ref_name]["distance"], smp_profiles[ref_name]["force"], label=f"{ref_name}")
+            plt.plot(smp_profiles[remaining]["distance"], smp_profiles[remaining]["force"], label=f"{remaining}")
+            #plot mean
+            plt.plot(result_df["distance"], result_df["mean_force"], label="Mean")
+            plt.xlabel("Distance (mm)")
+            plt.ylabel("Force (N)")
+            n_profiles = len(info["aligned_profiles"])
+            plt.legend()
+            plt.grid()
+            plt.tight_layout()
+            # Create save path
+            filename = f"mean_{ref_name}_with_{remaining}profiles.svg"
+            save_path = "output/automated_mean/" + filename
+            plt.savefig(save_path)
+            plt.close()
 
         # Find all groups
         groups = find_all_threshold_groups(S, labels, threshold)
