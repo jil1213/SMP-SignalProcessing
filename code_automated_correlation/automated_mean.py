@@ -125,7 +125,7 @@ if __name__ == "__main__":
             plt.grid()
             plt.tight_layout()
             # Create save path
-            filename = f"mean_{ref_name}_with_{remaining}profiles.svg"
+            filename = f"mean_{ref_name}_with_{remaining}.svg"
             save_path = "output/automated_mean/" + filename
             plt.savefig(save_path)
             plt.close()
