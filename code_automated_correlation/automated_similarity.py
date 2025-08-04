@@ -84,7 +84,6 @@ if __name__ == "__main__":
     root = Path(__file__).resolve().parent 
     input_root = root/ "raw_data"
     output_root = root / "output" / "similarity_scores"
-    output_aligned = root / "output" / "crosscorrelation"
 
 
     for folder_path in sorted(input_root.iterdir()):
