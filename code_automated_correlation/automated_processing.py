@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 from pathlib import Path
+from itertools import combinations
 from snowmicropyn import Profile
 from scipy.signal import correlate
 
-from code_visualizations.plotSMP import plot_pairs # function to plot to smp profiles together, not necessary for offset
 from code_SMP.detect_surface import detect_surface  # my own method to detect surface
 plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
@@ -26,6 +27,20 @@ def load_profiles(folder_path):
         profiles_dict[name] = df
 
     return profiles_dict
+
+
+def plot_pairs(pairs, label2, filename, target_dir=Path("output/visualizations")):
+    for df1, name1, df2, name2 in pairs:
+        plt.figure(figsize=(5.5, 3.5))
+        plt.plot(df1["distance"], df1["force"], label=name1)
+        plt.plot(df2["distance"], df2["force"], label=label2)
+        plt.xlabel("Distance (mm)")
+        plt.ylabel("Force (N)")
+        plt.legend()
+        plt.grid()
+        plt.tight_layout()
+        plt.savefig((target_dir / filename).with_suffix(".svg"))
+        plt.close()
 
 
 #method to get the offset of two profiles by crosscorrelation
@@ -65,28 +80,28 @@ def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crossc
 
     offset_mm = lag_max * dx #distance offset
 
-    #Print results
-    #print(f"Crosscorrelation {name1} - {name2}")
-    #print(f"Max corr: {np.max(correlation)}")
-    #print(f"Offset: {offset_mm:.2f} mm (lag: {lag_max})")
     if plot == True:
         plt.figure(figsize=(5.5, 3.5)) #(8, 4))
         plt.plot(index_shifts_mm, correlation, label=f"Cross-Correlation: {name1}, {name2}")
         plt.axvspan(index_shifts_mm[start], index_shifts_mm[end], color='gray', alpha=0.2)
-        #plt.title(f"Cross-Correlation over distance {name1} & {name2}")
         plt.xlabel("Distance (mm)")
         plt.ylabel("Correlation")
-        plt.grid(True)
-        #plt.show()
+        plt.grid()
         plt.tight_layout()
         plt.legend(fontsize="small")
-        plt.savefig(f"output/masterthesis/crosscorrelation{name1}_{name2}.svg") #this onyl for master thesis plots
-        #plt.savefig(target_dir / f"corr_{name1}_{name2}.png")
+        filename = f"crosscorrelation_{name1}_{name2}.svg"
+        plt.savefig(target_dir / filename)
         plt.close()
 
     return offset_mm, correlation, lag_max
 
 def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("output/crosscorrelation")):
+    # plot profiles before alignment
+    if plot == True:
+        label2=name2
+        filename = f"{name1}_to_{name2}_before_alignment"
+        plot_pairs([(df1, name1, df2, name2)], label2, filename, target_dir=target_dir)
+
     df2_shifted = df2.copy()
     # shift indices of df2 with lag to get max correlation
     # positive lag shift to right side - negative lag shift to left side
@@ -109,12 +124,14 @@ def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("outp
     df2_shifted = df2_shifted.loc[valid_index].reset_index(drop=True)
 
     #take distance values from df1 for both dfs
-    df2_shifted["distance"] = df1_shifted["distance"]#
+    df2_shifted["distance"] = df1_shifted["distance"]
 
+    offset_mm = lag * np.mean(np.diff(df1["distance"]))
+    # plot profiles after alignment
     if plot == True:
-        title = f"Signal shifted with cross-Correlation {name1} & {name2}"
-        filename = f"aligned_{name1}_to_{name2}"
-        plot_pairs([(df1_shifted, name1, df2_shifted, name2)], filename, save=True, title=title, target_dir=target_dir)
+        label2 = f"shifted {name2}"
+        filename = f"{name1}_to_{name2}_with_alignment"
+        plot_pairs([(df1_shifted, name1, df2_shifted, name2)], label2, filename, target_dir=target_dir)
 
     return df1_shifted, df2_shifted
 
@@ -125,19 +142,21 @@ if __name__ == "__main__":
     input_root = root/ "raw_data"
     output_root = root / "output" / "crosscorrelation"
 
-    all_day_profiles = {}
-
     for folder_path in sorted(input_root.iterdir()):
         if folder_path.is_dir():
             day = folder_path.name
             print(f"Processing {day}")
             smp_profiles = load_profiles(folder_path)
-            all_day_profiles.update(smp_profiles)
 
-    # Do crosscorellation for two profiles as a test
-    df1 = all_day_profiles["S45M1056"]
-    df2 = all_day_profiles["S45M1057"]
-    # get offset
-    offset_mm, correlation, lag = get_offset(df1, df2, "S45M1056", "S45M1057", plot=True, target_dir=output_root)
-    # align profiles
-    align_profiles(df1, df2, "S45M1056", "S45M1057", lag, plot=True, target_dir=output_root)
+            # Output directory for this day
+            day_output_dir = root / "output" / "alignment" / day
+            day_output_dir.mkdir(parents=True, exist_ok=True)
+
+            profile_names = sorted(smp_profiles.keys())
+            for name1, name2 in combinations(sorted(profile_names), 2):
+                df1 = smp_profiles[name1]
+                df2 = smp_profiles[name2]
+
+                # calculate offset and align
+                offset_mm, correlation, lag = get_offset(df1, df2, name1, name2, plot=True, target_dir=day_output_dir)
+                align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=day_output_dir)
