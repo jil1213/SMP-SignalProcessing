@@ -1,0 +1,32 @@
+Selected reference profile: S36N4032
+Remaining profiles: ['S36N4030', 'S36N4031', 'S36N4033', 'S36N4034', 'S36N4035', 'S36N4036']
+Mean similarity score: 0.8884
+
+Unique pairs with scores:
+S36N4030 - S36N4032: Similarity = 0.8581
+S36N4031 - S36N4032: Similarity = 0.9240
+S36N4032 - S36N4033: Similarity = 0.9265
+S36N4034 - S36N4035: Similarity = 0.9126
+S36N4035 - S36N4036: Similarity = 0.9243
+
+Groups ready for further processing:
+
+Group 1: ['S36N4030', 'S36N4032']
+[[1.         0.85806612]
+ [0.85806612 1.        ]]
+
+Group 2: ['S36N4031', 'S36N4032', 'S36N4033', 'S36N4034', 'S36N4035', 'S36N4036']
+[[1.         0.92402681 0.90586802 0.88848752 0.87097764 0.86773864]
+ [0.92402681 1.         0.92645317 0.88827158 0.86701469 0.86676223]
+ [0.90586802 0.92645317 1.         0.91042005 0.87645632 0.8713816 ]
+ [0.88848752 0.88827158 0.91042005 1.         0.91258351 0.89536909]
+ [0.87097764 0.86701469 0.87645632 0.91258351 1.         0.9243382 ]
+ [0.86773864 0.86676223 0.8713816  0.89536909 0.9243382  1.        ]]
+
+Selected reference profile: S36N4030
+Remaining profiles: ['S36N4032']
+Mean similarity score: 0.8581
+
+Selected reference profile: S36N4034
+Remaining profiles: ['S36N4031', 'S36N4032', 'S36N4033', 'S36N4035', 'S36N4036']
+Mean similarity score: 0.8990

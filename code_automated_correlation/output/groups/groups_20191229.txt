@@ -1,0 +1,23 @@
+Selected reference profile: S36M7922
+Remaining profiles: ['S36M7920', 'S36M7921', 'S36M7923', 'S36M7924', 'S36M7925']
+Mean similarity score: 0.9677
+
+Unique pairs with scores:
+S36M7920 - S36M7921: Similarity = 0.9710
+S36M7922 - S36M7923: Similarity = 0.9750
+S36M7923 - S36M7924: Similarity = 0.9770
+S36M7924 - S36M7925: Similarity = 0.9661
+
+Groups ready for further processing:
+
+Group 1: ['S36M7920', 'S36M7921', 'S36M7922', 'S36M7923', 'S36M7924', 'S36M7925']
+[[1.         0.97096714 0.96157038 0.95856726 0.94703889 0.94707875]
+ [0.97096714 1.         0.96789717 0.96075168 0.94927041 0.93377818]
+ [0.96157038 0.96789717 1.         0.9750061  0.96991488 0.96390704]
+ [0.95856726 0.96075168 0.9750061  1.         0.97698344 0.96483683]
+ [0.94703889 0.94927041 0.96991488 0.97698344 1.         0.96605118]
+ [0.94707875 0.93377818 0.96390704 0.96483683 0.96605118 1.        ]]
+
+Selected reference profile: S36M7922
+Remaining profiles: ['S36M7920', 'S36M7921', 'S36M7923', 'S36M7924', 'S36M7925']
+Mean similarity score: 0.9677

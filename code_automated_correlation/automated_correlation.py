@@ -152,48 +152,54 @@ if __name__ == "__main__":
 
     root = Path(__file__).resolve().parent 
     input_root = root/ "raw_data"
-    output_root = root / "output" / "similarity_scores"
 
     for folder_path in sorted(input_root.iterdir()):
         if folder_path.is_dir():
             day = folder_path.name
             smp_profiles = load_profiles(folder_path)
 
-        # calculate Similarity matrix S and labels
-        corr_df = compute_aligned_similarity_matrix(smp_profiles, day)
-        S = corr_df.values
-        labels = corr_df.index.tolist()
+        # output folder and file path
+        output_dir = root / "output" / "groups"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        output_file = output_dir / f"groups_{day}.txt"
 
-        if day == '20250131': 
-            threshold = 0.85 
-        else: 
-            threshold = 0.75 # good threshold for day 2 , day 1 = 0.85
+        with output_file.open("w") as f:
+            # calculate Similarity matrix S and labels
+            corr_df = compute_aligned_similarity_matrix(smp_profiles, day)
+            S = corr_df.values
+            labels = corr_df.index.tolist()
 
-        ref_name, remaining, mean_score = find_reference_profile(S, threshold, labels)
+            if day == '20250131' or day == '20250403' or day == '20191229': 
+                threshold = 0.85
+            else: 
+                threshold = 0.75 # good threshold for day 2 , day 1 = 0.85
 
-        if ref_name is not None:
-            print(f"\nSelected reference profile: {ref_name}")
-            print(f"Remaining profiles: {remaining}")
-            print(f"Mean similarity score: {mean_score:.4f}")
-        else:
-            print("No valid group was found.")
+            ref_name, remaining, mean_score = find_reference_profile(S, threshold, labels)
 
-        pairs = find_highest_similarity_pairs(S, labels)
-
-        print("\nUnique pairs with scores:")
-        for a, b, score in pairs:
-            print(f"{a} - {b}: Similarity = {score:.4f}")
-
-        groups = find_all_threshold_groups(S, labels, threshold)
-
-        print("\nGroups ready for further processing:")
-        for idx, g in enumerate(groups, 1):
-            print(f"\nGroup {idx}: {g['labels']}")
-            print(g["matrix"])
-
-        for group in groups:
-            ref_name, remaining, mean_score = find_reference_profile(group["matrix"], threshold, labels=group["labels"])
             if ref_name is not None:
-                print(f"\nSelected reference profile: {ref_name}")
-                print(f"Remaining profiles: {remaining}")
-                print(f"Mean similarity score: {mean_score:.4f}")
+                f.write(f"Selected reference profile: {ref_name}\n")
+                f.write(f"Remaining profiles: {remaining}\n")
+                f.write(f"Mean similarity score: {mean_score:.4f}\n\n")
+            else:
+                f.write("No valid group was found.\n\n")
+
+            # highest similarity pairs
+            f.write("Unique pairs with scores:\n")
+            pairs = find_highest_similarity_pairs(S, labels)
+            for a, b, score in pairs:
+                    f.write(f"{a} - {b}: Similarity = {score:.4f}\n")
+
+            # threshold groups
+            groups = find_all_threshold_groups(S, labels, threshold)
+            f.write("\nGroups ready for further processing:\n")
+            for idx, g in enumerate(groups, 1):
+                f.write(f"\nGroup {idx}: {g['labels']}\n")
+                f.write(f"{g['matrix']}\n")
+
+            # reference in each group
+            for group in groups:
+                ref_name, remaining, mean_score = find_reference_profile(group["matrix"], threshold, labels=group["labels"])
+                if ref_name is not None:
+                    f.write(f"\nSelected reference profile: {ref_name}\n")
+                    f.write(f"Remaining profiles: {remaining}\n")
+                    f.write(f"Mean similarity score: {mean_score:.4f}\n")

@@ -1,0 +1,27 @@
+Selected reference profile: S36M0442
+Remaining profiles: ['S36M0443', 'S36M0446']
+Mean similarity score: 0.9173
+
+Unique pairs with scores:
+S36M0442 - S36M0443: Similarity = 0.9339
+S36M0442 - S36M0444: Similarity = 0.6946
+S36M0442 - S36M0445: Similarity = 0.7104
+S36M0442 - S36M0446: Similarity = 0.9008
+
+Groups ready for further processing:
+
+Group 1: ['S36M0442', 'S36M0443']
+[[1.        0.9339016]
+ [0.9339016 1.       ]]
+
+Group 2: ['S36M0442', 'S36M0446']
+[[1.         0.90075072]
+ [0.90075072 1.        ]]
+
+Selected reference profile: S36M0442
+Remaining profiles: ['S36M0443']
+Mean similarity score: 0.9339
+
+Selected reference profile: S36M0442
+Remaining profiles: ['S36M0446']
+Mean similarity score: 0.9008
