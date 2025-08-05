@@ -17,55 +17,55 @@ Group 1: ['S45M1083', 'S45M1084', 'S45M1089']
  [0.78797095 1.         0.77635946]
  [0.85901327 0.77635946 1.        ]]
 
+Selected reference profile: S45M1083
+Remaining profiles: ['S45M1084', 'S45M1089']
+Mean similarity score: 0.8235
+
 Group 2: ['S45M1084', 'S45M1085']
 [[1.         0.75036957]
  [0.75036957 1.        ]]
+
+Selected reference profile: S45M1084
+Remaining profiles: ['S45M1085']
+Mean similarity score: 0.7504
 
 Group 3: ['S45M1086', 'S45M1092', 'S45M1093']
 [[1.         0.94842923 0.82635754]
  [0.94842923 1.         0.82345451]
  [0.82635754 0.82345451 1.        ]]
 
+Selected reference profile: S45M1086
+Remaining profiles: ['S45M1092', 'S45M1093']
+Mean similarity score: 0.8874
+
 Group 4: ['S45M1085', 'S45M1087', 'S45M1093']
 [[1.         0.79287348 0.77812442]
  [0.79287348 1.         0.86288785]
  [0.77812442 0.86288785 1.        ]]
 
-Group 5: ['S45M1090', 'S45M1091']
-[[1.         0.78115057]
- [0.78115057 1.        ]]
-
-Group 6: ['S45M1085', 'S45M1091']
-[[1.         0.84705863]
- [0.84705863 1.        ]]
-
-Group 7: ['S45M1083', 'S45M1092']
-[[1.        0.7555389]
- [0.7555389 1.       ]]
-
-Selected reference profile: S45M1083
-Remaining profiles: ['S45M1084', 'S45M1089']
-Mean similarity score: 0.8235
-
-Selected reference profile: S45M1084
-Remaining profiles: ['S45M1085']
-Mean similarity score: 0.7504
-
-Selected reference profile: S45M1086
-Remaining profiles: ['S45M1092', 'S45M1093']
-Mean similarity score: 0.8874
-
 Selected reference profile: S45M1087
 Remaining profiles: ['S45M1085', 'S45M1093']
 Mean similarity score: 0.8279
+
+Group 5: ['S45M1090', 'S45M1091']
+[[1.         0.78115057]
+ [0.78115057 1.        ]]
 
 Selected reference profile: S45M1090
 Remaining profiles: ['S45M1091']
 Mean similarity score: 0.7812
 
+Group 6: ['S45M1085', 'S45M1091']
+[[1.         0.84705863]
+ [0.84705863 1.        ]]
+
 Selected reference profile: S45M1085
 Remaining profiles: ['S45M1091']
 Mean similarity score: 0.8471
+
+Group 7: ['S45M1083', 'S45M1092']
+[[1.        0.7555389]
+ [0.7555389 1.       ]]
 
 Selected reference profile: S45M1083
 Remaining profiles: ['S45M1092']

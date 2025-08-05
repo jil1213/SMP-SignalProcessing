@@ -20,11 +20,19 @@ Group 1: ['S45M1056', 'S45M1057', 'S45M1059', 'S45M1062', 'S45M1064']
  [0.87195104 0.86842581 0.86780703 1.         0.88300615]
  [0.85437499 0.8727734  0.9333101  0.88300615 1.        ]]
 
+Selected reference profile: S45M1057
+Remaining profiles: ['S45M1056', 'S45M1059', 'S45M1062', 'S45M1064']
+Mean similarity score: 0.8876
+
 Group 2: ['S45M1056', 'S45M1058', 'S45M1061', 'S45M1063']
 [[1.         0.85912558 0.94764684 0.91602954]
  [0.85912558 1.         0.87704723 0.91977524]
  [0.94764684 0.87704723 1.         0.92165887]
  [0.91602954 0.91977524 0.92165887 1.        ]]
+
+Selected reference profile: S45M1063
+Remaining profiles: ['S45M1056', 'S45M1058', 'S45M1061']
+Mean similarity score: 0.9192
 
 Group 3: ['S45M1056', 'S45M1057', 'S45M1061', 'S45M1062', 'S45M1064']
 [[1.         0.91104956 0.94764684 0.87195104 0.85437499]
@@ -33,33 +41,25 @@ Group 3: ['S45M1056', 'S45M1057', 'S45M1061', 'S45M1062', 'S45M1064']
  [0.87195104 0.86842581 0.86551521 1.         0.88300615]
  [0.85437499 0.8727734  0.86303099 0.88300615 1.        ]]
 
+Selected reference profile: S45M1057
+Remaining profiles: ['S45M1056', 'S45M1061', 'S45M1062', 'S45M1064']
+Mean similarity score: 0.8879
+
 Group 4: ['S45M1056', 'S45M1057', 'S45M1061', 'S45M1063']
 [[1.         0.91104956 0.94764684 0.91602954]
  [0.91104956 1.         0.899229   0.8834884 ]
  [0.94764684 0.899229   1.         0.92165887]
  [0.91602954 0.8834884  0.92165887 1.        ]]
 
+Selected reference profile: S45M1056
+Remaining profiles: ['S45M1057', 'S45M1061', 'S45M1063']
+Mean similarity score: 0.9249
+
 Group 5: ['S45M1059', 'S45M1062', 'S45M1064', 'S45M1065']
 [[1.         0.86780703 0.9333101  0.86151917]
  [0.86780703 1.         0.88300615 0.93128441]
  [0.9333101  0.88300615 1.         0.90230286]
  [0.86151917 0.93128441 0.90230286 1.        ]]
-
-Selected reference profile: S45M1057
-Remaining profiles: ['S45M1056', 'S45M1059', 'S45M1062', 'S45M1064']
-Mean similarity score: 0.8876
-
-Selected reference profile: S45M1063
-Remaining profiles: ['S45M1056', 'S45M1058', 'S45M1061']
-Mean similarity score: 0.9192
-
-Selected reference profile: S45M1057
-Remaining profiles: ['S45M1056', 'S45M1061', 'S45M1062', 'S45M1064']
-Mean similarity score: 0.8879
-
-Selected reference profile: S45M1056
-Remaining profiles: ['S45M1057', 'S45M1061', 'S45M1063']
-Mean similarity score: 0.9249
 
 Selected reference profile: S45M1064
 Remaining profiles: ['S45M1059', 'S45M1062', 'S45M1065']

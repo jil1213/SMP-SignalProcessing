@@ -14,13 +14,13 @@ Group 1: ['S36M0442', 'S36M0443']
 [[1.        0.9339016]
  [0.9339016 1.       ]]
 
-Group 2: ['S36M0442', 'S36M0446']
-[[1.         0.90075072]
- [0.90075072 1.        ]]
-
 Selected reference profile: S36M0442
 Remaining profiles: ['S36M0443']
 Mean similarity score: 0.9339
+
+Group 2: ['S36M0442', 'S36M0446']
+[[1.         0.90075072]
+ [0.90075072 1.        ]]
 
 Selected reference profile: S36M0442
 Remaining profiles: ['S36M0446']

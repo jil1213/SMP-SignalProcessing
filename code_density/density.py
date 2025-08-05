@@ -5,6 +5,7 @@ from snowmicropyn import loewe2012
 from snowmicropyn.parameterizations.calonne_richter2020 import CalonneRichter2020
 from code_automated_correlation.a_automated_processing import load_profiles
 from code_automated_correlation.d_automated_mean import compute_aligned_mean
+plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 
 def calculate_density_profile(df, window=1, overlap=50): #i think this values are default but not sure, check again
@@ -36,16 +37,14 @@ def calculate_density_profile(df, window=1, overlap=50): #i think this values ar
     return df_density
 
 def plot_density(df_density, name, save=True, target_dir=Path("output/density_profiles")):
-    """
-    Plot density profile.
-    """
     plt.figure(figsize=(8, 5))
     plt.plot(df_density["distance"],df_density["density"])
     plt.xlabel("Distance (mm)")
     plt.ylabel("Density (kg/m³)")
     plt.title(f"Density Profile: {name}")
     plt.gca()
-    plt.grid(True)
+    plt.grid()
+    plt.tight_layout()
 
     if save:
         target_dir.mkdir(parents=True, exist_ok=True)
