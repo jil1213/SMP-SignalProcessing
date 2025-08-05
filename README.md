@@ -13,19 +13,16 @@ All data must be stored in the folder `raw_data`, which should contain one subfo
 Each subfolder contains the `.PNT` files (SMP profiles) for that specific measurement day.
 
 **Example structure:**
+
+```text
 raw_data/
-
 ├── 20250131/
-
 │ ├── S45M0001.PNT
-
 │ └── ...
-
 ├── 20250202/
-
 │ ├── S45M0020.PNT
-
 │ └── ...
+```
 
 The pipeline processes each subfolder sequentially, day by day.
 
