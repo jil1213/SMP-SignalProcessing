@@ -2,8 +2,8 @@ import numpy as np
 
 from pathlib import Path
 
-from code_automated_correlation.automated_processing import load_profiles
-from code_automated_correlation.automated_similarity import compute_aligned_similarity_matrix
+from code_automated_correlation.a_automated_processing import load_profiles
+from code_automated_correlation.b_automated_similarity import compute_aligned_similarity_matrix
 
 def find_reference_profile(similarity_matrix, threshold, labels):
     """

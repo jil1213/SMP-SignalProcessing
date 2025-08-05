@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from pathlib import Path
-from code_automated_correlation.automated_processing import load_profiles, get_offset, align_profiles
-from code_automated_correlation.automated_similarity import compute_aligned_similarity_matrix
-from code_automated_correlation.automated_correlation import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
+from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
+from code_automated_correlation.b_automated_similarity import compute_aligned_similarity_matrix
+from code_automated_correlation.c_automated_grouping import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 

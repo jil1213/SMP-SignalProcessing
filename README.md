@@ -5,15 +5,45 @@ Folder `data` stores the measured data and converted files
 
 ## Code_automated_correlation
 
-This folder contains free-standing code that can be used to automatically create an average of matching profiles. The following steps, which are saved in the associated scripts, are carried out automatically:
-All Profiles of one subfolder (=one day) are load and cuuted with surface and ground. -> Automated_processing
-The similarity of all profiles to each others is calculated and presented in a Similarity matrix. -> Automated_similarity
-To find matching profiles a threshold is applied and groups or pairs are build -> Automated_correlation
-The mean and std of groups/pairs is calculated and plotted -> Automated_mean
+This folder contains free-standing code -a fully automated pipeline- to process, analyze, and average SnowMicroPen (SMP) profiles based on similarity. It allows for aligning, comparing, grouping, and averaging profiles using cosine similarity and cross-correlation methods.
 
-The scripts are explained in detailled:
+### Data Structure
 
-### automated_processing
+All data must be stored in the folder `raw_data`, which should contain one subfolder **per day**.  
+Each subfolder contains the `.PNT` files (SMP profiles) for that specific measurement day.
+
+**Example structure:**
+raw_data/
+├── 20250131/
+│ ├── S45M0001.PNT
+│ ├── S45M0002.PNT
+│ └── ...
+├── 20250202/
+│ ├── S45M0020.PNT
+│ ├── S45M0021.PNT
+│ └── ...
+
+The pipeline processes each subfolder sequentially, day by day.
+
+### Run the Full Pipeline
+
+You can execute the entire pipeline with the following command:
+
+```bash
+python -m code_automated_correlation.d_automated_mean
+```
+
+Each script can also be executed individually. Necessary previous steps (e.g. trimming, alignment) will be automatically performed within each script if needed.
+
+a)Load and trim profiles, detect surface and ground, compute cross-correlation and align all profile pairs.-> `a_automated_processing.py`
+
+b) The similarity of all profiles to each others is calculated and presented in a Similarity matrix. -> `b_automated_similarity.py`
+
+c) To find matching profiles a threshold is applied and groups or pairs are build -> `c_automated_correlation.py`
+
+d) The mean and std of groups/pairs is calculated and plotted -> `d_automated_mean.py`
+
+### a_automated_processing
 
 Load all smp profiles of subfolders with `load_profiles`
 and cut them between surface (own method to find surface value and cut values before) and ground (detected by snowmicropyn). Save all profiles in a dict.
@@ -22,24 +52,51 @@ Alignment functions are save in this script: Used to align to profiles with cros
 `get_offset` finds lag by correlate two profiles
 `align_profiles` Shifts profiles by lag to get best alignment
 
-### automated_similarity.py
+Run script with command:
 
-Cosine similarity matrix is calculated in `compute_aligned_similarity_matrix`. To get the highest possible similarity, profiles are aligned with crosscorrelation first! Alignment functions are part of `automated_processing.py`
+```bash
+python -m code_automated_correlation.a_automated_processing
+```
+
+### b_automated_similarity.py
+
+Cosine similarity matrix is calculated in `compute_aligned_similarity_matrix`. To get the highest possible similarity, profiles are aligned with crosscorrelation first! Alignment functions are part of `a_automated_processing.py`
 After alignment cosine similarity as similarity value is calculated.
+
 `cosine = np.dot(df1, df2) / (np.linalg.norm(df1) * np.linalg.norm(df2))`
+
 Similarity Matrix of one day (=Subfolder) can be plotted.
 
-### automated_correlation.py
+Run script with command:
+
+```bash
+python -m code_automated_correlation.b_automated_similarity
+```
+
+### c_automated_grouping.py
 
 This script analyzes structural similarity between SMP profiles based on cosine similarity. It includes three core methods:
 
 `find_reference_profile`: Automatically selects the most representative profile in a group by optimizing for number of similar neighbors, their minimum similarity, and their mean similarity.
+
 `find_highest_similarity_pairs`: Identifies unique pairs of profiles with the highest mutual similarity.
+
 `find_all_threshold_groups` : Constructs groups of profiles in which all members exceed a specified similarity threshold to one another.
 
-### automated_mean.py
+Run script with command:
 
-Can use output of `automated_correlation.py` to compute and visualize mean of group-wise aligned profiles.
+```bash
+python -m code_automated_correlation.c_automated_grouping
+```
+
+### d_automated_mean.py
+
+Can use output of `c_automated_grouping.py` to compute and visualize mean of group-wise aligned profiles.
+Run script with command:
+
+```bash
+python -m code_automated_correlation.d_automated_mean
+```
 
 ## Code_density
 
