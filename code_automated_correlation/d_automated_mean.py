@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
 from code_automated_correlation.b_automated_similarity import compute_aligned_similarity_matrix
-from code_automated_correlation.c_automated_grouping import find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
+from code_automated_correlation.c_automated_grouping import analyze_day, find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
 plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 
@@ -70,25 +70,23 @@ if __name__ == "__main__":
 
     for folder_path in sorted(input_root.iterdir()):
         if folder_path.is_dir():
-            day = folder_path.name
-            smp_profiles = load_profiles(folder_path)
+            result = analyze_day(folder_path)
+
+            day = result["day"]
+            smp_profiles = result["smp_profiles"]
+            S = result["similarity_matrix"]
+            labels = result["labels"]
+            threshold = result["threshold"]
+            ref_result = result["reference_result"]
+            pairs = result["pairs"]
+            groups = result["groups"]
 
             # Output directory for current day
             day_output_dir = output_root / day
             day_output_dir.mkdir(parents=True, exist_ok=True)
 
-            # calculate Similarity matrix S and labels
-            corr_df = compute_aligned_similarity_matrix(smp_profiles, day)
-            S = corr_df.values
-            labels = corr_df.index.tolist()
-
-            if day == '20250131' or day == '20250403' or day == '20191229': 
-                threshold = 0.85 
-            else: 
-                threshold = 0.75 # good threshold for day 2 , day 1 = 0.85
-
-            # Find reference profile for whole day
-            ref_name, remaining, mean_score = find_reference_profile(S, threshold, labels)
+            # Reference profile for whole day
+            ref_name, remaining, mean_score = ref_result
 
             if ref_name is not None:
                 # Compute aligned mean profile
@@ -112,8 +110,7 @@ if __name__ == "__main__":
                 plt.savefig(day_output_dir / f"mean_{ref_name}_with_profiles.svg")
                 plt.close()
 
-            # Find Pairs of best similarity and build mean for them
-            pairs = find_highest_similarity_pairs(S, labels)
+            # Pairs of best similarity and build mean for them
             for ref_name, remaining, score in pairs:
                 # Compute mean for each pair 
                 result_df, info = compute_aligned_mean(smp_profiles, (ref_name, [remaining], score))
@@ -137,9 +134,7 @@ if __name__ == "__main__":
                 plt.savefig(save_path)
                 plt.close()
 
-            # Find all groups
-            groups = find_all_threshold_groups(S, labels, threshold)
-
+            # All groups
             for idx, group in enumerate(groups, 1):
                 ref_name, remaining, mean_score = find_reference_profile(group["matrix"], threshold, labels=group["labels"])
                 if ref_name is not None:
