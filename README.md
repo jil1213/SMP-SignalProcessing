@@ -84,6 +84,15 @@ This script analyzes structural similarity between SMP profiles based on cosine 
 
 `find_all_threshold_groups` : Constructs groups of profiles in which all members exceed a specified similarity threshold to one another.
 
+`analyze_day`: To use the pipeline (processing similarity, groups and pair finding) for one day. It loads the profiles, computes the similarity matrix, identifies the best reference profile,
+generates similarity-based profile pairs, and extracts groups of profiles that exceed a defined similarity threshold.
+Returns a structured dictionary containing:
+
+"""text - day (str) - smp_profiles (dict) - similarity_matrix (np.ndarray) - labels (list) - threshold (float) - reference_result (tuple): (ref_name, remaining, mean_score) - pairs (list): [(a, b, score)] - groups (list): list of group dicts {'labels': [...], 'matrix': ...}
+"""
+
+This function ensures consistent data processing across multiple modules (e.g., grouping, mean calculation, density analysis).
+
 Run script with command:
 
 ```bash
