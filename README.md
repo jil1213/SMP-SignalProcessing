@@ -88,7 +88,7 @@ This script analyzes structural similarity between SMP profiles based on cosine 
 generates similarity-based profile pairs, and extracts groups of profiles that exceed a defined similarity threshold.
 Returns a structured dictionary containing:
 
-"""text
+```text
 day (str)
 smp_profiles (dict)
 similarity_matrix (np.ndarray)
@@ -97,7 +97,7 @@ threshold (float)
 reference_result (tuple): (ref_name, remaining, mean_score)
 pairs (list): [(a, b, score)]
 groups (list): list of group dicts {'labels': [...], 'matrix': ...}
-"""
+```
 
 This function ensures consistent data processing across multiple modules (e.g., grouping, mean calculation, density analysis).
 
