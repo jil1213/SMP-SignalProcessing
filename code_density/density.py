@@ -3,8 +3,8 @@ from pathlib import Path
 
 from snowmicropyn import loewe2012
 from snowmicropyn.parameterizations.calonne_richter2020 import CalonneRichter2020
-from code_automated_correlation.automated_processing import load_profiles
-from code_automated_correlation.automated_mean import compute_aligned_mean
+from code_automated_correlation.a_automated_processing import load_profiles
+from code_automated_correlation.d_automated_mean import compute_aligned_mean
 
 
 def calculate_density_profile(df, window=1, overlap=50): #i think this values are default but not sure, check again

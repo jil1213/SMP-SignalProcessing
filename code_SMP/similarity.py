@@ -5,9 +5,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from code_SMP.readSMP import load_all_smp_profiles
-from code_automated_correlation.automated_processing import get_offset, align_profiles
+from code_automated_correlation.a_automated_processing import get_offset, align_profiles
 from code_SMP.pairs import pairs, first, single_distance_pairs, double_distance_pairs, increasing_distance_pairs, decreasing_distance_pairs
-from code_automated_correlation.automated_similarity import load_cache, similarity, compute_aligned_similarity_matrix, plot_correlation_matrix
+from code_automated_correlation.b_automated_similarity import load_cache, similarity, compute_aligned_similarity_matrix, plot_correlation_matrix
 
 
 def build_pairs_from_list(smp_profiles, name_pairs):

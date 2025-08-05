@@ -5,7 +5,7 @@ import numpy as np
 from pathlib import Path
 from code_SMP.readSMP import load_all_smp_profiles
 from code_visualizations.plotSMP import bulid_pairs, plot_pairs
-from code_automated_correlation.automated_processing import get_offset, align_profiles
+from code_automated_correlation.a_automated_processing import get_offset, align_profiles
 
 target_dir = Path("output/cross_correlations")
 

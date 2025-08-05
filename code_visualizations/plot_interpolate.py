@@ -8,7 +8,7 @@ from scipy.signal import argrelextrema
 
 from code_SMP.readSMP import load_all_smp_profiles
 from code_SMP.pairs import pairs
-from code_automated_correlation.automated_processing import get_offset, align_profiles
+from code_automated_correlation.a_automated_processing import get_offset, align_profiles
 from code_SMP.similarity import load_offset_cache, build_pairs_from_list
 
 # Interpolation of minima with low pass filter
