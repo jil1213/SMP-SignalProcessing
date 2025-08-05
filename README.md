@@ -14,13 +14,17 @@ Each subfolder contains the `.PNT` files (SMP profiles) for that specific measur
 
 **Example structure:**
 raw_data/
+
 ├── 20250131/
+
 │ ├── S45M0001.PNT
-│ ├── S45M0002.PNT
+
 │ └── ...
+
 ├── 20250202/
+
 │ ├── S45M0020.PNT
-│ ├── S45M0021.PNT
+
 │ └── ...
 
 The pipeline processes each subfolder sequentially, day by day.
