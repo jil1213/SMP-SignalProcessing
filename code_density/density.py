@@ -1,5 +1,7 @@
+import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
+import xml.etree.ElementTree as ET
 
 from snowmicropyn import loewe2012
 from snowmicropyn.parameterizations.calonne_richter2020 import CalonneRichter2020
@@ -53,6 +55,61 @@ def plot_density(dfs_densities, labels, filename, save=True, target_dir=Path("ou
         plt.show()
     plt.close()
 
+
+def load_manual_density(day, input_path):
+
+    # .xml SnowProfile File
+    for file in input_path.glob("*.xml"):
+        if file.stem.startswith(day):
+            print(f"Found XML file: {file}")
+            tree = ET.parse(file)
+            root = tree.getroot()
+            ns = {"caaml": "http://caaml.org/Schemas/SnowProfileIACS/v6.0.3"}
+            layers = root.findall(".//caaml:densityProfile/caaml:Layer", ns)
+
+            thicknesses = []
+            densities = []
+
+            for layer in layers:
+                thickness = float(layer.find("caaml:thickness", ns).text)
+                density = float(layer.find("caaml:density", ns).text)
+
+                thicknesses.append(thickness)
+                densities.append(density)
+
+            # Calculate upper and lower bounds for each layer in mm
+            bottoms = pd.Series(thicknesses).cumsum() * 10
+            tops = bottoms - pd.Series(thicknesses) * 10
+
+            distance_steps = []
+            density_steps = []
+
+            for top, bottom, dens in zip(tops, bottoms, densities):
+                distance_steps.extend([top, bottom])
+                density_steps.extend([dens, dens])
+
+            # Add surface level
+            distance_steps.insert(0, 0.0)
+            density_steps.insert(0, densities[0])
+
+            df = pd.DataFrame({"distance": distance_steps, "density": density_steps})
+
+            return df, "XML"
+
+    # .xlsx Files (SnowPro and DensityCutter)
+    for file in input_path.glob("*.xlsx"):
+        if file.stem.startswith(day):
+            suffix = file.stem[len(day):].lstrip("-_").lower()  # get what's after day
+            print(f"Found .xlsx file: {file}")
+            df = pd.read_excel(file)
+            if "snowpro" in suffix:
+                return df, "SnowPro"
+            else:
+                return df, "DensityCutter"
+
+    return None, None
+
+
 if __name__ == "__main__":
 
     root = Path(__file__).resolve().parent 
@@ -74,6 +131,7 @@ if __name__ == "__main__":
 
         day_output_dir = output_root / day
         day_output_dir.mkdir(parents=True, exist_ok=True)
+
 
         # Density for all pairs
         for ref_name, remaining, score in pairs:
@@ -100,3 +158,13 @@ if __name__ == "__main__":
             # Plot all individual and mean
             plot_density([ref_density] + rem_densities + [mean_density], [ref_name] + remaining + ["Mean"],
                 filename=f"density_global_group_{ref_name}", save=True, target_dir=day_output_dir)
+
+        #load manual density profile
+        manual_density, label = load_manual_density(day, input_root)
+
+        if manual_density is not None:
+            # plot group mean density with manual density
+            plot_density([mean_density, manual_density], ["Mean", label],
+                    filename=f"density_mean_manual_{day}",
+                    save=False, target_dir=day_output_dir)
+
