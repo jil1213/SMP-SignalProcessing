@@ -40,7 +40,7 @@ def calculate_density_profile(df, profile_name, window=1, overlap=0): #i think t
 def plot_density(dfs_densities, labels, filename, save=True, target_dir=Path("output/density_profiles")):
     plt.figure(figsize=(5.5, 3.5))
     for df, label in zip(dfs_densities, labels):
-        alpha = 1.0 if label == "Mean" else 0.6
+        alpha = 1.0 if label == "Mean" or "Manual density measurement" or "SnowPro" or "DensityCutter" else 0.6
         plt.plot(df["distance"], df["density"], label=label, alpha=alpha)
     plt.xlabel("Distance (mm)")
     plt.ylabel("Density (kg/m³)")
@@ -56,12 +56,12 @@ def plot_density(dfs_densities, labels, filename, save=True, target_dir=Path("ou
     plt.close()
 
 
-def load_manual_density(day, input_path):
 
+def load_manual_density(day, input_path):
+    manual_dfs = []
     # .xml SnowProfile File
     for file in input_path.glob("*.xml"):
         if file.stem.startswith(day):
-            print(f"Found XML file: {file}")
             tree = ET.parse(file)
             root = tree.getroot()
             ns = {"caaml": "http://caaml.org/Schemas/SnowProfileIACS/v6.0.3"}
@@ -73,7 +73,6 @@ def load_manual_density(day, input_path):
             for layer in layers:
                 thickness = float(layer.find("caaml:thickness", ns).text)
                 density = float(layer.find("caaml:density", ns).text)
-
                 thicknesses.append(thickness)
                 densities.append(density)
 
@@ -94,20 +93,49 @@ def load_manual_density(day, input_path):
 
             df = pd.DataFrame({"distance": distance_steps, "density": density_steps})
 
-            return df, "XML"
+            label = f"Manual density measurement"
+            manual_dfs.append((df, label))
+
 
     # .xlsx Files (SnowPro and DensityCutter)
     for file in input_path.glob("*.xlsx"):
         if file.stem.startswith(day):
-            suffix = file.stem[len(day):].lstrip("-_").lower()  # get what's after day
-            print(f"Found .xlsx file: {file}")
-            df = pd.read_excel(file)
-            if "snowpro" in suffix:
-                return df, "SnowPro"
-            else:
-                return df, "DensityCutter"
+            suffix = file.stem[len(day):].lstrip("-_").lower()  # get what's after day name (day eg.20250321-densitycutter)
+            df_raw = pd.read_excel(file)
 
-    return None, None
+            if "snowdepth" in df_raw.columns and "mean" in df_raw.columns:
+                df_raw = df_raw[["snowdepth", "mean"]]
+                bottoms = df_raw["snowdepth"].values * 10  # convert to mm
+                tops = [0] + list(bottoms[:-1])
+                densities = df_raw["mean"].values
+
+                distance_steps = []
+                density_steps = []
+
+                for top, bottom, dens in zip(tops, bottoms, densities):
+                    if pd.isna(dens):
+                        continue  #Step over Nan layers
+                    distance_steps.extend([top, bottom])
+                    density_steps.extend([dens, dens])
+
+                # Create DataFrame and convert to numeric (handle "NaN" strings)
+                df = pd.DataFrame({"distance": distance_steps, "density": pd.to_numeric(density_steps, errors="coerce")})
+
+                # Optional: add surface point if first density is valid
+                if not pd.isna(df["density"].iloc[0]):
+                    df = pd.concat([
+                        pd.DataFrame({"distance": [0.0], "density": [df["density"].iloc[0]]}),
+                        df
+                    ], ignore_index=True)
+
+                # convert coloumns to float, if not convertable, set to NaN
+                df["density"] = pd.to_numeric(df["density"], errors="coerce")
+
+                label = "SnowPro" if "snowpro" in suffix else "DensityCutter"
+                manual_dfs.append((df, label))
+
+    return manual_dfs if manual_dfs else None
+
 
 
 if __name__ == "__main__":
@@ -159,12 +187,12 @@ if __name__ == "__main__":
             plot_density([ref_density] + rem_densities + [mean_density], [ref_name] + remaining + ["Mean"],
                 filename=f"density_global_group_{ref_name}", save=True, target_dir=day_output_dir)
 
-        #load manual density profile
-        manual_density, label = load_manual_density(day, input_root)
 
-        if manual_density is not None:
-            # plot group mean density with manual density
-            plot_density([mean_density, manual_density], ["Mean", label],
-                    filename=f"density_mean_manual_{day}",
-                    save=False, target_dir=day_output_dir)
+        # Manual density measurements
+        manual_results = load_manual_density(day, input_root)
 
+        if manual_results is not None:
+            dfs = [mean_density] + [df for df, _ in manual_results]
+            labels = ["Mean"] + [label for _, label in manual_results]
+
+            plot_density(dfs, labels, filename=f"density_mean_manual_{day}", target_dir=day_output_dir)
