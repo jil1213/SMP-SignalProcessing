@@ -100,7 +100,7 @@ if __name__ == "__main__":
                 plt.figure(figsize=(5.5, 3.5))
                 for name in [ref_name] + remaining:
                     df = smp_profiles[name]
-                    plt.plot(df["distance"], df["force"], alpha=0.6, label=name)
+                    plt.plot(df["distance"][:len(result_df)], df["force"][:len(result_df)], alpha=0.6, label=name)
                 plt.plot(result_df["distance"], result_df["mean_force"], label="Mean")
                 plt.xlabel("Distance (mm)")
                 plt.ylabel("Force (N)")
@@ -118,8 +118,8 @@ if __name__ == "__main__":
                 # For Pairs, plot only signals and mean, no std 
                 plt.figure(figsize= (5.5,3.5)) #(8, 5))
                 #plot single signals
-                plt.plot(smp_profiles[ref_name]["distance"], smp_profiles[ref_name]["force"], alpha=0.6, label=f"{ref_name}")
-                plt.plot(smp_profiles[remaining]["distance"], smp_profiles[remaining]["force"], alpha=0.6, label=f"{remaining}")
+                plt.plot(smp_profiles[ref_name]["distance"][:len(result_df)], smp_profiles[ref_name]["force"][:len(result_df)], alpha=0.6, label=f"{ref_name}")
+                plt.plot(smp_profiles[remaining]["distance"][:len(result_df)], smp_profiles[remaining]["force"][:len(result_df)], alpha=0.6, label=f"{remaining}")
                 #plot mean
                 plt.plot(result_df["distance"], result_df["mean_force"], label="Mean")
                 plt.xlabel("Distance (mm)")
