@@ -94,3 +94,20 @@ if __name__ == "__main__":
         corr_df = compute_aligned_similarity_matrix(smp_profiles, day)
 
         plot_correlation_matrix(corr_df, day)
+
+        # special case for master thesis only: compute velocity similarity matrices
+        if day in ['20250131', '20250321']:
+            names = list(corr_df.index)
+            mid = len(names) // 2
+
+            # first half
+            corr_part1 = corr_df.iloc[:mid, :mid]
+            with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}_part1.pkl", "wb") as f1:
+                pickle.dump({"labels": list(corr_part1.index), "matrix": corr_part1.values}, f1)
+            plot_correlation_matrix(corr_part1, f"{day}_20")
+            # second half
+            corr_part2 = corr_df.iloc[mid:, mid:]
+            with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}_part2.pkl", "wb") as f2:
+                pickle.dump({"labels": list(corr_part2.index), "matrix": corr_part2.values}, f2)
+            plot_correlation_matrix(corr_part2, f"{day}_8")
+        # ----------------------------------------------------------------------------
