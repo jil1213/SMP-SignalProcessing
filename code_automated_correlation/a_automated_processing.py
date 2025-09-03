@@ -168,3 +168,31 @@ if __name__ == "__main__":
                 # calculate offset and align
                 offset_mm, correlation, lag = get_offset(df1, df2, name1, name2, plot=True, target_dir=day_output_dir)
                 align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=day_output_dir)
+                
+            # Only for master thesis visualization!
+            for name in profile_names:
+                if name == 'S45M1064':
+                    df = smp_profiles[name]
+                    plt.figure(figsize=(5.5, 3.5)) #(8, 4))
+                    plt.plot(df["distance"], df["force"], label=name)
+                    plt.xlabel("Distance (mm)")
+                    plt.ylabel("Force (N)")
+                    plt.grid()
+                    plt.tight_layout()
+                    plt.legend()
+                    filename = f"single_profile_{name}.svg"
+                    plt.savefig(day_output_dir / filename)
+                    plt.close()
+
+                    # zoomed range 
+                    plt.figure(figsize=(5.5, 3.5)) #(8, 4))
+                    plt.plot(df["distance"], df["force"])
+                    plt.xlabel("Distance (mm)")
+                    plt.ylabel("Force (N)")
+                    plt.xlim(199.8, 200.6)
+                    plt.ylim(0.1, 0.25)
+                    plt.grid()
+                    plt.tight_layout()
+                    filename = f"single_profile_{name}_zoomed.svg"
+                    plt.savefig(day_output_dir / filename)
+                    plt.close()
