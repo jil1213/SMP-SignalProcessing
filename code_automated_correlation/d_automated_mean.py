@@ -110,6 +110,24 @@ if __name__ == "__main__":
                 plt.savefig(day_output_dir / f"mean_{ref_name}_with_profiles.svg")
                 plt.close()
 
+                # ONLY for master thesis: Zoom Plot mean with single profiles--------
+                special_xlims = {"20250131": (350, 550), "20250321": (25, 300),"20250403": (0, 250),}
+                if day in special_xlims:
+                    plt.figure(figsize=(5.5, 3.5))
+                    for name in [ref_name] + remaining:
+                        df = smp_profiles[name]
+                        plt.plot(df["distance"][:len(result_df)], df["force"][:len(result_df)], alpha=0.6, label=name)
+                    plt.plot(result_df["distance"], result_df["mean_force"], label="Mean", color="tab:olive")
+                    plt.xlabel("Distance (mm)")
+                    plt.ylabel("Force (N)")
+                    plt.xlim(*special_xlims[day])
+                    plt.legend()
+                    plt.grid()
+                    plt.tight_layout()
+                    plt.savefig(day_output_dir / f"zoomed_mean_{ref_name}_with_profiles.svg")
+                    plt.close()
+                # -------------------------------------------------------------
+
             # Pairs of best similarity and build mean for them
             for ref_name, remaining, score in pairs:
                 # Compute mean for each pair 
