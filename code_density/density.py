@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -38,10 +39,15 @@ def calculate_density_profile(df, profile_name, window=1, overlap=0): #i think t
     return df_density
 
 def plot_density(dfs_densities, labels, filename, save=True, target_dir=Path("output/density_profiles")):
+    min_len = len(dfs_densities[labels.index("Mean")])
     plt.figure(figsize=(5.5, 3.5))
     for df, label in zip(dfs_densities, labels):
-        alpha = 1.0 if label == "Mean" or "Manual density measurement" or "SnowPro" or "DensityCutter" else 0.6
-        plt.plot(df["distance"], df["density"], label=label, alpha=alpha)
+        if label == "Manual density measurement":
+            plt.plot(df["distance"][:min_len], df["density"][:min_len], label=label, alpha=1.0)
+        elif label == "Mean":
+            plt.plot(df["distance"], df["density"], label=label, alpha=1.0, color="tab:red")
+        else:
+            plt.plot(df["distance"][:min_len], df["density"][:min_len], label=label, alpha=0.6)
     plt.xlabel("Distance (mm)")
     plt.ylabel("Density (kg/m³)")
     plt.legend(fontsize="small")
@@ -66,6 +72,9 @@ def load_manual_density(day, input_path):
             root = tree.getroot()
             ns = {"caaml": "http://caaml.org/Schemas/SnowProfileIACS/v6.0.3"}
             layers = root.findall(".//caaml:densityProfile/caaml:Layer", ns)
+
+            #slope angle 
+            angle = float(root.find(".//caaml:validSlopeAngle/caaml:SlopeAnglePosition/caaml:position", ns).text) #data["location"]["slope_angle"]
 
             thicknesses = []
             densities = []
@@ -92,6 +101,8 @@ def load_manual_density(day, input_path):
             density_steps.insert(0, densities[0])
 
             df = pd.DataFrame({"distance": distance_steps, "density": density_steps})
+            # correct distance with slope angle 
+            df["distance"] = df["distance"]/ np.cos(np.deg2rad(angle))
 
             label = f"Manual density measurement"
             manual_dfs.append((df, label))
@@ -102,36 +113,28 @@ def load_manual_density(day, input_path):
         if file.stem.startswith(day):
             suffix = file.stem[len(day):].lstrip("-_").lower()  # get what's after day name (day eg.20250321-densitycutter)
             df_raw = pd.read_excel(file)
+            if day == "20250131": # Not valid for other profiles right now!
+                angle = 25
+            elif day == "20250321": 
+                angle= 21 
 
-            if "snowdepth" in df_raw.columns and "mean" in df_raw.columns:
+            # decide for what range values are valid 
+            if suffix == "snowpro":
+                range = 40 / np.cos(np.deg2rad(angle)) #mm in both directions (/is angle correction)
+                label = f"SnowPro sensor"
                 df_raw = df_raw[["snowdepth", "mean"]]
-                bottoms = df_raw["snowdepth"].values * 10  # convert to mm
-                tops = [0] + list(bottoms[:-1])
+                distances = (df_raw["snowdepth"].values * 10) / np.cos(np.deg2rad(angle)) # convert to mm and correct with slope angle correction
                 densities = df_raw["mean"].values
+                df = pd.DataFrame({"distance": distances, "density": densities})
+                manual_dfs.append((df, label))
 
-                distance_steps = []
-                density_steps = []
-
-                for top, bottom, dens in zip(tops, bottoms, densities):
-                    if pd.isna(dens):
-                        continue  #Step over Nan layers
-                    distance_steps.extend([top, bottom])
-                    density_steps.extend([dens, dens])
-
-                # Create DataFrame and convert to numeric (handle "NaN" strings)
-                df = pd.DataFrame({"distance": distance_steps, "density": pd.to_numeric(density_steps, errors="coerce")})
-
-                # Optional: add surface point if first density is valid
-                if not pd.isna(df["density"].iloc[0]):
-                    df = pd.concat([
-                        pd.DataFrame({"distance": [0.0], "density": [df["density"].iloc[0]]}),
-                        df
-                    ], ignore_index=True)
-
-                # convert coloumns to float, if not convertable, set to NaN
-                df["density"] = pd.to_numeric(df["density"], errors="coerce")
-
-                label = "SnowPro" if "snowpro" in suffix else "DensityCutter"
+            elif suffix == "densitycutter":
+                range = 20 / np.cos(np.deg2rad(angle))
+                label = f"Manual method with cylindrical sampling device"
+                df_raw = df_raw[["snowdepth", "mean"]]
+                distances = (df_raw["snowdepth"].values * 10) / np.cos(np.deg2rad(angle)) # convert to mm and correct with slope angle correction
+                densities = df_raw["mean"].values
+                df = pd.DataFrame({"distance": distances, "density": densities})
                 manual_dfs.append((df, label))
 
     return manual_dfs if manual_dfs else None
@@ -192,7 +195,33 @@ if __name__ == "__main__":
         manual_results = load_manual_density(day, input_root)
 
         if manual_results is not None:
-            dfs = [mean_density] + [df for df, _ in manual_results]
-            labels = ["Mean"] + [label for _, label in manual_results]
+            #dfs = [mean_density] + [df for df, _ in manual_results]
+            #labels = ["Mean"] + [label for _, label in manual_results]
 
-            plot_density(dfs, labels, filename=f"density_mean_manual_{day}", target_dir=day_output_dir)
+            plt.figure(figsize=(5.5, 3.5))
+            plt.plot(mean_density["distance"], mean_density["density"], label="Mean", alpha=1.0)
+            # Plot manual datasets depending on label
+            for df, label in manual_results:
+                if label == "SnowPro sensor":
+                    x = df["distance"].values
+                    y = df["density"].values
+                    xerr = np.full_like(x, 40.0)
+                    plt.errorbar(x, y, xerr=xerr, fmt='o', label=label, color='tab:orange',
+                         alpha=0.7, markersize=2, capsize=0.5, linewidth=1)
+                elif label == "Manual method with cylindrical sampling device":
+                    x = df["distance"].values
+                    y = df["density"].values
+                    # 34 mm links, 0 mm rechts
+                    xerr = [np.full_like(x, 34.0), np.zeros_like(x)]
+                    plt.errorbar(x, y, xerr=xerr, fmt='o', label=label, color='tab:green',
+                         alpha=0.7, markersize=2, capsize=0.5, linewidth=1)                
+                elif label == "Manual density measurement":
+                    plt.plot(df["distance"], df["density"], label=label)
+            plt.xlabel("Distance (mm)")
+            plt.ylabel("Density (kg/m³)")
+            plt.legend(fontsize="small")
+            plt.grid()
+            plt.tight_layout()
+            filename=f"density_mean_manual_{day}"
+            plt.savefig(day_output_dir / f"{filename}.svg")
+            plt.close()
