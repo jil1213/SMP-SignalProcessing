@@ -98,8 +98,16 @@ def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crossc
 def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("output/crosscorrelation")):
     # plot profiles before alignment
     if plot == True:
+        # calculate similarity score before alignment 
+        #take only min len of both to calculate
+        f1 = df1["force"].values
+        f2 = df2["force"].values
+        minlen = min(len(df1), len(df2))
+        b_cosine = np.dot(f1[:minlen], f2[:minlen]) / (np.linalg.norm(f1[:minlen]) * np.linalg.norm(f2[:minlen]))
+        # convert cosine value to string without . 
+        cos_str = f"{b_cosine:.4f}".replace("0.", "0p")
         label2=name2
-        filename = f"{name1}_to_{name2}_before_alignment"
+        filename = f"{name1}_to_{name2}_before_alignment_{cos_str}"
         plot_pairs([(df1, name1, df2, name2)], label2, filename, target_dir=target_dir)
 
     df2_shifted = df2.copy()
@@ -130,7 +138,7 @@ def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("outp
     # plot profiles after alignment
     if plot == True:
         label2 = f"shifted {name2}"
-        filename = f"{name1}_to_{name2}_with_alignment"
+        filename = f"{name1}_to_{name2}_with_alignment_lag{lag}"
         plot_pairs([(df1_shifted, name1, df2_shifted, name2)], label2, filename, target_dir=target_dir)
 
     return df1_shifted, df2_shifted
