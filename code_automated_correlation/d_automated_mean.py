@@ -101,7 +101,7 @@ if __name__ == "__main__":
                 for name in [ref_name] + remaining:
                     df = smp_profiles[name]
                     plt.plot(df["distance"][:len(result_df)], df["force"][:len(result_df)], alpha=0.6, label=name)
-                plt.plot(result_df["distance"], result_df["mean_force"], label="Mean")
+                plt.plot(result_df["distance"], result_df["mean_force"], label="Mean", color="tab:olive")
                 plt.xlabel("Distance (mm)")
                 plt.ylabel("Force (N)")
                 plt.legend()
