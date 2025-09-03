@@ -113,6 +113,22 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
         plt.savefig(folder_path / "delta_error_boxplot.svg")  # for master thesis vector graphic
         plt.close()
 
+        #Calculate & print values for Boxplot in Terminal 
+        q1_old, med_old, q3_old = np.percentile(delta_old, [25, 50, 75])
+        iqr_old = q3_old - q1_old
+        lf_old, hf_old = q1_old - 1.5*iqr_old, q3_old + 1.5*iqr_old
+        lw_old = delta_old[delta_old >= lf_old].min()
+        uw_old = delta_old[delta_old <= hf_old].max()
+
+        q1_new, med_new, q3_new = np.percentile(delta_new, [25, 50, 75])
+        iqr_new = q3_new - q1_new
+        lf_new, hf_new = q1_new - 1.5*iqr_new, q3_new + 1.5*iqr_new
+        lw_new = delta_new[delta_new >= lf_new].min()
+        uw_new = delta_new[delta_new <= hf_new].max()
+        print("Boxplot statistics:")
+        print(f"Existing method -> median={med_old:.3f} mm, whiskers=[{lw_old:.3f}, {uw_old:.3f}] mm, IQR={iqr_old:.3f} mm")
+        print(f"New method      -> median={med_new:.3f} mm, whiskers=[{lw_new:.3f}, {uw_new:.3f}] mm, IQR={iqr_new:.3f} mm")
+
         # Boxplot zoomed
         plt.figure(figsize=(8, 5))
         plt.boxplot([delta_old, delta_new], labels=["Existing method", "New method"])
