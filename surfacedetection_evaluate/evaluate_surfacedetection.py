@@ -65,7 +65,7 @@ def calculate_surfaces(folder_path, output_path):
         if surface_ini is not None:
             delta_new = abs(surface_new - surface_ini)
             if (delta_new > 100):
-                plt.figure(figsize=(8, 5))
+                plt.figure(figsize=(5.5, 3.5))
                 plt.plot(df["distance"], df["force"])
                 plt.xlabel("Distance (mm)")
                 plt.ylabel("Force (N)")
@@ -80,11 +80,11 @@ def calculate_surfaces(folder_path, output_path):
                 plt.savefig(output_path / f"outliers/outlier_{profile_name}.svg")  # for master thesis vector graphic
 
                 # Zoomed range for all 
-                plt.figure(figsize=(8, 5))
+                plt.figure(figsize=(5.5, 3.5))
                 plt.plot(df["distance"], df["force"])
                 plt.xlabel("Distance (mm)")
-                plt.xlim(-2, 300)
-                plt.ylim(-0.2, 1)
+                plt.xlim(-2, 220)
+                plt.ylim(-0.1, 0.3)
                 plt.ylabel("Force (N)")
                 # Vertical lines at reference and detected surfaces
                 plt.axvline(surface_ini, color="k", linestyle="--", label=f"reference surface = {surface_ini:.1f} mm")
