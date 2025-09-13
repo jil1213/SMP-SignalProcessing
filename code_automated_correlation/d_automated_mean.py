@@ -136,10 +136,10 @@ if __name__ == "__main__":
                 # For Pairs, plot only signals and mean, no std 
                 plt.figure(figsize= (5.5,3.5)) #(8, 5))
                 #plot single signals
-                plt.plot(smp_profiles[ref_name]["distance"][:len(result_df)], smp_profiles[ref_name]["force"][:len(result_df)], alpha=0.6, label=f"{ref_name}")
-                plt.plot(smp_profiles[remaining]["distance"][:len(result_df)], smp_profiles[remaining]["force"][:len(result_df)], alpha=0.6, label=f"{remaining}")
+                plt.plot(smp_profiles[ref_name]["distance"][:len(result_df)], smp_profiles[ref_name]["force"][:len(result_df)], alpha=0.8, label=f"{ref_name}")
+                plt.plot(smp_profiles[remaining]["distance"][:len(result_df)], smp_profiles[remaining]["force"][:len(result_df)], alpha=0.8, label=f"{remaining}")
                 #plot mean
-                plt.plot(result_df["distance"], result_df["mean_force"], label="Mean")
+                plt.plot(result_df["distance"], result_df["mean_force"], label="Mean", color="tab:olive")
                 plt.xlabel("Distance (mm)")
                 plt.ylabel("Force (N)")
                 n_profiles = len(info["aligned_profiles"])
