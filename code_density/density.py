@@ -184,6 +184,8 @@ if __name__ == "__main__":
 
             ref_density = calculate_density_profile(smp_profiles[ref_name], ref_name)
             mean_density = calculate_density_profile(mean_df, "Mean")
+            #print mean density in command line
+            print("Mean density SMP derived:", mean_density["density"].mean())
             rem_densities = [calculate_density_profile(smp_profiles[name], name) for name in remaining]
 
             # Plot all individual and mean
