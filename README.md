@@ -122,7 +122,25 @@ This script contains the surface detection method newly developed in this work. 
 
 ## Code_density
 
-...under construction...
+This module computes snow density profiles from a SMP mean profile using the **Löwe et al. (2012)** shot-noise model together with the **Calonne & Richter (2020)** density parameterization, implemented in the snowmicropyn python package.
+It makes use of the previously developed _automated averaging pipeline_ located in `code_automated_correlation` to compute the SMP mean profile used as input for density calculation.
+
+**`calculate_density_profile`**
+Computes a density profile from SMP force data using Löwe2012 + CalonneRichter2020.
+
+**`plot_density`**
+Plots individual, paired, or averaged density profiles and saves them as `.svg`.
+
+**`load_manual_density`**
+Imports manual density data from CAAML-XML, SnowPro sensor (`.xlsx`), and density cutter measurements, including slope-angle correction. For comparison between smp computed density and traditional methods
+
+**Daily processing (`__main__`)**
+Runs the automated averaging pipeline for each day to generate mean profiles,
+Computes density for reference profiles, individual profiles, and group means,
+Generates comparison plots
+
+All outputs are saved in:
+`output/density/<day>/`
 
 ## Surface_detection tuning + evaluation
 
@@ -161,7 +179,7 @@ Ground detection for csv smp profiles with same method as used in snowmicropyn p
 
 ### detect_surface.py
 
-Surface detection of smp profiles with logarithmic force gradient. Currently under construction
+Surface detection of smp profiles with logarithmic force gradient.
 
 ### detrending.py
 
@@ -212,6 +230,8 @@ Minima Interpolation of two velocities can be compared and extracted to get info
 
 ## code_visualizations
 
+Contains mostly visualizations/plots used for master thesis.
+
 ### FFT.py
 
 Fourier Transformation computed with the Fast Fourier Transformation and PSD (Leistungsdichtespektrum) can be plotted.
@@ -238,7 +258,7 @@ can be used to import and visualize density measuremnts stored in csv files
 
 ## data
 
-Contains input data
+Contains input data for all scripts except the subfolder `code_automated_correlation` (has its own data storage)
 
 ### aligned_first
 
