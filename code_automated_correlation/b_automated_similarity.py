@@ -23,7 +23,11 @@ def similarity(df1, df2):
     return cosine
 
 
-def compute_aligned_similarity_matrix(smp_profiles, day, save=True, velocity=None):
+def compute_aligned_similarity_matrix(smp_profiles, day, save=True, velocity=None, output_dir=None):
+    if output_dir is None:
+        output_dir = Path(__file__).resolve().parent / "output" / "similarity_scores"
+    output_dir.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
+
     if velocity is None:
         day_profiles = smp_profiles
     elif velocity == 0: #only use for my special dataset to devide whole set into subsets (compute for both velocities together)
@@ -57,19 +61,23 @@ def compute_aligned_similarity_matrix(smp_profiles, day, save=True, velocity=Non
                 corr_matrix[j, i] = cosine
 
     if save == True:
-        with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}.pkl", "wb") as f:
+        with open(output_dir / f"corr_data_day{day}.pkl", "wb") as f:
             pickle.dump({"labels": names, "matrix": corr_matrix}, f)
 
     return pd.DataFrame(corr_matrix, index=names, columns=names)
 
 
-def plot_correlation_matrix(corr_df, day, velocity=None):
+def plot_correlation_matrix(corr_df, day, velocity=None, output_dir=None):
+    if output_dir is None:
+        output_dir = Path(__file__).resolve().parent / "output" / "similarity_scores"
+    output_dir.mkdir(parents=True, exist_ok=True)  # Ensure directory exists
+
     plt.figure(figsize=(10, 8))
     sns.heatmap(corr_df, annot=True, cmap="coolwarm", vmin=0, vmax=1, annot_kws={"size": 15})
     plt.tight_layout()
     if velocity is None:
         #plt.title(f"Cosine Correlation Matrix - Day {day}")
-        plt.savefig(f"code_automated_correlation/output/similarity_scores/correlation_matrix_day{day}.svg")
+        plt.savefig(output_dir / f"correlation_matrix_day{day}.svg")
     elif velocity == 0:
         plt.title(f"Cosine Correlation Matrix - Day {day}")
         plt.savefig(f"output/similarity_scores/correlation_matrix_day{day}.png")
@@ -82,7 +90,7 @@ def plot_correlation_matrix(corr_df, day, velocity=None):
 if __name__ == "__main__":
     root = Path(__file__).resolve().parent 
     input_root = root/ "raw_data"
-    output_root = root / "output" / "similarity_scores"
+    output_dir = root / "output" / "similarity_scores"
 
 
     for folder_path in sorted(input_root.iterdir()):
@@ -90,23 +98,23 @@ if __name__ == "__main__":
             day = folder_path.name
             smp_profiles = load_profiles(folder_path)
 
-        corr_df = compute_aligned_similarity_matrix(smp_profiles, day)
+        corr_df = compute_aligned_similarity_matrix(smp_profiles, day, output_dir=output_dir)
 
-        plot_correlation_matrix(corr_df, day)
+        plot_correlation_matrix(corr_df, day, output_dir=output_dir)
 
         # special case for master thesis only: compute velocity similarity matrices
-        if day in ['20250131', '20250321']:
-            names = list(corr_df.index)
-            mid = len(names) // 2
+        #if day in ['20250131', '20250321']:
+        #    names = list(corr_df.index)
+        #    mid = len(names) // 2
 
-            # first half
-            corr_part1 = corr_df.iloc[:mid, :mid]
-            with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}_part1.pkl", "wb") as f1:
-                pickle.dump({"labels": list(corr_part1.index), "matrix": corr_part1.values}, f1)
-            plot_correlation_matrix(corr_part1, f"{day}_20")
+        #    # first half
+        #    corr_part1 = corr_df.iloc[:mid, :mid]
+        #    with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}_part1.pkl", "wb") as f1:
+        #        pickle.dump({"labels": list(corr_part1.index), "matrix": corr_part1.values}, f1)
+        #    plot_correlation_matrix(corr_part1, f"{day}_20")
             # second half
-            corr_part2 = corr_df.iloc[mid:, mid:]
-            with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}_part2.pkl", "wb") as f2:
-                pickle.dump({"labels": list(corr_part2.index), "matrix": corr_part2.values}, f2)
-            plot_correlation_matrix(corr_part2, f"{day}_8")
+        #    corr_part2 = corr_df.iloc[mid:, mid:]
+        #    with open(f"code_automated_correlation/output/similarity_scores/corr_data_day{day}_part2.pkl", "wb") as f2:
+        #        pickle.dump({"labels": list(corr_part2.index), "matrix": corr_part2.values}, f2)
+        #    plot_correlation_matrix(corr_part2, f"{day}_8")
         # ----------------------------------------------------------------------------
