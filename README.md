@@ -1,16 +1,15 @@
 # SMP-SignalProcessing
 
 This repository contains all scripts used for my master's thesis.
-Folder `data` stores the measured data and converted files
 
 ## Code_automated_correlation
 
-This folder contains free-standing code -a fully automated pipeline- to process, analyze, and average SnowMicroPen (SMP) profiles based on similarity. It allows for aligning, comparing, grouping, and averaging profiles using cosine similarity and cross-correlation methods.
+This folder contains free-standing code -a fully automated pipeline- to process, analyze, and average SnowMicroPen (SMP) profiles based on similarity. It enables aligning, comparing, grouping, and averaging profiles using cosine similarity and cross-correlation methods.
 
 ### Data Structure
 
-All data must be stored in the folder `raw_data`, which should contain one subfolder **per day**.  
-Each subfolder contains the `.PNT` files (SMP profiles) for that specific measurement day.
+All data must be stored in the folder `raw_data`, which should contain one subfolder **per day** (or measurement set).
+Each subfolder contains the `.PNT` files (SMP profiles) for that specific measurement day (or spcific measurement set).
 
 **Example structure:**
 
@@ -25,6 +24,7 @@ raw_data/
 ```
 
 The pipeline processes each subfolder sequentially, day by day.
+Other data (e.g., .xlsx, .xml files) are optional and not required for the pipeline. Only when used in combination with the density code.
 
 ### Run the Full Pipeline
 
