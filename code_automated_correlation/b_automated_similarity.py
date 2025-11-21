@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 
 from pathlib import Path
 from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
-plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 
 

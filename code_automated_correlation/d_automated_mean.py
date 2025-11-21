@@ -6,7 +6,6 @@ from pathlib import Path
 from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
 from code_automated_correlation.b_automated_similarity import compute_aligned_similarity_matrix
 from code_automated_correlation.c_automated_grouping import analyze_day, find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
-plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 
 def compute_aligned_mean(smp_profiles, values):
