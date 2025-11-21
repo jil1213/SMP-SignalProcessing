@@ -116,6 +116,10 @@ Run script with command:
 python -m code_automated_correlation.d_automated_mean
 ```
 
+### new_surface_detection.py
+
+This script contains the surface detection method newly developed in this work. Please note: This is the same function as in code_SMP/surface_detection, which has simply been copied so that the code_automated_correlation subfolder can be used as standalone code.
+
 ## Code_density
 
 ...under construction...

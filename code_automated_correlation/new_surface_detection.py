@@ -1,9 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
-from snowmicropyn import Profile
 from snowmicropyn.tools import smooth
-#from code_SMP.readSMP import load_all_smp_profiles
+
+# same function as in from code_SMP.detect_surface import detect_surface
+# copied into code_atomated_correlation for easy stand alone use of this subfolder
 
 def moving_linear_regression(x, y, window_mm=1.0):
     # calculate window size 
@@ -109,40 +109,3 @@ def detect_surface(df, name):
         surface = distance[0]
 
     return surface, grad, threshold
-
-
-def detect_surface_snowmicropyn(file):
-    #compare with snowmicropyn package detection method
-    smp_profile = Profile.load(file)
-    surface = Profile.detect_surface(smp_profile)
-    return surface
-
-
-
-def plot_surface(df, name, surface, surface2): 
-    plt.figure(figsize=(8, 5))
-    plt.plot(df["distance"], df["force"])
-    plt.axvline(x=surface, color='red', linestyle='--', label=f'Surface lin reg: {surface} mm')
-    plt.axvline(x=surface2, color='blue', linestyle='--', label=f'Surface snowmicropyn: {surface2} mm')
-    #plt.yscale('log')
-    plt.xlabel("Distance (mm)")
-    plt.ylabel("Force (N)")
-    plt.title(f"Surface detection Profile: {name}")
-    plt.grid()
-    plt.legend()
-    plt.show()
-
-#this kind of comment to avoid circular import 
-"""""
-if __name__ == "__main__":
-    #smp_profiles = load_all_smp_profiles(pnt=True)
-    for name, df in smp_profiles.items():
-        surface = detect_surface(df, name)
-        print(f"Profile: {name}, Detected Surface1: {surface} mm")
-        #works only with Profile (not with df)
-        file = 'data/smp_profiles/'+name+'.PNT' #load origin file to use with snowmicropyn package 
-        surface2 = detect_surface_snowmicropyn(file)
-        print(f"Profile: {name}, Detected Surface2: {surface2} mm")
-
-        plot_surface(df, name, surface, surface2)
-"""""

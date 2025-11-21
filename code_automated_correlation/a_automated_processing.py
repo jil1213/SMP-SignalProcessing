@@ -7,7 +7,7 @@ from itertools import combinations
 from snowmicropyn import Profile
 from scipy.signal import correlate
 
-from code_SMP.detect_surface import detect_surface  # my own method to detect surface
+from code_automated_correlation.new_surface_detection import detect_surface # my own method to detect surface
 plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
 
 
