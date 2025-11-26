@@ -9,15 +9,20 @@ This folder contains free-standing code -a fully automated pipeline- to process,
 ### For stand-alone use
 
 Change import statement in the following scripts:
+
 `a_automated_processing.py`:
 
 from code_automated_correlation.new_surface_detection import detect_surface
 change to:
+
 from new_surface_detection import detect_surface
 
 `b_automated_similarity.py`:
+
 from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
+
 change to
+
 from a_automated_processing import load_profiles, get_offset, align_profiles
 
 `c_automated_correlation.py`:
@@ -31,6 +36,7 @@ from a_automated_processing import load_profiles
 from b_automated_similarity import compute_aligned_similarity_matrix
 
 `d_automated_mean.py`:
+
 from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
 from code_automated_correlation.b_automated_similarity import compute_aligned_similarity_matrix
 from code_automated_correlation.c_automated_grouping import analyze_day, find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
