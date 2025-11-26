@@ -6,6 +6,41 @@ This repository contains all scripts used for my master's thesis.
 
 This folder contains free-standing code -a fully automated pipeline- to process, analyze, and average SnowMicroPen (SMP) profiles based on similarity. It enables aligning, comparing, grouping, and averaging profiles using cosine similarity and cross-correlation methods.
 
+### For stand-alone use
+
+Change import statement in the following scripts:
+`a_automated_processing.py`:
+
+from code_automated_correlation.new_surface_detection import detect_surface
+change to:
+from new_surface_detection import detect_surface
+
+`b_automated_similarity.py`:
+from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
+change to
+from a_automated_processing import load_profiles, get_offset, align_profiles
+
+`c_automated_correlation.py`:
+
+from code_automated_correlation.a_automated_processing import load_profiles
+from code_automated_correlation.b_automated_similarity import compute_aligned_similarity_matrix
+
+to
+
+from a_automated_processing import load_profiles
+from b_automated_similarity import compute_aligned_similarity_matrix
+
+`d_automated_mean.py`:
+from code_automated_correlation.a_automated_processing import load_profiles, get_offset, align_profiles
+from code_automated_correlation.b_automated_similarity import compute_aligned_similarity_matrix
+from code_automated_correlation.c_automated_grouping import analyze_day, find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
+
+change to
+
+from a_automated_processing import load_profiles, get_offset, align_profiles
+from b_automated_similarity import compute_aligned_similarity_matrix
+from c_automated_grouping import analyze_day, find_reference_profile, find_highest_similarity_pairs, find_all_threshold_groups
+
 ### Data Structure
 
 All data must be stored in the folder `raw_data`, which should contain one subfolder **per day** (or measurement set).
