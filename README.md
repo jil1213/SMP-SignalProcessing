@@ -2,9 +2,9 @@
 
 This repository contains all scripts used for my master's thesis.
 
-## Code_automated_correlation
+## Code for automated correlation
 
-This folder contains free-standing code -a fully automated pipeline- to process, analyze, and average SnowMicroPen (SMP) profiles based on similarity. It enables aligning, comparing, grouping, and averaging profiles using cosine similarity and cross-correlation methods.
+This scripts are free-standing code -a fully automated pipeline- to process, analyze, and average SnowMicroPen (SMP) profiles based on similarity. It enables aligning, comparing, grouping, and averaging profiles using cosine similarity and cross-correlation methods.
 
 ### Data Structure
 
@@ -120,10 +120,10 @@ python -m code_automated_correlation.d_automated_mean
 
 This script contains the surface detection method newly developed in this work. Please note: This is the same function as in code_SMP/surface_detection, which has simply been copied so that the code_automated_correlation subfolder can be used as standalone code.
 
-## Code_density
+## Code for density parametrization
 
-This module computes snow density profiles from a SMP mean profile using the **Löwe et al. (2012)** shot-noise model together with the **Calonne & Richter (2020)** density parameterization, implemented in the snowmicropyn python package.
-It makes use of the previously developed _automated averaging pipeline_ located in `code_automated_correlation` to compute the SMP mean profile used as input for density calculation.
+This script computes snow density profiles from a SMP mean profile using the **Löwe et al. (2012)** shot-noise model together with the **Calonne & Richter (2020)** density parameterization, implemented in the snowmicropyn python package.
+It makes use of the previously developed _automated averaging pipeline_ to compute the SMP mean profile used as input for density calculation.
 
 **`calculate_density_profile`**
 Computes a density profile from SMP force data using Löwe2012 + CalonneRichter2020.
