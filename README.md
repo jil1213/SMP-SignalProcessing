@@ -1,6 +1,6 @@
 # SMP-SignalProcessing
 
-This repository contains all scripts used for my master's thesis.
+This branch contains all scripts used for my master's thesis.
 
 ## Code_automated_correlation
 
