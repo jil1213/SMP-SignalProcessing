@@ -147,3 +147,106 @@ MAE old - new: 5.11 - 1.78
 MSE old - new: 524.79 - 88.45 mm^2
 RMSEold - new: 22.91 - 9.40 mm
 
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std + air_mean 
+
+Scores:
+MAE old - new: 5.11 - 1.36
+MSE old - new: 524.79 - 12.90 mm^2
+RMSEold - new: 22.91 - 3.59 mm
+
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+ and check 5mm if air after detected surface 
+
+Scores:
+MAE old - new: 5.11 - 47.21
+MSE old - new: 524.79 - 5153.71 mm^2
+RMSEold - new: 22.91 - 71.79 mm
+
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+ and no check air after detected surface 
+
+Scores:
+MAE old - new: 5.11 - 61.50
+MSE old - new: 524.79 - 6751.28 mm^2
+RMSEold - new: 22.91 - 82.17 mm
+
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+ and 5mm mean check air after detected surface 
+
+Scores:
+MAE old - new: 5.11 - 1.56
+MSE old - new: 524.79 - 17.88 mm^2
+RMSEold - new: 22.91 - 4.23 mm
+
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+ and 1mm mean check air after detected surface 
+
+Scores:
+MAE old - new: 5.11 - 1.56
+MSE old - new: 524.79 - 17.88 mm^2
+RMSEold - new: 22.91 - 4.23 mm
+
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+ and 5mm min check air (force_threshold = air_force_mean + air_force_std)after detected surface 
+
+Scores:
+MAE old - new: 5.11 - 4.08
+MSE old - new: 524.79 - 376.30 mm^2
+RMSEold - new: 22.91 - 19.40 mm
+
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+ and 5mm min check air (force_threshold = air_force_mean + 3*air_force_std)after detected surface 
+
+Scores:
+MAE old - new: 5.11 - 0.62
+MSE old - new: 524.79 - 4.02 mm^2
+RMSEold - new: 22.91 - 2.01 mm
+
+
+
+--------------------------------------
+Run with moving linear regression and threshold finding with
+ air_std over rolling window 20mm
+ threshold = threshold = 5 * air_std 
+ and 5mm min check air (force_threshold = air_force_mean + 2*air_force_std)after detected surface 
+
+Scores:
+MAE old - new: 5.11 - 0.92
+MSE old - new: 524.79 - 34.03 mm^2
+RMSEold - new: 22.91 - 5.83 mm
+

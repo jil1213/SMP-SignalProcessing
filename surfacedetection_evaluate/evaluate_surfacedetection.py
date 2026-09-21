@@ -9,7 +9,7 @@ from surfacedetection_tuning.tune_surfacedetection import compute_metrics, plot_
 # for plotting master thesis only
 import numpy as np
 import matplotlib.pyplot as plt
-plt.style.use(r'c:/Users/jille/Documents/Uni/Master-Mechatronik/Masterarbeit/SMP-SignalProcessing/latex_default.mplstyle')
+plt.style.use(Path(__file__).resolve().parent.parent / 'latex_default.mplstyle')
 
 
 def load_surface_data(csv_path):
