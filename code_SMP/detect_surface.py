@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 
 from snowmicropyn import Profile
 from snowmicropyn.tools import smooth
-#from code_SMP.readSMP import load_all_smp_profiles
 
 def moving_linear_regression(x, y, window_mm=1.0):
     # calculate window size 
@@ -54,8 +53,8 @@ def detect_surface(df, name):
         grad (np.ndarray): Smoothed force gradient
         threshold (float): Gradient threshold used for detection
     """
-    distance = df["distance"]
-    force = df["force"]
+    distance = df["distance"].reset_index(drop=True)
+    force = df["force"].reset_index(drop=True)
     window_len = 242 # thats 1mm/resolution of SMP 
 
 
@@ -133,11 +132,14 @@ def plot_surface(df, name, surface, surface2):
     plt.show()
 
 #this kind of comment to avoid circular import 
-"""""
+#"""""
 if __name__ == "__main__":
-    #smp_profiles = load_all_smp_profiles(pnt=True)
+    from code_SMP.readSMP import load_all_smp_profiles
+    # Trim_surface=False: apply detect_surface to profiles that are only ground-trimmed,
+    # not already surface-trimmed (otherwise we'd run the method on its own output)
+    smp_profiles = load_all_smp_profiles(pnt=True, Trim_surface=False)
     for name, df in smp_profiles.items():
-        surface = detect_surface(df, name)
+        surface, grad, threshold = detect_surface(df, name)
         print(f"Profile: {name}, Detected Surface1: {surface} mm")
         #works only with Profile (not with df)
         file = 'data/smp_profiles/'+name+'.PNT' #load origin file to use with snowmicropyn package 
@@ -145,4 +147,4 @@ if __name__ == "__main__":
         print(f"Profile: {name}, Detected Surface2: {surface2} mm")
 
         plot_surface(df, name, surface, surface2)
-"""""
+#"""""
