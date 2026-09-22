@@ -132,10 +132,15 @@ if __name__ == "__main__":
     csv_file = output_path / "surface_detection_cache.csv"
     output_file = output_path / "surface_detection_cache.csv"
 
-    # Calculate and save results
-    results = calculate_surfaces(folder_path, output_path)
-    save_surface_results_to_csv(results, output_file)
-    
+    # Set to False to reuse the existing cache instead of recomputing all surfaces
+    use_cache = True
+
+    if use_cache and csv_file.exists():
+        print(f"Using existing surface detection cache: {csv_file}")
+    else:
+        results = calculate_surfaces(folder_path, output_path)
+        save_surface_results_to_csv(results, output_file)
+
     # Load data and compute metrics
     surface_ini_all, surface_old_all, surface_new_all, profile_names = load_surface_data(csv_file)
     scores = compute_metrics(surface_ini_all, surface_old_all, surface_new_all)
@@ -143,4 +148,4 @@ if __name__ == "__main__":
     print("Evaluation scores:", scores)
     
     # Plot delta errors
-    plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, output_path)
+    plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, output_path, scores=scores)

@@ -49,7 +49,7 @@ def append_run_information(info_text, scores, target_file=Path(__file__).resolve
 
     print(f"Information successfully appended to {target_file}")
 
-def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_path):
+def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_path, scores=None):
         # Calculate delta errors for each profile
         delta_old = surface_old_all - surface_ini_all
         delta_new = surface_new_all - surface_ini_all
@@ -102,18 +102,7 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
         plt.savefig(folder_path / f"delta_error_zoomed.png")
         plt.savefig(folder_path / "delta_error_zoomed.svg")  # for master thesis vector graphic
 
-        # Boxplot
-        plt.figure(figsize=(8, 5))
-        plt.boxplot([delta_old, delta_new], labels=["Existing method", "New method"])
-        plt.ylabel("Deviation to manual reference (mm)")
-        #plt.title("Boxplot of Surface Detection Deviations")
-        plt.grid()
-        plt.tight_layout()
-        plt.savefig(folder_path / "delta_error_boxplot.png")
-        plt.savefig(folder_path / "delta_error_boxplot.svg")  # for master thesis vector graphic
-        plt.close()
-
-        #Calculate & print values for Boxplot in Terminal 
+        #Calculate & print values for Boxplot in Terminal
         q1_old, med_old, q3_old = np.percentile(delta_old, [25, 50, 75])
         iqr_old = q3_old - q1_old
         lf_old, hf_old = q1_old - 1.5*iqr_old, q3_old + 1.5*iqr_old
@@ -129,17 +118,85 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
         print(f"Existing method -> median={med_old:.3f} mm, whiskers=[{lw_old:.3f}, {uw_old:.3f}] mm, IQR={iqr_old:.3f} mm")
         print(f"New method      -> median={med_new:.3f} mm, whiskers=[{lw_new:.3f}, {uw_new:.3f}] mm, IQR={iqr_new:.3f} mm")
 
-        # Boxplot zoomed
-        plt.figure(figsize=(8, 5))
-        plt.boxplot([delta_old, delta_new], labels=["Existing method", "New method"])
-        plt.ylabel("Deviation to manual reference (mm)")
-        #plt.title("Zoomed Boxplot of Surface Detection Deviations")
-        plt.grid()
-        plt.ylim(-10, 10)
-        plt.tight_layout()
-        plt.savefig(folder_path / "delta_error_boxplot_zoomed.png")
-        plt.savefig(folder_path / "delta_error_boxplot_zoomed.svg")  # for master thesis vector graphic
-        plt.close()
+        # Count outliers (points beyond 1.5*IQR fences), separated by direction
+        n_below_old = int(np.sum(delta_old < lf_old))
+        n_above_old = int(np.sum(delta_old > hf_old))
+        n_below_new = int(np.sum(delta_new < lf_new))
+        n_above_new = int(np.sum(delta_new > hf_new))
+        n_total = len(delta_old)
+
+        outlier_summary = (
+            "Outliers outside 1.5*IQR:\n"
+            f"Existing method -> below: {n_below_old}, above: {n_above_old}, "
+            f"total: {n_below_old + n_above_old} / {n_total}\n"
+            f"New method      -> below: {n_below_new}, above: {n_above_new}, "
+            f"total: {n_below_new + n_above_new} / {n_total}\n"
+        )
+        print(outlier_summary)
+
+        # Count large deviations, separated by direction and threshold
+        threshold_summary_lines = ["Large deviations by threshold:"]
+        for thresh in (100, 200):
+            n_below_old_t = int(np.sum(delta_old < -thresh))
+            n_above_old_t = int(np.sum(delta_old > thresh))
+            n_below_new_t = int(np.sum(delta_new < -thresh))
+            n_above_new_t = int(np.sum(delta_new > thresh))
+            threshold_summary_lines.append(
+                f"|delta| > {thresh} mm -> "
+                f"Existing method: below={n_below_old_t}, above={n_above_old_t}; "
+                f"New method: below={n_below_new_t}, above={n_above_new_t}"
+            )
+        threshold_summary = "\n".join(threshold_summary_lines) + "\n"
+        print(threshold_summary)
+
+        # Save all error values (metrics, boxplot stats, outlier counts) to a text file
+        summary_parts = []
+        if scores is not None:
+            summary_parts.append(f"Error metrics:\n{scores}")
+        summary_parts.append(
+            "Boxplot statistics:\n"
+            f"Existing method -> median={med_old:.3f} mm, whiskers=[{lw_old:.3f}, {uw_old:.3f}] mm, IQR={iqr_old:.3f} mm\n"
+            f"New method      -> median={med_new:.3f} mm, whiskers=[{lw_new:.3f}, {uw_new:.3f}] mm, IQR={iqr_new:.3f} mm\n"
+        )
+        summary_parts.append(outlier_summary)
+        summary_parts.append(threshold_summary)
+        with (folder_path / "error_summary.txt").open("w", encoding="utf-8") as f:
+            f.write("\n".join(summary_parts))
+
+        # Boxplot: two panels side by side - (a) full range with all outliers, (b) zoomed range
+        # Sized and styled to match the copernicus.cls paper: full text width (177 mm),
+        # Computer Modern (matches the paper's default LaTeX font), 9pt to match figure caption size.
+        method_labels = ["Existing snowmicropyn method", "New method"]
+        mm_to_in = 1 / 25.4
+        paper_rc = {
+            "font.family": "cmr10",
+            "mathtext.fontset": "cm",
+            "font.size": 9,
+            "axes.titlesize": 9,
+            "axes.labelsize": 9,
+            "xtick.labelsize": 9,
+            "ytick.labelsize": 9,
+            "axes.unicode_minus": False,  # cmr10 has no unicode minus glyph
+        }
+
+        with plt.rc_context(paper_rc):
+            fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(177 * mm_to_in, 85 * mm_to_in))
+
+            for ax, panel_label in zip((ax_a, ax_b), ("(a)", "(b)")):
+                ax.boxplot([delta_old, delta_new], labels=method_labels)
+                ax.axhline(0, color="grey", linestyle="--", linewidth=0.8, zorder=0)
+                ax.grid()
+                ax.tick_params(axis="x", labelrotation=15)
+                ax.text(0.0, 1.02, panel_label, transform=ax.transAxes,
+                        fontweight="bold", va="bottom", ha="left")
+
+            ax_a.set_ylabel(r"$\Delta z$ (mm)")
+            ax_b.set_ylim(-7.5, 7.5)
+
+            plt.tight_layout()
+            plt.savefig(folder_path / "delta_error_boxplot.png", dpi=300)
+            plt.savefig(folder_path / "delta_error_boxplot.svg")  # for master thesis vector graphic
+            plt.close()
 
 
 
@@ -241,5 +298,5 @@ if __name__ == "__main__":
                 # Append information to the run_summary.txt
                 append_run_information(info_text, scores)
 
-                # Plot delta error 
-                plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_path)
+                # Plot delta error
+                plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_path, scores=scores)

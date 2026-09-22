@@ -1,0 +1,16 @@
+Error metrics:
+MAE old - new: 7.20 - 5.42
+MSE old - new: 823.83 - 503.32 mm^2
+RMSEold - new: 28.70 - 22.43 mm
+
+Boxplot statistics:
+Existing method -> median=2.907 mm, whiskers=[-0.556, 6.904] mm, IQR=1.961 mm
+New method      -> median=-0.023 mm, whiskers=[-1.062, 1.208] mm, IQR=0.569 mm
+
+Outliers outside 1.5*IQR:
+Existing method -> below: 56, above: 179, total: 235 / 2622
+New method      -> below: 254, above: 396, total: 650 / 2622
+
+Large deviations by threshold:
+|delta| > 100 mm -> Existing method: below=6, above=20; New method: below=35, above=2
+|delta| > 200 mm -> Existing method: below=0, above=12; New method: below=0, above=1
