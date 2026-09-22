@@ -195,7 +195,7 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
 
             plt.tight_layout()
             plt.savefig(folder_path / "delta_error_boxplot.png", dpi=300)
-            plt.savefig(folder_path / "delta_error_boxplot.svg")  # for master thesis vector graphic
+            plt.savefig(folder_path / "delta_error_boxplot.pdf")  # vector graphic for the paper (pdflatex-ready)
             plt.close()
 
 
