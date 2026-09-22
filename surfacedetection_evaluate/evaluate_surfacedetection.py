@@ -33,6 +33,11 @@ def calculate_surfaces(folder_path, output_path):
     results = []
 
     for file in pnt_files:
+        # Exclude tuning folders (202501*) and test folders (ending in "T")
+        folder_name = file.parent.name
+        if folder_name.startswith("202501") or folder_name.endswith("T"):
+            continue
+
         surface_ini = None
         ini_file = file.with_suffix(".ini")  # get corresponding ini file
         config = configparser.ConfigParser()
