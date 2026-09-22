@@ -121,9 +121,9 @@ def save_surface_results_to_csv(results, output_file):
 
 if __name__ == "__main__":
     # Define input and output paths
-    root = Path(__file__).resolve().parent.parent.parent
-    folder_path = root / "raw_data"
-    output_path = root / "SMP-SignalProcessing" / "surfacedetection_evaluate"
+    root = Path(__file__).resolve().parent.parent
+    folder_path = root / "code_automated_correlation" / "raw_data"
+    output_path = root / "surfacedetection_evaluate"
     csv_file = output_path / "surface_detection_cache.csv"
     output_file = output_path / "surface_detection_cache.csv"
 
