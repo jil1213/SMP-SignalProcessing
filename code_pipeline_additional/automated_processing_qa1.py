@@ -79,9 +79,10 @@ def process_folder(folder_path, csv_writer):
 
 
 if __name__ == "__main__":
-    root = Path(__file__).resolve().parent.parent
-    input_root = root / "code_automated_correlation" / "raw_data"
-    output_file = root / "output" / "similarity_scores_qa1.csv"
+    script_dir = Path(__file__).resolve().parent
+    repo_root = script_dir.parent
+    input_root = repo_root / "code_automated_correlation" / "raw_data"
+    output_file = script_dir / "output" / "similarity_scores_qa1.csv"
     output_file.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_file, "w", newline="") as f:

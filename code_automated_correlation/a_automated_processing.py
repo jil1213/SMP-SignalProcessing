@@ -74,6 +74,9 @@ def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crossc
     # lag_max = np.argmax(correlation) - (len(df1_cut["force"]) - 1) # lag with max correlation global
     # local max  around center (most realistic)
     start, end = len(correlation) // 2 - 24200, len(correlation) // 2 + 24200 # Assumption: max shift is not more than 100cm in both directions
+    # clip to valid range for short profiles, where the +-100cm window exceeds the correlation array
+    start = max(start, 0)
+    end = min(end, len(correlation) - 1)
     lag_local = np.argmax(correlation[start:end])
     lag_max = (start + lag_local) - (len(df1_cut["force"]) - 1) #  absolute index of whole array - centre
 
