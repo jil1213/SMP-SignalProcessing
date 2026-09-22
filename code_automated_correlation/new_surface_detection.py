@@ -54,8 +54,8 @@ def detect_surface(df, name):
         grad (np.ndarray): Smoothed force gradient
         threshold (float): Gradient threshold used for detection
     """
-    distance = df["distance"]
-    force = df["force"]
+    distance = df["distance"].reset_index(drop=True)
+    force = df["force"].reset_index(drop=True)
     window_len = 242 # thats 1mm/resolution of SMP 
 
 
@@ -73,14 +73,17 @@ def detect_surface(df, name):
     # assumption II: to get a stable std a a value range of 10mm is used for the calculation -> window
 
     max_distance_mm = 100.0      # assumption I: scan first 100mm (10cm) as possible air measurement
-    window = int(20 / 0.00413223123177886) # assumption II: 10mm window size to calculate std air (length_mm/resolution)
+    window = int(20 / 0.00413223123177886) # assumption II: 20mm window size to calculate std air (length_mm/resolution)
 
     # Initialize variables before loop
     min_std = np.inf
     air_std = None
     air_mean = None
+    air_force_mean = None
+    air_force_std = None
 
     grad_air = grad[distance <= (distance[0] + max_distance_mm)]
+    force_air = force[distance <= (distance[0] + max_distance_mm)].reset_index(drop=True).to_numpy()
     for i in range(len(grad_air) - window + 1):
         window_grad = grad_air[i : i + window]
         s = window_grad.std()
@@ -88,17 +91,21 @@ def detect_surface(df, name):
             min_std = s
             air_std = s
             air_mean = window_grad.mean()
+            air_force_mean = force_air[i : i + window].mean()
+            air_force_std = force_air[i : i + window].std()
 
-    threshold = 5 * air_std #with air_mean + 5* air_std a very small bit worse - snowmicropyn method
+    threshold = 5 * air_std  #with air_mean + 5* air_std a very small bit worse - snowmicropyn method
 
+    # force level below which the signal still looks like air
+    force_threshold = air_force_mean + 3* air_force_std
 
     # 3. Find first significant gradient rise above threshold = surface
     surface = None
     for i in range(1000, len(grad)): # Start at index 1000 to avoid noise at the very top (in snowmicropyn:100)
         if grad[i] > threshold:
-            # Check if next 1mm after the surface value is not air again
-            check_window = grad[i+1 : i+1+window_len]
-            if np.sum(check_window < threshold) / len(check_window) >= threshold:
+            # Confirm rise as surface: check if force within next 5mm does NOT fall back to air-like levels
+            check_window_force = force[i+1 : i+1+5*window_len]
+            if check_window_force.mean() < force_threshold:
                  continue
             surface = distance[i]
             break
