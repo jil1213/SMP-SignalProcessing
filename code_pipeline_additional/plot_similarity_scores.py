@@ -185,22 +185,32 @@ def plot_seasonal_boxplot(df, daily, output_dir):
         plt.close()
 
 
-def plot_outlier_pairs(df, repo_root, output_dir, n_worst=8):
-    # Re-loads the raw profiles for the worst pairs and re-runs the existing
-    # get_offset/align_profiles plotting (plot=True) to inspect what went wrong.
+def plot_extreme_pairs(df, repo_root, output_dir, n_pairs=20):
+    # Re-loads the raw profiles for the most extreme pairs (worst and best, by two
+    # criteria) and re-runs the existing get_offset/align_profiles plotting
+    # (plot=True) to inspect what happened. Each pair is saved into one or more
+    # criterion subfolders, depending on which selection(s) it belongs to.
     from code_pipeline_additional.automated_processing_qa1 import load_profiles_qa1
     from code_automated_correlation.a_automated_processing import get_offset, align_profiles
 
     valid = df.dropna(subset=["similarity_after"]).copy()
     valid["delta"] = valid["similarity_after"] - valid["similarity_before"]
 
-    worst_delta = valid.nsmallest(n_worst, "delta")
-    worst_after = valid.nsmallest(n_worst, "similarity_after")
-    candidates = pd.concat([worst_delta, worst_after]).drop_duplicates(
-        subset=["folder", "profile_name_1", "profile_name_2"])
+    pair_cols = ["folder", "profile_name_1", "profile_name_2"]
+    selections = {
+        "worst_delta": valid.nsmallest(n_pairs, "delta"),
+        "worst_similarity_after": valid.nsmallest(n_pairs, "similarity_after"),
+        "best_delta": valid.nlargest(n_pairs, "delta"),
+        "best_similarity_after": valid.nlargest(n_pairs, "similarity_after"),
+    }
+    keys_by_selection = {name: set(map(tuple, sel[pair_cols].values)) for name, sel in selections.items()}
 
     outlier_dir = output_dir / "outliers"
-    outlier_dir.mkdir(parents=True, exist_ok=True)
+    target_dirs = {name: outlier_dir / name for name in selections}
+    for d in target_dirs.values():
+        d.mkdir(parents=True, exist_ok=True)
+
+    candidates = pd.concat(selections.values()).drop_duplicates(subset=pair_cols)
     raw_data_root = repo_root / "code_automated_correlation" / "raw_data"
 
     for folder_name, group in candidates.groupby("folder"):
@@ -211,10 +221,19 @@ def plot_outlier_pairs(df, repo_root, output_dir, n_worst=8):
             if name1 not in smp_profiles or name2 not in smp_profiles:
                 continue
             df1, df2 = smp_profiles[name1], smp_profiles[name2]
-            _, _, lag = get_offset(df1, df2, name1, name2, plot=True, target_dir=outlier_dir)
-            align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=outlier_dir)
+            key = (row["folder"], name1, name2)
+            dirs_for_pair = [target_dirs[name] for name, keys in keys_by_selection.items() if key in keys]
 
-    print(f"Outlier pair plots ({len(candidates)} pairs) saved to: {outlier_dir}")
+            date_str = row["date"].strftime("%Y-%m-%d")
+            sim_before, sim_after = row["similarity_before"], row["similarity_after"]
+            for target_dir in dirs_for_pair:
+                _, _, lag = get_offset(df1, df2, name1, name2, plot=True, target_dir=target_dir,
+                                        date_str=date_str, sim_before=sim_before, sim_after=sim_after)
+                align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=target_dir,
+                                date_str=date_str, sim_before=sim_before, sim_after=sim_after)
+
+    summary = ", ".join(f"{len(sel)} {name}" for name, sel in selections.items())
+    print(f"Extreme pair plots ({summary}, {len(candidates)} unique pairs) saved to: {outlier_dir}")
     return candidates
 
 
@@ -255,7 +274,7 @@ def save_summary(df, daily, outliers, output_dir):
         f"  mean |offset|   = {valid['offset_mm'].abs().mean():.3f} mm",
         f"  Spearman correlation |offset_mm| vs delta S: rho={corr:.3f}, p={p_corr:.2e}",
         "",
-        f"Outlier diagnostic pairs plotted (worst delta S and/or lowest S_after): {len(outliers)}",
+        f"Extreme diagnostic pairs plotted (worst/best delta S and/or S_after): {len(outliers)}",
     ]
     (output_dir / "similarity_summary.txt").write_text("\n".join(lines), encoding="utf-8")
     print("\n".join(lines))
@@ -275,7 +294,7 @@ if __name__ == "__main__":
     plot_offset_histogram(df, output_dir)
     plot_offset_vs_delta(df, output_dir)
     plot_seasonal_boxplot(df, daily, output_dir)
-    outliers = plot_outlier_pairs(df, repo_root, output_dir)
+    outliers = plot_extreme_pairs(df, repo_root, output_dir)
     save_summary(df, daily, outliers, output_dir)
 
     print(f"\nPlots and summary saved to: {output_dir}")

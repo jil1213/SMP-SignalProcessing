@@ -28,7 +28,23 @@ def load_profiles(folder_path):
     return profiles_dict
 
 
-def plot_pairs(pairs, label2, filename, target_dir=Path("output/visualizations")):
+def _info_title(date_str=None, sim_before=None, sim_after=None, lag=None):
+    # Optional context line (profile date, similarity before/after, alignment lag)
+    # shown on the outlier diagnostic plots. Returns "" when nothing was passed, so
+    # callers that don't provide this info (the normal processing pipeline) see no change.
+    parts = []
+    if date_str is not None:
+        parts.append(str(date_str))
+    if sim_before is not None:
+        parts.append(f"S_before={sim_before:.3f}")
+    if sim_after is not None:
+        parts.append(f"S_after={sim_after:.3f}")
+    if lag is not None:
+        parts.append(f"lag={lag}")
+    return "  |  ".join(parts)
+
+
+def plot_pairs(pairs, label2, filename, target_dir=Path("output/visualizations"), info_title=""):
     for df1, name1, df2, name2 in pairs:
         plt.figure(figsize=(5.5, 3.5))
         plt.plot(df1["distance"], df1["force"], label=name1)
@@ -37,13 +53,16 @@ def plot_pairs(pairs, label2, filename, target_dir=Path("output/visualizations")
         plt.ylabel("Force (N)")
         plt.legend()
         plt.grid()
+        if info_title:
+            plt.title(info_title, fontsize=8)
         plt.tight_layout()
         plt.savefig((target_dir / filename).with_suffix(".svg"))
         plt.close()
 
 
 #method to get the offset of two profiles by crosscorrelation
-def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crosscorrelation")):
+def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crosscorrelation"),
+                date_str=None, sim_before=None, sim_after=None):
 
     # make sure index starts with 0 -> surface detection earlier might make trouble here
     df1 = df1.reset_index(drop=True)
@@ -89,28 +108,25 @@ def get_offset(df1, df2, name1, name2, plot=True, target_dir=Path("output/crossc
         plt.xlabel("Distance (mm)")
         plt.ylabel("Correlation")
         plt.grid()
+        info_title = _info_title(date_str, sim_before, sim_after)
+        if info_title:
+            plt.title(info_title, fontsize=8)
         plt.tight_layout()
         plt.legend(fontsize="small")
-        filename = f"crosscorrelation_{name1}_{name2}.svg"
+        filename = f"{name1}_to_{name2}_crosscorrelation.svg"
         plt.savefig(target_dir / filename)
         plt.close()
 
     return offset_mm, correlation, lag_max
 
-def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("output/crosscorrelation")):
+def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("output/crosscorrelation"),
+                    date_str=None, sim_before=None, sim_after=None):
+    info_title = _info_title(date_str, sim_before, sim_after)
     # plot profiles before alignment
     if plot == True:
-        # calculate similarity score before alignment 
-        #take only min len of both to calculate
-        f1 = df1["force"].values
-        f2 = df2["force"].values
-        minlen = min(len(df1), len(df2))
-        b_cosine = np.dot(f1[:minlen], f2[:minlen]) / (np.linalg.norm(f1[:minlen]) * np.linalg.norm(f2[:minlen]))
-        # convert cosine value to string without . 
-        cos_str = f"{b_cosine:.4f}".replace("0.", "0p")
-        label2=name2
-        filename = f"{name1}_to_{name2}_before_alignment_{cos_str}"
-        plot_pairs([(df1, name1, df2, name2)], label2, filename, target_dir=target_dir)
+        label2 = name2
+        filename = f"{name1}_to_{name2}_before_alignment"
+        plot_pairs([(df1, name1, df2, name2)], label2, filename, target_dir=target_dir, info_title=info_title)
 
     df2_shifted = df2.copy()
     # shift indices of df2 with lag to get max correlation
@@ -140,8 +156,10 @@ def align_profiles(df1, df2, name1, name2, lag, plot=True, target_dir=Path("outp
     # plot profiles after alignment
     if plot == True:
         label2 = f"shifted {name2}"
-        filename = f"{name1}_to_{name2}_with_alignment_lag{lag}"
-        plot_pairs([(df1_shifted, name1, df2_shifted, name2)], label2, filename, target_dir=target_dir)
+        filename = f"{name1}_to_{name2}_with_alignment"
+        after_title = _info_title(date_str, sim_before, sim_after, lag=lag)
+        plot_pairs([(df1_shifted, name1, df2_shifted, name2)], label2, filename, target_dir=target_dir,
+                   info_title=after_title)
 
     return df1_shifted, df2_shifted
 
