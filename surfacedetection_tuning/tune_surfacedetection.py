@@ -8,6 +8,7 @@ from pathlib import Path
 from snowmicropyn import Profile
 from sklearn.metrics import mean_absolute_error,  mean_squared_error
 from code_SMP.detect_surface import detect_surface
+from paper_style import set_paper_style, figsize
 plt.style.use(Path(__file__).resolve().parent.parent / 'latex_default.mplstyle')
 
 def compute_metrics(surface_ini_all, surface_old_all, surface_new_all): 
@@ -164,26 +165,23 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
             f.write("\n".join(summary_parts))
 
         # Boxplot: two panels side by side - (a) full range with all outliers, (b) zoomed range
-        # Sized and styled to match the copernicus.cls paper: full text width (177 mm),
-        # Computer Modern (matches the paper's default LaTeX font), 9pt to match figure caption size.
+        # Styled to match the copernicus.cls paper via paper_style.py (full text width, 177 mm).
         method_labels = ["Existing snowmicropyn method", "New method"]
-        mm_to_in = 1 / 25.4
-        paper_rc = {
-            "font.family": "cmr10",
-            "mathtext.fontset": "cm",
-            "font.size": 9,
-            "axes.titlesize": 9,
-            "axes.labelsize": 9,
-            "xtick.labelsize": 9,
-            "ytick.labelsize": 9,
-            "axes.unicode_minus": False,  # cmr10 has no unicode minus glyph
-        }
+        # Matplotlib's own boxplot defaults draw the median in orange (C1) on a blue
+        # (C0) box, which is hard to read against the color scheme used elsewhere in
+        # the paper. Black is the conventional, print-safe choice for the median line;
+        # fliers (outlier markers) are kept small and thin so they don't dominate.
+        box_style_kwargs = dict(
+            medianprops=dict(color="black", linewidth=1.4),
+            flierprops=dict(marker="o", markersize=3, markeredgewidth=0.5),
+        )
 
-        with plt.rc_context(paper_rc):
-            fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(177 * mm_to_in, 85 * mm_to_in))
+        with plt.rc_context():
+            set_paper_style(usetex=False)
+            fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=figsize("text", aspect=85 / 177))
 
             for ax, panel_label in zip((ax_a, ax_b), ("(a)", "(b)")):
-                ax.boxplot([delta_old, delta_new], labels=method_labels)
+                ax.boxplot([delta_old, delta_new], labels=method_labels, **box_style_kwargs)
                 ax.axhline(0, color="grey", linestyle="--", linewidth=0.8, zorder=0)
                 ax.grid()
                 ax.tick_params(axis="x", labelrotation=15)
@@ -193,7 +191,6 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
             ax_a.set_ylabel(r"$\Delta z$ (mm)")
             ax_b.set_ylim(-7.5, 7.5)
 
-            plt.tight_layout()
             plt.savefig(folder_path / "delta_error_boxplot.png", dpi=300)
             plt.savefig(folder_path / "delta_error_boxplot.pdf")  # vector graphic for the paper (pdflatex-ready)
             plt.close()

@@ -8,25 +8,21 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from scipy.stats import shapiro, wilcoxon, spearmanr
 
-# Consistent before/after identity across all figures (validated categorical pair,
-# see dataviz palette reference: blue/orange, CVD Delta E 24.7 protan)
-COLOR_BEFORE = "#2a78d6"
-COLOR_AFTER = "#eb6834"
+from paper_style import set_paper_style, figsize, C
 
-# Styled to match the copernicus.cls paper (same convention as
-# surfacedetection_tuning/tune_surfacedetection.py): full text width (177 mm),
-# Computer Modern, 9pt to match figure caption size.
-PAPER_RC = {
-    "font.family": "cmr10",
-    "mathtext.fontset": "cm",
-    "font.size": 9,
-    "axes.titlesize": 9,
-    "axes.labelsize": 9,
-    "xtick.labelsize": 9,
-    "ytick.labelsize": 9,
-    "axes.unicode_minus": False,
-}
-MM_TO_IN = 1 / 25.4
+# Consistent before/after identity across all figures, taken from the paper's own
+# color scheme (paper_style.C, matches fig_workflow2.tex) for visual consistency.
+COLOR_BEFORE = C["mainblue"]
+COLOR_AFTER = C["mainorange"]
+
+# Matplotlib's own boxplot defaults draw the median in orange (C1) on a blue (C0)
+# box, which disappears against COLOR_BEFORE/COLOR_AFTER above. Black is the
+# conventional, print-safe choice that stays legible against both.
+MEDIAN_COLOR = "black"
+BOX_STYLE_KWARGS = dict(
+    medianprops=dict(color=MEDIAN_COLOR, linewidth=1.4),
+    flierprops=dict(marker="o", markersize=3, markeredgewidth=0.5),
+)
 
 
 def load_scores(csv_path):
@@ -38,13 +34,13 @@ def load_scores(csv_path):
 def plot_pooled_boxplot(df, output_dir):
     # matplotlib's boxplot does not drop NaNs on its own (a handful of pairs have no
     # valid overlap after alignment) - would otherwise silently render an empty box.
-    with plt.rc_context(PAPER_RC):
-        fig, ax = plt.subplots(figsize=(177 * MM_TO_IN, 85 * MM_TO_IN))
+    with plt.rc_context():
+        set_paper_style(usetex=False)
+        fig, ax = plt.subplots(figsize=figsize("text", aspect=85 / 177))
         ax.boxplot([df["similarity_before"].dropna(), df["similarity_after"].dropna()],
-                   labels=["Before alignment", "After alignment"])
+                   labels=["Before alignment", "After alignment"], **BOX_STYLE_KWARGS)
         ax.set_ylabel("Cosine similarity")
         ax.grid()
-        plt.tight_layout()
         plt.savefig(output_dir / "similarity_boxplot_pooled.png", dpi=300)
         plt.savefig(output_dir / "similarity_boxplot_pooled.pdf")
         plt.close()
@@ -54,8 +50,9 @@ def plot_daily_median(df, output_dir):
     # S_tilde_d = median_{i<j} S_ij per day, computed separately before/after alignment
     daily = df.groupby("date")[["similarity_before", "similarity_after"]].median().reset_index()
 
-    with plt.rc_context(PAPER_RC):
-        fig, ax = plt.subplots(figsize=(177 * MM_TO_IN, 85 * MM_TO_IN))
+    with plt.rc_context():
+        set_paper_style(usetex=False)
+        fig, ax = plt.subplots(figsize=figsize("text", aspect=85 / 177))
         ax.scatter(daily["date"], daily["similarity_before"], s=10, marker="o",
                    color=COLOR_BEFORE, alpha=0.7, linewidths=0, label="Before alignment")
         ax.scatter(daily["date"], daily["similarity_after"], s=10, marker="^",
@@ -64,8 +61,7 @@ def plot_daily_median(df, output_dir):
         ax.set_ylabel(r"Daily median similarity $\tilde{S}_d$")
         ax.grid()
         ax.legend(fontsize="small")
-        fig.autofmt_xdate()
-        plt.tight_layout()
+        plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
         plt.savefig(output_dir / "similarity_daily_median.png", dpi=300)
         plt.savefig(output_dir / "similarity_daily_median.pdf")
         plt.close()
@@ -74,8 +70,9 @@ def plot_daily_median(df, output_dir):
 
 
 def plot_before_after_scatter(df, output_dir):
-    with plt.rc_context(PAPER_RC):
-        fig, ax = plt.subplots(figsize=(90 * MM_TO_IN, 90 * MM_TO_IN))
+    with plt.rc_context():
+        set_paper_style(usetex=False)
+        fig, ax = plt.subplots(figsize=figsize(90, aspect=1.0))
         ax.scatter(df["similarity_before"], df["similarity_after"], s=4, alpha=0.25,
                    color=COLOR_BEFORE, linewidths=0)
         lims = [0, 1]
@@ -87,7 +84,6 @@ def plot_before_after_scatter(df, output_dir):
         ax.set_aspect("equal")
         ax.grid()
         ax.legend(fontsize="small")
-        plt.tight_layout()
         plt.savefig(output_dir / "similarity_scatter_before_after.png", dpi=300)
         plt.savefig(output_dir / "similarity_scatter_before_after.pdf")
         plt.close()
@@ -96,13 +92,13 @@ def plot_before_after_scatter(df, output_dir):
 def plot_delta_distribution(df, output_dir):
     # Delta S = S_after - S_before per pair, same single-box style as delta_error_boxplot.py
     delta = (df["similarity_after"] - df["similarity_before"]).dropna()
-    with plt.rc_context(PAPER_RC):
-        fig, ax = plt.subplots(figsize=(90 * MM_TO_IN, 85 * MM_TO_IN))
-        ax.boxplot([delta], labels=[r"$\Delta S$ (after $-$ before)"])
+    with plt.rc_context():
+        set_paper_style(usetex=False)
+        fig, ax = plt.subplots(figsize=figsize(90, aspect=85 / 90))
+        ax.boxplot([delta], labels=[r"$\Delta S$ (after $-$ before)"], **BOX_STYLE_KWARGS)
         ax.axhline(0, color="grey", linestyle="--", linewidth=0.8, zorder=0)
         ax.set_ylabel(r"$\Delta S$")
         ax.grid()
-        plt.tight_layout()
         plt.savefig(output_dir / "similarity_delta_boxplot.png", dpi=300)
         plt.savefig(output_dir / "similarity_delta_boxplot.pdf")
         plt.close()
@@ -110,14 +106,14 @@ def plot_delta_distribution(df, output_dir):
 
 
 def plot_offset_histogram(df, output_dir):
-    with plt.rc_context(PAPER_RC):
-        fig, ax = plt.subplots(figsize=(177 * MM_TO_IN, 75 * MM_TO_IN))
+    with plt.rc_context():
+        set_paper_style(usetex=False)
+        fig, ax = plt.subplots(figsize=figsize("text", aspect=75 / 177))
         ax.hist(df["offset_mm"], bins=60, color=COLOR_BEFORE, edgecolor="white", linewidth=0.3)
         ax.axvline(0, color="grey", linestyle="--", linewidth=0.8, zorder=0)
         ax.set_xlabel("Alignment offset (mm)")
         ax.set_ylabel("Number of pairs")
         ax.grid()
-        plt.tight_layout()
         plt.savefig(output_dir / "similarity_offset_histogram.png", dpi=300)
         plt.savefig(output_dir / "similarity_offset_histogram.pdf")
         plt.close()
@@ -127,41 +123,48 @@ def plot_offset_vs_delta(df, output_dir):
     # Does a larger necessary shift correspond to a larger similarity gain?
     valid = df.dropna(subset=["similarity_after"])
     delta = valid["similarity_after"] - valid["similarity_before"]
-    with plt.rc_context(PAPER_RC):
-        fig, ax = plt.subplots(figsize=(90 * MM_TO_IN, 85 * MM_TO_IN))
+    with plt.rc_context():
+        set_paper_style(usetex=False)
+        fig, ax = plt.subplots(figsize=figsize(90, aspect=85 / 90))
         ax.scatter(valid["offset_mm"].abs(), delta, s=4, alpha=0.25, color=COLOR_AFTER, linewidths=0)
         ax.axhline(0, color="grey", linestyle="--", linewidth=0.8, zorder=0)
         ax.set_xlabel("Absolute alignment offset (mm)")
         ax.set_ylabel(r"$\Delta S$")
         ax.grid()
-        plt.tight_layout()
         plt.savefig(output_dir / "similarity_offset_vs_delta.png", dpi=300)
         plt.savefig(output_dir / "similarity_offset_vs_delta.pdf")
         plt.close()
 
 
-def plot_seasonal_boxplot(daily, output_dir):
-    # Daily medians S_tilde_d grouped by calendar month (pooled across all years)
+def plot_seasonal_boxplot(df, daily, output_dir):
+    # Daily medians S_tilde_d grouped by calendar month (pooled across all years),
+    # restricted to the snow season Nov-May and ordered so it runs Nov, Dec, Jan, ...,
+    # May instead of the calendar's Jan-first order.
     daily = daily.copy()
     daily["month"] = daily["date"].dt.month
+    season_months = [11, 12, 1, 2, 3, 4, 5]
+
+    # Profile-pair counts (per-pair rows, not per-day medians) per month, for the n= labels
+    n_pairs_per_month = df.assign(month=df["date"].dt.month).groupby("month").size()
 
     rows = []
-    for m in range(1, 13):
+    for pos, m in enumerate(season_months, start=1):
         before_vals = daily.loc[daily["month"] == m, "similarity_before"].dropna().values
         after_vals = daily.loc[daily["month"] == m, "similarity_after"].dropna().values
         if len(before_vals) > 0 and len(after_vals) > 0:
-            rows.append((m, before_vals, after_vals))
-    months, before_by_month, after_by_month = zip(*rows)
+            rows.append((pos, m, before_vals, after_vals))
+    positions, months, before_by_month, after_by_month = zip(*rows)
 
-    positions_before = [m - 0.18 for m in months]
-    positions_after = [m + 0.18 for m in months]
+    positions_before = [p - 0.18 for p in positions]
+    positions_after = [p + 0.18 for p in positions]
 
-    with plt.rc_context(PAPER_RC):
-        fig, ax = plt.subplots(figsize=(177 * MM_TO_IN, 85 * MM_TO_IN))
+    with plt.rc_context():
+        set_paper_style(usetex=False)
+        fig, ax = plt.subplots(figsize=figsize("text", aspect=85 / 177))
         bp_before = ax.boxplot(before_by_month, positions=positions_before, widths=0.32,
-                                patch_artist=True, manage_ticks=False)
+                                patch_artist=True, manage_ticks=False, **BOX_STYLE_KWARGS)
         bp_after = ax.boxplot(after_by_month, positions=positions_after, widths=0.32,
-                               patch_artist=True, manage_ticks=False)
+                               patch_artist=True, manage_ticks=False, **BOX_STYLE_KWARGS)
         for box in bp_before["boxes"]:
             box.set_facecolor(COLOR_BEFORE)
             box.set_alpha(0.6)
@@ -169,13 +172,14 @@ def plot_seasonal_boxplot(daily, output_dir):
             box.set_facecolor(COLOR_AFTER)
             box.set_alpha(0.6)
 
-        ax.set_xticks(list(months))
-        ax.set_xticklabels([calendar.month_abbr[m] for m in months])
+        ax.set_xticks(list(positions))
+        ax.set_xticklabels([f"{calendar.month_abbr[m]}\n(n={int(n_pairs_per_month.get(m, 0))})"
+                             for m in months])
+        ax.set_ylim(0, 1)
         ax.set_ylabel(r"Daily median similarity $\tilde{S}_d$")
         ax.legend([bp_before["boxes"][0], bp_after["boxes"][0]],
                   ["Before alignment", "After alignment"], fontsize="small")
         ax.grid()
-        plt.tight_layout()
         plt.savefig(output_dir / "similarity_seasonal_boxplot.png", dpi=300)
         plt.savefig(output_dir / "similarity_seasonal_boxplot.pdf")
         plt.close()
@@ -270,7 +274,7 @@ if __name__ == "__main__":
     plot_delta_distribution(df, output_dir)
     plot_offset_histogram(df, output_dir)
     plot_offset_vs_delta(df, output_dir)
-    plot_seasonal_boxplot(daily, output_dir)
+    plot_seasonal_boxplot(df, daily, output_dir)
     outliers = plot_outlier_pairs(df, repo_root, output_dir)
     save_summary(df, daily, outliers, output_dir)
 
