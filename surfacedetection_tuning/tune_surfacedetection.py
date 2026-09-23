@@ -166,13 +166,14 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
 
         # Boxplot: two panels side by side - (a) full range with all outliers, (b) zoomed range
         # Styled to match the copernicus.cls paper via paper_style.py (full text width, 177 mm).
-        method_labels = ["Existing snowmicropyn method", "New method"]
+        method_labels = ["Existing", "New"]
         # Matplotlib's own boxplot defaults draw the median in orange (C1) on a blue
         # (C0) box, which is hard to read against the color scheme used elsewhere in
-        # the paper. Black is the conventional, print-safe choice for the median line;
-        # fliers (outlier markers) are kept small and thin so they don't dominate.
+        # the paper. Black, drawn thick and on top of the box fill, is the conventional,
+        # print-safe choice for the median line; fliers (outlier markers) are kept small
+        # and thin so they don't dominate.
         box_style_kwargs = dict(
-            medianprops=dict(color="black", linewidth=1.4),
+            medianprops=dict(color="black", linewidth=2.2, zorder=5),
             flierprops=dict(marker="o", markersize=3, markeredgewidth=0.5),
         )
 
@@ -185,8 +186,10 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
                 ax.axhline(0, color="grey", linestyle="--", linewidth=0.8, zorder=0)
                 ax.grid()
                 ax.tick_params(axis="x", labelrotation=15)
-                ax.text(0.0, 1.02, panel_label, transform=ax.transAxes,
-                        fontweight="bold", va="bottom", ha="left")
+                ax.text(0.05, 0.95, panel_label, transform=ax.transAxes,
+                        fontweight="bold", va="top", ha="left",
+                        bbox=dict(boxstyle="round,pad=0.2", facecolor="white",
+                                  edgecolor="none", alpha=0.75))
 
             ax_a.set_ylabel(r"$\Delta z$ (mm)")
             ax_b.set_ylim(-7.5, 7.5)
