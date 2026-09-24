@@ -1,0 +1,63 @@
+Median / quartile / range statistics of the velocity sub-matrices
+(recomputed from the unrounded cosine-similarity values, not the rounded
+numbers used in the master's thesis).
+
+--- Tyrol 1 (2025-01-31) ---
+velocity = 20 mm/s: n=10
+  median (unrounded) = 0.8308973946836163
+  Q1 (unrounded)     = 0.8197804119500463
+  Q3 (unrounded)     = 0.8570487034651283
+  IQR (unrounded)    = 0.03726829151508204
+  min (unrounded)    = 0.7025768144676026
+  max (unrounded)    = 0.9110493516114612
+  range (unrounded)  = 0.2084725371438586
+  median=0.8309  Q1=0.8198  Q3=0.8570  IQR=0.0373  min=0.7026  max=0.9110  range=0.2085
+velocity = 8 mm/s: n=10
+  median (unrounded) = 0.8642850868996816
+  Q1 (unrounded)     = 0.8229557499810427
+  Q3 (unrounded)     = 0.897479410965419
+  IQR (unrounded)    = 0.07452366098437635
+  min (unrounded)    = 0.7876914064332773
+  max (unrounded)    = 0.9309851243552737
+  range (unrounded)  = 0.1432937179219964
+  median=0.8643  Q1=0.8230  Q3=0.8975  IQR=0.0745  min=0.7877  max=0.9310  range=0.1433
+
+--- Tyrol 2 (2025-03-21) ---
+velocity = 20 mm/s: n=10
+  median (unrounded) = 0.6915370168056016
+  Q1 (unrounded)     = 0.616578256169576
+  Q3 (unrounded)     = 0.7491824190011829
+  IQR (unrounded)    = 0.13260416283160692
+  min (unrounded)    = 0.5334265182894178
+  max (unrounded)    = 0.7928854662679181
+  range (unrounded)  = 0.25945894797850033
+  median=0.6915  Q1=0.6166  Q3=0.7492  IQR=0.1326  min=0.5334  max=0.7929  range=0.2595
+velocity = 8 mm/s: n=10
+  median (unrounded) = 0.6701531807821257
+  Q1 (unrounded)     = 0.6151326088672353
+  Q3 (unrounded)     = 0.72926972715851
+  IQR (unrounded)    = 0.11413711829127471
+  min (unrounded)    = 0.4865616967344165
+  max (unrounded)    = 0.8234545139159213
+  range (unrounded)  = 0.33689281718150477
+  median=0.6702  Q1=0.6151  Q3=0.7293  IQR=0.1141  min=0.4866  max=0.8235  range=0.3369
+
+--- pooled across both speed-test days ---
+velocity = 20 mm/s: n=20
+  median (unrounded) = 0.7904339720405207
+  Q1 (unrounded)     = 0.6882773875044568
+  Q3 (unrounded)     = 0.8287380831811376
+  IQR (unrounded)    = 0.14046069567668085
+  min (unrounded)    = 0.5334265182894178
+  max (unrounded)    = 0.9110493516114612
+  range (unrounded)  = 0.3776228333220434
+  median=0.7904  Q1=0.6883  Q3=0.8287  IQR=0.1405  min=0.5334  max=0.9110  range=0.3776
+velocity = 8 mm/s: n=20
+  median (unrounded) = 0.7998690175088249
+  Q1 (unrounded)     = 0.6715252497821651
+  Q3 (unrounded)     = 0.863663984903901
+  IQR (unrounded)    = 0.19213873512173585
+  min (unrounded)    = 0.4865616967344165
+  max (unrounded)    = 0.9309851243552737
+  range (unrounded)  = 0.4444234276208572
+  median=0.7999  Q1=0.6715  Q3=0.8637  IQR=0.1921  min=0.4866  max=0.9310  range=0.4444
