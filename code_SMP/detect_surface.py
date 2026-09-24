@@ -35,9 +35,9 @@ def moving_linear_regression(x, y, window_mm=1.0):
     return result
 
 
-def detect_surface(df, name):
+def detect_surface(df, name, k=2.75, use_air_mean=True, precomputed=None):
     """
-    Detects the snow surface in an SMP profile by identifying the first 
+    Detects the snow surface in an SMP profile by identifying the first
     significant gradient increase in the force signal.
     1. Computes gradient of force using a moving linear regression and smoothing
     2. Calculates a threshold based on the standard deviation of the gradient
@@ -47,56 +47,65 @@ def detect_surface(df, name):
     Parameters:
         df (pd.DataFrame): Profile with 'distance' and 'force' columns
         name (str): Profile name for debugging
+        k (float): multiplier of air_force_std in the force_threshold check
+        use_air_mean (bool): if False, force_threshold = k*air_force_std (air_force_mean left out)
+        precomputed (tuple): optional (distance, force, grad, threshold, air_force_mean, air_force_std)
+            to skip steps 1-2, e.g. when sweeping k/use_air_mean for the same profile many times
 
     Returns:
         surface (float): Surface position
         grad (np.ndarray): Smoothed force gradient
         threshold (float): Gradient threshold used for detection
     """
-    distance = df["distance"].reset_index(drop=True)
-    force = df["force"].reset_index(drop=True)
-    window_len = 242 # thats 1mm/resolution of SMP 
+    if precomputed is not None:
+        distance, force, grad, threshold, air_force_mean, air_force_std = precomputed
+    else:
+        distance = df["distance"].reset_index(drop=True)
+        force = df["force"].reset_index(drop=True)
+        window_len = 242 # thats 1mm/resolution of SMP
 
 
-    # 1. Compute gradient with moving linear regression over 1mm window
-    grad = moving_linear_regression(distance, force, window_mm=1.0)
+        # 1. Compute gradient with moving linear regression over 1mm window
+        grad = moving_linear_regression(distance, force, window_mm=1.0)
 
-    # smoothing with hanning
-    grad = smooth(grad, window_len)
-    grad = grad[:len(distance)]  #cut to length of distance
+        # smoothing with hanning
+        grad = smooth(grad, window_len)
+        grad = grad[:len(distance)]  #cut to length of distance
 
 
-    # 2. Calculate threshold based on standard deviation of the gradient
-    # method: take STD of the gradient from the air measurement without disturbances, form threshold out of it
-    # assumption I: the air measurement can be found in the first 10cm of the profile
-    # assumption II: to get a stable std a a value range of 10mm is used for the calculation -> window
+        # 2. Calculate threshold based on standard deviation of the gradient
+        # method: take STD of the gradient from the air measurement without disturbances, form threshold out of it
+        # assumption I: the air measurement can be found in the first 10cm of the profile
+        # assumption II: to get a stable std a a value range of 10mm is used for the calculation -> window
 
-    max_distance_mm = 100.0      # assumption I: scan first 100mm (10cm) as possible air measurement
-    window = int(20 / 0.00413223123177886) # assumption II: 20mm window size to calculate std air (length_mm/resolution)
+        max_distance_mm = 100.0      # assumption I: scan first 100mm (10cm) as possible air measurement
+        window = int(20 / 0.00413223123177886) # assumption II: 20mm window size to calculate std air (length_mm/resolution)
 
-    # Initialize variables before loop
-    min_std = np.inf
-    air_std = None
-    air_mean = None
-    air_force_mean = None
-    air_force_std = None
+        # Initialize variables before loop
+        min_std = np.inf
+        air_std = None
+        air_mean = None
+        air_force_mean = None
+        air_force_std = None
 
-    grad_air = grad[distance <= (distance[0] + max_distance_mm)]
-    force_air = force[distance <= (distance[0] + max_distance_mm)].reset_index(drop=True).to_numpy()
-    for i in range(len(grad_air) - window + 1):
-        window_grad = grad_air[i : i + window]
-        s = window_grad.std()
-        if s < min_std:
-            min_std = s
-            air_std = s
-            air_mean = window_grad.mean()
-            air_force_mean = force_air[i : i + window].mean()
-            air_force_std = force_air[i : i + window].std()
+        grad_air = grad[distance <= (distance[0] + max_distance_mm)]
+        force_air = force[distance <= (distance[0] + max_distance_mm)].reset_index(drop=True).to_numpy()
+        for i in range(len(grad_air) - window + 1):
+            window_grad = grad_air[i : i + window]
+            s = window_grad.std()
+            if s < min_std:
+                min_std = s
+                air_std = s
+                air_mean = window_grad.mean()
+                air_force_mean = force_air[i : i + window].mean()
+                air_force_std = force_air[i : i + window].std()
 
-    threshold = 5 * air_std  #with air_mean + 5* air_std a very small bit worse - snowmicropyn method
+        threshold = 5 * air_std  #with air_mean + 5* air_std a very small bit worse - snowmicropyn method
+
+    window_len = 242 # thats 1mm/resolution of SMP
 
     # force level below which the signal still looks like air
-    force_threshold = air_force_mean + 3* air_force_std
+    force_threshold = (air_force_mean if use_air_mean else 0) + k * air_force_std
 
     # 3. Find first significant gradient rise above threshold = surface
     surface = None

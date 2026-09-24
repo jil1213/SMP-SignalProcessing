@@ -133,7 +133,7 @@ if __name__ == "__main__":
     output_file = output_path / "surface_detection_cache.csv"
 
     # Set to False to reuse the existing cache instead of recomputing all surfaces
-    use_cache = True
+    use_cache = False
 
     if use_cache and csv_file.exists():
         print(f"Using existing surface detection cache: {csv_file}")
