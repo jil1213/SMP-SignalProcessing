@@ -35,7 +35,8 @@ def moving_linear_regression(x, y, window_mm=1.0):
     return result
 
 
-def detect_surface(df, name, k=2.75, use_air_mean=True, precomputed=None):
+def detect_surface(df, name, k=5.25, use_air_mean=True, precomputed=None,
+                    confirm_mode="force", min_persist_frac=0.8):
     """
     Detects the snow surface in an SMP profile by identifying the first
     significant gradient increase in the force signal.
@@ -47,10 +48,14 @@ def detect_surface(df, name, k=2.75, use_air_mean=True, precomputed=None):
     Parameters:
         df (pd.DataFrame): Profile with 'distance' and 'force' columns
         name (str): Profile name for debugging
-        k (float): multiplier of air_force_std in the force_threshold check
+        k (float): multiplier of air_force_std in the force_threshold check (confirm_mode="force")
         use_air_mean (bool): if False, force_threshold = k*air_force_std (air_force_mean left out)
         precomputed (tuple): optional (distance, force, grad, threshold, air_force_mean, air_force_std)
-            to skip steps 1-2, e.g. when sweeping k/use_air_mean for the same profile many times
+            to skip steps 1-2, e.g. when sweeping parameters for the same profile many times
+        confirm_mode (str): "force" (default, check force level over next 5mm) or
+            "persistence" (check that the gradient itself stays elevated over the next 1mm)
+        min_persist_frac (float): confirm_mode="persistence" only - required fraction of the
+            next 1mm where the gradient must stay above `threshold`
 
     Returns:
         surface (float): Surface position
@@ -111,10 +116,16 @@ def detect_surface(df, name, k=2.75, use_air_mean=True, precomputed=None):
     surface = None
     for i in range(1000, len(grad)): # Start at index 1000 to avoid noise at the very top (in snowmicropyn:100)
         if grad[i] > threshold:
-            # Confirm rise as surface: check if force within next 5mm does NOT fall back to air-like levels
-            check_window_force = force[i+1 : i+1+5*window_len]
-            if check_window_force.mean() < force_threshold:
-                 continue
+            if confirm_mode == "force":
+                # Confirm rise as surface: check if force within next 5mm does NOT fall back to air-like levels
+                check_window_force = force[i+1 : i+1+5*window_len]
+                if check_window_force.mean() < force_threshold:
+                     continue
+            elif confirm_mode == "persistence":
+                # Confirm rise as surface: gradient itself must stay elevated over the next 1mm
+                check_window_grad = grad[i+1 : i+1+window_len]
+                if np.mean(check_window_grad > threshold) < min_persist_frac:
+                     continue
             surface = distance[i]
             break
 

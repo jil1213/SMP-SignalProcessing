@@ -293,7 +293,7 @@ if __name__ == "__main__":
                 scores = compute_metrics(surface_ini_all, surface_old_all, surface_new_all)
 
                 # Change here for different parameter runs
-                info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 20mm\n threshold = threshold = 5 * air_std \n and 5mm min check air (force_threshold = air_force_mean + 2.75*air_force_std)after detected surface \n")
+                info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 20mm\n threshold = threshold = 5 * air_std \n and 5mm min check air (force_threshold = air_force_mean + 5.25*air_force_std)after detected surface \n")
 
                 # Append information to the run_summary.txt
                 append_run_information(info_text, scores)
