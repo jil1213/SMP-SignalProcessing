@@ -35,7 +35,7 @@ def moving_linear_regression(x, y, window_mm=1.0):
     return result
 
 
-def detect_surface(df, name, k=5.25, use_air_mean=True, precomputed=None,
+def detect_surface(df, name, k=5, use_air_mean=True, precomputed=None,
                     confirm_mode="force", min_persist_frac=0.8):
     """
     Detects the snow surface in an SMP profile by identifying the first

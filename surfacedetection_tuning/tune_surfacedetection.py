@@ -185,7 +185,7 @@ def plot_delta_error(surface_ini_all, surface_old_all, surface_new_all, folder_p
                 ax.boxplot([delta_old, delta_new], labels=method_labels, **box_style_kwargs)
                 ax.axhline(0, color="grey", linestyle="--", linewidth=0.8, zorder=0)
                 ax.grid()
-                ax.tick_params(axis="x", labelrotation=15)
+                ax.tick_params(axis="x", labelrotation=0)
                 ax.text(0.05, 0.95, panel_label, transform=ax.transAxes,
                         fontweight="bold", va="top", ha="left",
                         bbox=dict(boxstyle="round,pad=0.2", facecolor="white",
@@ -293,7 +293,7 @@ if __name__ == "__main__":
                 scores = compute_metrics(surface_ini_all, surface_old_all, surface_new_all)
 
                 # Change here for different parameter runs
-                info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 20mm\n threshold = threshold = 5 * air_std \n and 5mm min check air (force_threshold = air_force_mean + 5.25*air_force_std)after detected surface \n")
+                info_text = (f"Run with moving linear regression and threshold finding with\n air_std over rolling window 20mm\n threshold = threshold = 5 * air_std \n and 5mm min check air (force_threshold = air_force_mean + 5*air_force_std)after detected surface \n")
 
                 # Append information to the run_summary.txt
                 append_run_information(info_text, scores)
