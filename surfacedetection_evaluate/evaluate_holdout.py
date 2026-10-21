@@ -14,7 +14,7 @@ SPLIT_PATH = root / "surfacedetection_tuning" / "train_test_split" / "profile_sp
 BEST_CONFIG_PATH = root / "surfacedetection_tuning" / "train_test_split" / "best_config.json"
 CACHE_PATH = Path(__file__).resolve().parent / "holdout" / "surface_detection_holdout_cache.csv"
 
-use_cache = True
+use_cache = False
 
 
 def calculate_holdout_surfaces(test_rows, best_config):
@@ -46,6 +46,7 @@ if __name__ == "__main__":
 
     with BEST_CONFIG_PATH.open("r", encoding="utf-8") as f:
         best_config = json.load(f)
+    best_config["force"]["k"] = 5 #Setting 5 as best config 
 
     if use_cache and CACHE_PATH.exists():
         print(f"Using existing holdout cache: {CACHE_PATH}")
