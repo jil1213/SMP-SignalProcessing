@@ -146,7 +146,9 @@ if __name__ == "__main__":
     input_root = root.parent/ "code_automated_correlation" / "raw_data" 
     output_root = root / "output" / "density"
 
-    for folder_path in sorted(input_root.iterdir()):
+    #for folder_path in sorted(input_root.iterdir()):
+    selected_days = ["20250131_T", "20250321_T", "20160127", "20191229", "20250403"]
+    for folder_path in [input_root / day for day in selected_days]:
         if not folder_path.is_dir():
             continue
 

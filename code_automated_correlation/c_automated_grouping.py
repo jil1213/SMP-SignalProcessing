@@ -170,7 +170,7 @@ def analyze_day(folder_path, threshold_override=None):
     labels = corr_df.index.tolist()
 
     threshold = threshold_override if threshold_override is not None else (
-        0.85 if day in ['20250131', '20250403', '20191229'] else 0.75)
+        0.85 if day in ['20250131_T', '20250403', '20191229'] else 0.75)
 
     ref_result = find_reference_profile(S, threshold, labels)
     pairs = find_highest_similarity_pairs(S, labels)

@@ -97,7 +97,7 @@ def detect_surface(df, name):
     threshold = 5 * air_std  #with air_mean + 5* air_std a very small bit worse - snowmicropyn method
 
     # force level below which the signal still looks like air
-    force_threshold = air_force_mean + 3* air_force_std
+    force_threshold = air_force_mean + 5* air_force_std
 
     # 3. Find first significant gradient rise above threshold = surface
     surface = None
