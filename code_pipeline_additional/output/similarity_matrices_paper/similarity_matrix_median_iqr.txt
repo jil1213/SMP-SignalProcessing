@@ -3,7 +3,7 @@ Median / IQR of the off-diagonal similarity values, per dataset and pooled
 
 Per dataset (all M*(M-1)/2 off-diagonal values of that dataset's matrix, unrounded):
   Tyrol 1 (2025-01-31): M=10, n=45 -> median=0.8544  IQR=0.0581  (Q1=0.8249, Q3=0.8830)
-  Tyrol 2 (2025-03-21): M=10, n=45 -> median=0.6729  IQR=0.1427  (Q1=0.6170, Q3=0.7596)
+  Tyrol 2 (2025-03-21): M=10, n=45 -> median=0.6729  IQR=0.1426  (Q1=0.6170, Q3=0.7596)
   WFJ 1 (2016-01-27): M=5, n=10 -> median=0.5483  IQR=0.3151  (Q1=0.3913, Q3=0.7064)
   WFJ 2 (2019-12-29): M=6, n=15 -> median=0.9639  IQR=0.0156  (Q1=0.9539, Q3=0.9695)
   WFJ 3 (2025-04-03): M=7, n=21 -> median=0.8714  IQR=0.0478  (Q1=0.8581, Q3=0.9059)

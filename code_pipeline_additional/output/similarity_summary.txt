@@ -1,27 +1,27 @@
 n pairs: 6274
 n days: 554
-n pairs with failed alignment (similarity_after = NaN): 22
+n pairs with failed alignment (similarity_after = NaN): 0
 
 Pooled (all pairs, all days):
-  median before = 0.8811
-  median after  = 0.9124
-  mean before   = 0.8122
-  mean after    = 0.8594
-  median delta S (after - before) = 0.0140
-  mean delta S   (after - before) = 0.0466
-  share of pairs improved (delta S > 0) = 88.59%
+  median before = 0.8814
+  median after  = 0.9137
+  mean before   = 0.8132
+  mean after    = 0.8620
+  median delta S (after - before) = 0.0144
+  mean delta S   (after - before) = 0.0488
+  share of pairs improved (delta S > 0) = 89.50%
 
 Daily medians S_tilde_d (median_{i<j} S_ij per day):
-  median of daily medians, before = 0.8652
-  median of daily medians, after  = 0.9014
+  median of daily medians, before = 0.8698
+  median of daily medians, after  = 0.9047
 
-Paired significance test on delta S (n = 6252):
-  Shapiro-Wilk on delta S: stat=0.6578, p=0.00e+00 (not normal -> use non-parametric test)
-  Wilcoxon signed-rank test (before vs after): stat=1338006.5, p=0.00e+00
+Paired significance test on delta S (n = 6274):
+  Shapiro-Wilk on delta S: stat=0.6513, p=0.00e+00 (not normal -> use non-parametric test)
+  Wilcoxon signed-rank test (before vs after): stat=1187726.0, p=0.00e+00
 
 Alignment offset:
-  median |offset| = 3.800 mm
-  mean |offset|   = 10.222 mm
-  Spearman correlation |offset_mm| vs delta S: rho=0.701, p=0.00e+00
+  median |offset| = 3.638 mm
+  mean |offset|   = 8.372 mm
+  Spearman correlation |offset_mm| vs delta S: rho=0.744, p=0.00e+00
 
-Outlier diagnostic pairs plotted (worst delta S and/or lowest S_after): 16
+Extreme diagnostic pairs plotted (worst/best delta S and/or S_after): 78
